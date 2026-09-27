@@ -1,0 +1,976 @@
+@prefix : <http://purl.org/csf/core#> .
+@prefix csf: <http://purl.org/csf/> .
+@prefix core: <http://purl.org/csf/core#> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix co: <http://purl.org/co/> .
+@prefix fschema: <https://w3id.org/framester/schema/> .
+@prefix cflow: <http://www.ontologydesignpatterns.org/cp/owl/controlflow.owl#> .
+@prefix taskex: <http://www.ontologydesignpatterns.org/cp/owl/taskexecution.owl#> .
+@prefix seq: <http://www.ontologydesignpatterns.org/cp/owl/sequence.owl#> .
+@prefix pol: <http://purl.org/polanyi/heuristics#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+csf:core
+    a owl:Ontology ;
+#    owl:imports <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl> ,
+#                <http://purl.org/co/> ,
+#                <https://w3id.org/framester/schema/> ,
+#                <http://www.ontologydesignpatterns.org/cp/owl/controlflow.owl> ;
+	rdfs:comment "v3.1 / Req 11: Cascade step types are predominantly biological. Psychological and social mechanisms (rumination, social withdrawal, learned helplessness) are represented as BehavioralStep types but the taxonomy is weighted toward neuroendocrine mechanisms. This reflects the ontology's focus on HPA-mediated pathways rather than a claim that psychological mechanisms are less important. Step Type Subtypes by biological domain have been introduced. v3.3 introduces Situation Phases."@en ;
+    owl:versionInfo "3.3" ;
+    dcterms:title "Corticoidogenic Stress Frames Ontology (CSF) - Core Module"@en ;
+    dcterms:description """Core module of the CSF ontology v3. Properly distinguishes:
+    
+    SCHEMA LEVEL (Description/Frame):
+    - CorticoidogenicFrame: frame describing situation types
+    - CascadeFrame: frame describing cascade workflow patterns  
+    - CascadeStep: step roles in cascade schemas (aligned with controlflow:Task)
+    - CSFRole: semantic roles in corticoidogenic frames
+    
+    INSTANCE LEVEL (Situation/Event):
+    - CSF_Situation: actual situation evoking a corticoidogenic frame
+    - CascadeOccurrence: actual cascade process occurring in a person
+    - CascadeStepOccurrence: actual step event (aligned with taskexecution:Action)
+    
+    Relations:
+    - csf:evokes / csf:evokedBy: Situation ↔ Frame (D&S pattern)
+    - csf:executesStep: StepOccurrence → Step (taskexecution pattern)
+    - co:itemContent: SequenceItem → Step (Collection Ontology)
+    
+    H2b: TEMPORAL PHASE SEQUENCES (Req 12) - Situation Phases:
+    Since v3.2 introduced sit:hasTrajectory and sit:hasChronicity as stepping stones,
+	H2b model extends this with Selye's General Adaptation Syndrome (GAS) as discrete phases
+	with explicit transition conditions. This is an alternative to the continuous model
+	(H2a) because it enables:
+		(a) Phase-specific cascade activation rules
+		(b) Phase-dependent moderator effectiveness
+		(c) Intervention timing optimization
+
+	DESIGN DECISION: Situation phases are DISTINCT from cascade temporal phases
+	(csf:CascadeTemporalPhase). Cascade phases describe individual step timing;
+	situation phases describe the organism's overall adaptation trajectory.
+	The two interact but are not identical.
+
+	LITERATURE: Selye 1956; McEwen 1998 (PMID 9629234); Juster et al. 2010 (PMID 19836632)
+    """@en ;
+    dcterms:creator "Generated via POLANYI++ methodology" ;
+    owl:versionInfo "3.1" ;
+    rdfs:seeAlso <https://pubmed.ncbi.nlm.nih.gov/17615391/> ;
+    pol:designHeuristic pol:b01-FRAMEBINDING, pol:m03-CASCADEMODELING, pol:BRI .
+
+#################################################################
+#    POLANYI++ Heuristic Annotations (Meta-level)
+#################################################################
+
+pol:Heuristic a owl:Class ;
+    rdfs:subClassOf dul:InformationEntity ;
+    rdfs:label "POLANYI++ Heuristic"@en ;
+    rdfs:comment "Metaclass for heuristics used in ontology design and knowledge extraction."@en .
+
+pol:BindingHeuristic a owl:Class ;
+    rdfs:subClassOf pol:Heuristic ;
+    rdfs:label "Binding Heuristic (b-type)"@en ;
+    rdfs:comment "Heuristics that ground abstract concepts to observable/measurable entities."@en .
+
+pol:MethodHeuristic a owl:Class ;
+    rdfs:subClassOf pol:Heuristic ;
+    rdfs:label "Method Heuristic (m-type)"@en ;
+    rdfs:comment "Problem-solving method heuristics for extraction and integration."@en .
+
+pol:b01-FRAMEBINDING a pol:BindingHeuristic ;
+    rdfs:label "b01-FRAMEBINDING"@en ;
+    rdfs:comment """Bind abstract stress types to frame-semantic structures with core/peripheral 
+    role distinctions. Each frame evokes a gestalt situation-type with predictable role fillers."""@en ;
+    dcterms:references <https://framenet.icsi.berkeley.edu/> .
+
+pol:b02-BIOMARKERBINDING a pol:BindingHeuristic ;
+    rdfs:label "b02-BIOMARKERBINDING"@en ;
+    rdfs:comment """Bind physiological constructs (allostatic load, HPA dysregulation) to 
+    measurable biomarker constellations (cortisol, DHEA-S, cytokines, etc.)."""@en ;
+    dcterms:references <https://pubmed.ncbi.nlm.nih.gov/19836632/> .
+
+pol:b03-NEURALBINDING a pol:BindingHeuristic ;
+    rdfs:label "b03-NEURALBINDING"@en ;
+    rdfs:comment """Bind neural pathway constructs to specific brain regions and connectivity 
+    patterns (amygdala-PFC, hippocampus-HPA, etc.)."""@en ;
+    dcterms:references <https://pubmed.ncbi.nlm.nih.gov/33345670/> .
+
+pol:b04-TEMPORALBINDING a pol:BindingHeuristic ;
+    rdfs:label "b04-TEMPORALBINDING"@en ;
+    rdfs:comment """Bind temporal constructs (acute, chronic, developmental) to specific 
+    time windows and their differential mechanistic implications."""@en ;
+    dcterms:references <https://pubmed.ncbi.nlm.nih.gov/9629234/> .
+
+pol:m01-SITUATIONTYPING a pol:MethodHeuristic ;
+    rdfs:label "m01-SITUATIONTYPING"@en ;
+    rdfs:comment """Method for classifying real-world situations into frame-types based on 
+    structural features (controllability, duration, developmental timing, social embedding)."""@en .
+
+pol:m02-ROLEEXTRACTION a pol:MethodHeuristic ;
+    rdfs:label "m02-ROLEEXTRACTION"@en ;
+    rdfs:comment """Extract frame element roles (Stressor, Experiencer, Context, Duration) 
+    from situation descriptions using compositional semantics."""@en .
+
+pol:m03-CASCADEMODELING a pol:MethodHeuristic ;
+    rdfs:label "m03-CASCADEMODELING"@en ;
+    rdfs:comment """Model causal cascades as workflow patterns with sequence, parallel, 
+    choice, and iteration operators. Schema level uses controlflow:Task, instance level 
+    uses taskexecution:Action. Each step is a state transition in the allostatic system."""@en ;
+    dcterms:references <https://pubmed.ncbi.nlm.nih.gov/39680766/> .
+
+pol:m04-SEVERITYESTIMATION a pol:MethodHeuristic ;
+    rdfs:label "m04-SEVERITYESTIMATION"@en ;
+    rdfs:comment """Estimate outcome severity based on formula: 
+    Duration × Intensity × DevelopmentalTiming × (1/Controllability) × ModeratorEffects."""@en .
+
+pol:BRI a pol:Heuristic ;
+    rdfs:label "BRI Meta-Heuristic"@en ;
+    rdfs:comment """Bind-Reify-Integrate: 
+    (1) BIND: Real-world events bind to schema-level step types
+    (2) REIFY: Bindings are reified as step occurrence individuals
+    (3) INTEGRATE: Step occurrences form cascade occurrences that evoke cascade frames"""@en .
+
+pol:designHeuristic a owl:ObjectProperty ;
+    rdfs:label "design heuristic"@en ;
+    rdfs:comment "Links ontology elements to the POLANYI++ heuristics used in their design."@en .
+
+pol:extractionHeuristic a owl:AnnotationProperty ;
+    rdfs:label "extraction heuristic"@en ;
+    rdfs:comment "Heuristic to apply when extracting instances of this class from text/data."@en .
+
+pol:groundingReference a owl:AnnotationProperty ;
+    rdfs:label "grounding reference"@en ;
+    rdfs:comment "Links to empirical literature grounding the construct."@en .
+
+#################################################################
+#    Annotation/Datatype Properties for Literature Grounding
+#################################################################
+
+csf:pubmedID a owl:AnnotationProperty ;
+    rdfs:subPropertyOf dcterms:references ;
+    rdfs:label "PubMed ID"@en .
+
+csf:doi a owl:AnnotationProperty ;
+    rdfs:subPropertyOf dcterms:references ;
+    rdfs:label "DOI"@en .
+
+csf:evidenceStrength a owl:DatatypeProperty ;
+    rdfs:label "evidence strength"@en ;
+    rdfs:range [ a rdfs:Datatype ;
+                 owl:oneOf ("meta-analysis" "systematic-review" "RCT" "cohort" "case-control" "cross-sectional" "case-study" "theoretical") ] .
+
+csf:mechanisticSupport a owl:DatatypeProperty ;
+    rdfs:label "mechanistic support"@en ;
+    rdfs:comment "References supporting the mechanistic pathway."@en ;
+    rdfs:range rdfs:Literal .
+
+csf:coreElement a owl:DatatypeProperty ;
+    rdfs:label "core element"@en ;
+    rdfs:range xsd:boolean .
+
+#################################################################
+#    SCHEMA-LEVEL CLASSES (Description/Frame)
+#################################################################
+
+# --- Corticoidogenic Frames (Situation-Type Descriptions) ---
+
+csf:CorticoidogenicFrame a owl:Class ;
+    rdfs:subClassOf fschema:Frame, dul:Description ;
+    rdfs:label "Corticoidogenic Frame"@en ;
+    rdfs:comment """SCHEMA LEVEL: A frame-semantic description that characterizes a TYPE of 
+    life situation structurally predisposed to induce chronic HPA axis activation and 
+    allostatic load accumulation. Situations EVOKE frames (D&S pattern)."""@en ;
+    pol:designHeuristic pol:b01-FRAMEBINDING ;
+    csf:pubmedID "17615391" ;
+    csf:evidenceStrength "systematic-review" .
+
+csf:CSFRole a owl:Class ;
+    rdfs:subClassOf fschema:SemanticRole, dul:Role ;
+    rdfs:label "CSF Semantic Role"@en ;
+    rdfs:comment """SCHEMA LEVEL: A semantic role within a corticoidogenic frame, following 
+    Fillmorean frame semantics. Roles can be core (obligatory) or peripheral."""@en ;
+    pol:designHeuristic pol:m02-ROLEEXTRACTION .
+
+# --- Cascade Frames (Workflow-Pattern Descriptions) ---
+
+csf:CascadeFrame a owl:Class ;
+    rdfs:subClassOf fschema:Frame, dul:Description ;
+    rdfs:label "Cascade Frame"@en ;
+    rdfs:comment """SCHEMA LEVEL: A frame describing a cascade workflow pattern - the TEMPLATE 
+    of a pathophysiological cascade from stressor exposure to clinical outcomes.
+    CascadeOccurrences EVOKE CascadeFrames."""@en ;
+    pol:designHeuristic pol:m03-CASCADEMODELING ;
+    csf:pubmedID "9629234" .
+
+csf:CascadeStep a owl:Class ;
+    rdfs:subClassOf fschema:SemanticRole, cflow:Task, dul:Role ;
+    rdfs:label "Cascade Step Type"@en ;
+    rdfs:comment """SCHEMA LEVEL: A step ROLE in a cascade frame schema. Defines WHAT should 
+    happen at this position in the cascade. Aligned with controlflow:Task.
+    Actual step occurrences EXECUTE step types (taskexecution pattern)."""@en ;
+    pol:designHeuristic pol:m03-CASCADEMODELING .
+
+# NOTE (v3.1 / Req 11): Cascade step types are predominantly biological. Psychological
+# and social mechanisms (rumination, social withdrawal, learned helplessness) are represented
+# as BehavioralStep types but the taxonomy is weighted toward neuroendocrine mechanisms.
+# This reflects the ontology's focus on HPA-mediated pathways rather than a claim that
+# psychological mechanisms are less important.
+# Step Type Subtypes (by biological domain)
+csf:NeuroendocrineStep a owl:Class ;
+    rdfs:subClassOf csf:CascadeStep ;
+    rdfs:label "Neuroendocrine Step Type"@en ;
+    rdfs:comment "Step type involving HPA axis, cortisol, catecholamines."@en ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/17615391/> .
+
+csf:NeuralPlasticityStep a owl:Class ;
+    rdfs:subClassOf csf:CascadeStep ;
+    rdfs:label "Neural Plasticity Step Type"@en ;
+    rdfs:comment "Step type involving structural or functional brain changes."@en ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/39680766/> .
+
+csf:BehavioralStep a owl:Class ;
+    rdfs:subClassOf csf:CascadeStep ;
+    rdfs:label "Behavioral Step Type"@en ;
+    rdfs:comment "Step type involving behavioral changes (coping, avoidance, etc.)."@en .
+
+csf:ImmuneStep a owl:Class ;
+    rdfs:subClassOf csf:CascadeStep ;
+    rdfs:label "Immune Step Type"@en ;
+    rdfs:comment "Step type involving inflammatory or immune processes."@en ;
+    pol:groundingReference <https://pmc.ncbi.nlm.nih.gov/articles/PMC11839829/> .
+
+csf:EpigeneticStep a owl:Class ;
+    rdfs:subClassOf csf:CascadeStep ;
+    rdfs:label "Epigenetic Step Type"@en ;
+    rdfs:comment "Step type involving epigenetic modifications (DNA methylation, histone changes)."@en ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/15084670/> .
+
+# NOTE (v3.1 / Req 8, Req 12): The sequential ordering of cascade steps is a modeling
+# simplification. Biological reality involves concurrent, overlapping processes. The
+# ParallelStep and co:List mechanisms partially address this, but users should be aware
+# that strict sequentiality is a representational convenience, not a biological claim.
+# Step Type Subtypes (by controlflow pattern)
+csf:SequenceStep a owl:Class ;
+    rdfs:subClassOf csf:CascadeStep, cflow:ActionTask ;
+    rdfs:label "Sequence Step Type"@en ;
+    rdfs:comment "Step type that must complete before next step begins."@en .
+
+csf:ParallelStep a owl:Class ;
+    rdfs:subClassOf csf:CascadeStep, cflow:ConcurrencyTask ;
+    rdfs:label "Parallel Step Type"@en ;
+    rdfs:comment "Step type that can execute concurrently with others."@en .
+
+csf:ChoiceStep a owl:Class ;
+    rdfs:subClassOf csf:CascadeStep, cflow:CaseTask ;
+    rdfs:label "Choice Step Type"@en ;
+    rdfs:comment "Branching point where cascade can take alternative paths."@en .
+
+csf:LoopStep a owl:Class ;
+    rdfs:subClassOf csf:CascadeStep, cflow:LoopTask ;
+    rdfs:label "Loop Step Type"@en ;
+    rdfs:comment "Step type that may repeat (feedforward/feedback loops)."@en .
+
+# --- Autonomic/Vagal Step Types (v3.1 extension) ---
+# Added per polyvagal theory (Porges 2011) and neurovisceral integration (Thayer & Lane 2009)
+
+csf:AutonomicStep a owl:Class ;
+    rdfs:subClassOf csf:CascadeStep ;
+    rdfs:label "Autonomic Step Type"@en ;
+    rdfs:comment "Step type involving autonomic nervous system changes, particularly parasympathetic/vagal mechanisms. Added in v3.1 to address the gap in vagal pathway representation (Porges 2011, Thayer & Lane 2009)."@en ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/21753751/> .
+
+# --- Social Genomics Step Types (v3.1 extension) ---
+# Added per CTRA theory (Cole et al. 2007, Slavich & Cole 2013)
+
+csf:SocialGenomicsStep a owl:Class ;
+    rdfs:subClassOf csf:CascadeStep ;
+    rdfs:label "Social Genomics Step Type"@en ;
+    rdfs:comment "Step type involving social signal transduction to gene expression changes. Formalizes Cole's Conserved Transcriptional Response to Adversity (CTRA). Added in v3.1."@en ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/17201568/> .
+
+# --- Cascade Sequence (Ordered List of Step Types) ---
+
+csf:CascadeSequence a owl:Class ;
+    rdfs:subClassOf co:List ;
+    rdfs:label "Cascade Sequence"@en ;
+    rdfs:comment """SCHEMA LEVEL: An ordered sequence of CascadeSteps within a CascadeFrame.
+    Uses Collection Ontology co:List for OWL2 DL compliance."""@en ;
+    pol:designHeuristic pol:m03-CASCADEMODELING .
+
+csf:CascadeSequenceItem a owl:Class ;
+    rdfs:subClassOf co:ListItem ;
+    rdfs:label "Cascade Sequence Item"@en .
+    
+co:itemContent a owl:ObjectProperty .
+
+
+#################################################################
+#    TEMPORAL PHASE CLASSES (v3.1 extension)
+#################################################################
+
+# Addresses the gap in temporal dynamics formalism (Req 5).
+# Cascade steps and occurrences can be annotated with temporal phase
+# without requiring temporal DL extensions.
+
+csf:CascadeTemporalPhase a owl:Class ;
+    rdfs:subClassOf dul:Quality ;
+    rdfs:label "Cascade Temporal Phase"@en ;
+    rdfs:comment "Temporal phase of cascade progression. Distinguishes acute responses (minutes-hours) from chronic allostatic accommodation (months-years). Added in v3.1 to address temporal dynamics gap."@en ;
+    owl:equivalentClass [ a owl:Class ;
+                          owl:oneOf ( csf:AcutePhase csf:SubacutePhase csf:ChronicPhase csf:RecoveryPhase ) ] .
+
+csf:AcutePhase a csf:CascadeTemporalPhase ;
+    rdfs:label "Acute Phase"@en ;
+    rdfs:comment "Minutes to hours: initial stress response activation."@en .
+
+csf:SubacutePhase a csf:CascadeTemporalPhase ;
+    rdfs:label "Subacute Phase"@en ;
+    rdfs:comment "Days to weeks: sustained activation, early allostatic changes."@en .
+
+csf:ChronicPhase a csf:CascadeTemporalPhase ;
+    rdfs:label "Chronic Phase"@en ;
+    rdfs:comment "Months to years: allostatic load accumulation, structural changes."@en .
+
+csf:RecoveryPhase a csf:CascadeTemporalPhase ;
+    rdfs:label "Recovery Phase"@en ;
+    rdfs:comment "Variable duration: partial or full reversal of cascade effects."@en .
+
+csf:hasTemporalPhase a owl:ObjectProperty ;
+    rdfs:domain [ a owl:Class ; owl:unionOf ( csf:CascadeStep csf:CascadeStepOccurrence ) ] ;
+    rdfs:range csf:CascadeTemporalPhase ;
+    rdfs:label "has temporal phase"@en ;
+    rdfs:comment "Links a cascade step type or occurrence to its typical temporal phase."@en .
+
+csf:hasTypicalOnset a owl:DatatypeProperty ;
+    rdfs:domain csf:CascadeStep ;
+    rdfs:range xsd:string ;
+    rdfs:label "has typical onset"@en ;
+    rdfs:comment "Typical time from stressor exposure to step activation (e.g., 'minutes', 'weeks', 'months')."@en .
+
+csf:hasTypicalDuration a owl:DatatypeProperty ;
+    rdfs:domain csf:CascadeStep ;
+    rdfs:range xsd:string ;
+    rdfs:label "has typical duration"@en ;
+    rdfs:comment "Typical duration of this step type (e.g., 'hours', 'weeks', 'permanent')."@en .
+
+#################################################################
+#    FEEDBACK TERMINATION FORMALISM (v3.1 extension)
+#################################################################
+
+# Addresses the feedback non-termination red flag (Req 1 partial).
+# Feedback loops (feedsForwardTo, feedsBackTo) now have explicit
+# termination conditions preventing infinite loop interpretation.
+
+csf:TerminationCondition a owl:Class ;
+    rdfs:subClassOf dul:Description ;
+    rdfs:label "Termination Condition"@en ;
+    rdfs:comment "A condition under which a feedback loop in a cascade terminates or dampens. Added in v3.1 to address feedback non-termination risk."@en .
+
+csf:ReceptorDownregulation a csf:TerminationCondition ;
+    rdfs:label "Receptor Downregulation"@en ;
+    rdfs:comment "Loop terminates when receptor density decreases sufficiently to reduce signal."@en .
+
+csf:AllostaticAccommodation a csf:TerminationCondition ;
+    rdfs:label "Allostatic Accommodation"@en ;
+    rdfs:comment "Loop dampens as system reaches new allostatic set-point."@en .
+
+csf:ExternalIntervention a csf:TerminationCondition ;
+    rdfs:label "External Intervention"@en ;
+    rdfs:comment "Loop terminated by therapeutic or environmental intervention."@en .
+
+csf:hasTerminationCondition a owl:ObjectProperty ;
+    rdfs:domain csf:LoopStep ;
+    rdfs:range csf:TerminationCondition ;
+    rdfs:label "has termination condition"@en ;
+    rdfs:comment "Links a feedback loop step to conditions under which it terminates."@en .
+
+csf:hasDampingFactor a owl:DatatypeProperty ;
+    rdfs:domain csf:LoopStep ;
+    rdfs:range [ a rdfs:Datatype ;
+                 owl:onDatatype xsd:float ;
+                 owl:withRestrictions ( [ xsd:minInclusive "0.0"^^xsd:float ]
+                                        [ xsd:maxInclusive "1.0"^^xsd:float ] ) ] ;
+    rdfs:label "has damping factor"@en ;
+    rdfs:comment "Rate at which loop amplitude decreases per cycle (0.0 = no damping, 1.0 = immediate termination)."@en .
+
+#################################################################
+#    RESILIENCE AND RECOVERY OUTCOMES (v3.1 extension)
+#################################################################
+
+# Addresses the missing positive outcome pathways (Req 6).
+# Buffers can redirect cascades toward resilience, not just attenuate them.
+
+csf:ResilienceOutcome a owl:Class ;
+    rdfs:subClassOf csf:ClinicalOutcome ;
+    rdfs:label "Resilience Outcome"@en ;
+    rdfs:comment "A positive adaptation outcome where the individual maintains or recovers functioning despite stress exposure. Added in v3.1 to balance the outcome taxonomy."@en .
+
+csf:RecoveryOutcome a owl:Class ;
+    rdfs:subClassOf csf:ClinicalOutcome ;
+    rdfs:label "Recovery Outcome"@en ;
+    rdfs:comment "An outcome representing return to baseline functioning after cascade activation. Added in v3.1."@en .
+
+csf:hasProtectiveTrajectory a owl:ObjectProperty ;
+    rdfs:domain csf:CascadeOccurrence ;
+    rdfs:range csf:ResilienceOutcome ;
+    rdfs:label "has protective trajectory"@en ;
+    rdfs:comment "Links a cascade occurrence to a resilience outcome when sufficient buffers redirect the cascade."@en .
+
+#################################################################
+#    OUTCOME-SITUATION FEEDBACK (v3.1 extension)
+#################################################################
+
+# Addresses the missing outcome-to-situation feedback loop (Req 1).
+# Clinical reality: Depression (outcome) → social withdrawal (new Frame G situation).
+
+csf:triggersSituation a owl:ObjectProperty ;
+    rdfs:domain csf:ClinicalOutcome ;
+    rdfs:range csf:CSF_Situation ;
+    rdfs:label "triggers situation"@en ;
+    rdfs:comment "Links a clinical outcome to a new stress situation it may generate. For example, Depression may trigger a SocialDisconnection situation. This property is NOT transitive to prevent unbounded inference chains. Added in v3.1."@en ;
+    rdfs:comment "(v3.2 / Req 7, Req 14): The causal chain from situation → frame → cascade → outcome is complete at the schema level via csf:triggeredByFrame and csf:typicallyLeadsTo. However, direct situation-to-outcome prediction (sit:predictsOutcome) is a REIFIED hypothesis (H3) deferred to future work. The current architecture requires traversing the full cascade chain, which is more mechanistically grounded but less convenient for epidemiological queries"@en ;
+    rdfs:comment "A positioned item in a cascade sequence, wrapping a CascadeStep."@en .
+
+#################################################################
+#    INSTANCE-LEVEL CLASSES (Situation/Event)
+#################################################################
+
+# --- Situations (Evoking Corticoidogenic Frames) ---
+
+csf:CSF_Situation a owl:Class ;
+    rdfs:subClassOf dul:Situation ;
+    rdfs:label "CSF Situation"@en ;
+    rdfs:comment """INSTANCE LEVEL: An actual situation that evokes a CorticoidogenicFrame.
+    This is the domain-specific situation class for the CSF ontology."""@en ;
+    pol:designHeuristic pol:m01-SITUATIONTYPING .
+    
+# --- Cascade Occurrences (Evoking Cascade Frames) ---
+
+csf:CascadeOccurrence a owl:Class ;
+    rdfs:subClassOf dul:Process, dul:Situation ;
+    rdfs:label "Cascade Occurrence"@en ;
+    rdfs:comment """INSTANCE LEVEL: An actual cascade process occurring in a specific person.
+    Evokes a CascadeFrame (the schema it instantiates). Contains CascadeStepOccurrences."""@en ;
+    pol:designHeuristic pol:m03-CASCADEMODELING, pol:BRI .
+
+csf:CascadeStepOccurrence a owl:Class ;
+    rdfs:subClassOf dul:Event, taskex:Action ;
+    rdfs:label "Cascade Step Occurrence"@en ;
+    rdfs:comment """INSTANCE LEVEL: An actual step event in a cascade occurrence.
+    Executes a CascadeStep (the role it fills). Aligned with taskexecution:Action."""@en ;
+    pol:designHeuristic pol:BRI .
+
+# --- Clinical Outcomes ---
+
+csf:ClinicalOutcome a owl:Class ;
+    rdfs:subClassOf dul:Event ;
+    rdfs:label "Clinical Outcome"@en ;
+    rdfs:comment "A clinically significant state or event resulting from cascade processes."@en ;
+    pol:designHeuristic pol:b02-BIOMARKERBINDING .
+
+# --- Moderators ---
+
+# NOTE (v3.2 / Req 4, Req 2): The moderator architecture models buffers (protective factors)
+# at the cascade level but not at the frame/situation level. The DARKSIDE audit identified
+# that no situation evokes a resilience or recovery frame. Protective frames (H1, Req 11)
+# are a REIFIED hypothesis. Current buffers (mod:Buffer instances in csf-moderators.ttl)
+# partially address this gap but only modulate cascade severity, not situation framing.
+csf:Moderator a owl:Class ;
+    rdfs:subClassOf dul:Quality ;
+    rdfs:label "Moderator"@en ;
+    rdfs:comment """A factor that amplifies or buffers the relationship between stressor 
+    exposure and outcome severity."""@en .
+
+#################################################################
+#    Frame Element Roles (Core and Peripheral)
+#################################################################
+
+csf:Experiencer a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ;
+    rdfs:label "Experiencer"@en ;
+    rdfs:comment "The individual undergoing the stress situation."@en ;
+    csf:coreElement "true"^^xsd:boolean .
+
+csf:Stressor a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ;
+    rdfs:label "Stressor"@en ;
+    rdfs:comment "The entity or condition exerting stress on the Experiencer."@en ;
+    csf:coreElement "true"^^xsd:boolean .
+
+csf:Context a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ;
+    rdfs:label "Context"@en ;
+    rdfs:comment "The environmental/social setting in which the stress situation occurs."@en ;
+    csf:coreElement "true"^^xsd:boolean .
+
+csf:Duration a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ;
+    rdfs:label "Duration"@en ;
+    rdfs:comment "Temporal extent of stressor exposure."@en ;
+    csf:coreElement "false"^^xsd:boolean .
+
+csf:Controllability a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ;
+    rdfs:label "Controllability"@en ;
+    rdfs:comment "Degree to which the Experiencer can influence the stressor."@en ;
+    csf:coreElement "false"^^xsd:boolean ;
+    csf:pubmedID "26981074" .
+
+csf:SocialEmbedding a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ;
+    rdfs:label "Social Embedding"@en ;
+    rdfs:comment "Presence and quality of social support available to the Experiencer."@en ;
+    csf:coreElement "false"^^xsd:boolean .
+
+csf:DevelopmentalPhase a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ;
+    rdfs:label "Developmental Phase"@en ;
+    rdfs:comment "Life stage at which exposure occurs."@en ;
+    csf:coreElement "false"^^xsd:boolean ;
+    csf:pubmedID "19167389" .
+
+csf:EscapePossibility a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ;
+    rdfs:label "Escape Possibility"@en ;
+    rdfs:comment "Whether exit from the situation is objectively possible."@en ;
+    csf:coreElement "false"^^xsd:boolean .
+
+#################################################################
+#    SCHEMA-LEVEL OBJECT PROPERTIES (Frame Relations)
+#################################################################
+
+# Frame-Situation Evocation (D&S Pattern)
+csf:evokes a owl:ObjectProperty ;
+    rdfs:subPropertyOf fschema:evokes, dul:classifiedBy ;
+    rdfs:range [ a owl:Class ; owl:unionOf ( csf:CorticoidogenicFrame csf:CascadeFrame ) ] ;
+    rdfs:domain dul:Situation ;
+    rdfs:label "evokes"@en ;
+    rdfs:comment """INSTANCE->SCHEMA: A situation evokes a frame.
+    Inverse of evokedBy. Aligned with Framester evokes and DUL classified by."""@en .
+
+csf:evokedBy a owl:ObjectProperty ;
+    owl:inverseOf csf:evokes ;
+    rdfs:subPropertyOf dul:classifies ;
+    rdfs:domain dul:Situation ;
+    rdfs:range [ a owl:Class ; owl:unionOf ( csf:CorticoidogenicFrame csf:CascadeFrame ) ] ;
+    rdfs:label "evoked by"@en ;
+    rdfs:comment """SCHEMA->INSTANCE: A frame is evoked by (classifies) a frame. Inverse of evokes."""@en .
+
+# Frame-Role Relations
+csf:hasRole a owl:ObjectProperty ;
+    rdfs:subPropertyOf fschema:semanticRole ;
+    rdfs:domain csf:CorticoidogenicFrame ;
+    rdfs:range csf:CSFRole ;
+    rdfs:label "has role"@en .
+
+csf:hasStep a owl:ObjectProperty ;
+    rdfs:subPropertyOf fschema:semanticRole ;
+    rdfs:domain csf:CascadeFrame ;
+    rdfs:range csf:CascadeStep ;
+    rdfs:label "has step type"@en ;
+    rdfs:comment "Links a cascade frame to its constituent step types."@en .
+
+# Cascade Frame-Sequence Relation
+csf:hasSequence a owl:ObjectProperty ;
+    rdfs:domain csf:CascadeFrame ;
+    rdfs:range csf:CascadeSequence ;
+    rdfs:label "has sequence"@en ;
+    rdfs:comment "Links a cascade frame to its ordered sequence of step types."@en .
+
+# Step Type Ordering (schema-level, aligned with sequence.owl)
+csf:precedes a owl:ObjectProperty ;
+    a owl:TransitiveProperty ;
+    rdfs:subPropertyOf seq:precedes ;
+    rdfs:domain csf:CascadeStep ;
+    rdfs:range csf:CascadeStep ;
+    rdfs:label "precedes"@en ;
+    rdfs:comment "Schema-level ordering: this step type comes before another."@en .
+
+csf:directlyPrecedes a owl:ObjectProperty ;
+    rdfs:subPropertyOf csf:precedes, seq:directlyPrecedes ;
+    rdfs:domain csf:CascadeStep ;
+    rdfs:range csf:CascadeStep ;
+    rdfs:label "directly precedes"@en ;
+    rdfs:comment "Immediate predecessor in cascade schema."@en .
+
+csf:feedsForwardTo a owl:ObjectProperty ;
+    rdfs:domain csf:CascadeStep ;
+    rdfs:range csf:CascadeStep ;
+    rdfs:label "feeds forward to"@en ;
+    rdfs:comment "Schema-level: positive feedback loop (amplification)."@en .
+
+csf:feedsBackTo a owl:ObjectProperty ;
+    rdfs:domain csf:CascadeStep ;
+    rdfs:range csf:CascadeStep ;
+    rdfs:label "feeds back to"@en ;
+    rdfs:comment "Schema-level: negative feedback loop (regulation)."@en .
+
+# Frame-Outcome Typical Relations
+csf:typicallyLeadsTo a owl:ObjectProperty ;
+    rdfs:domain csf:CascadeFrame ;
+    rdfs:range csf:ClinicalOutcome ;
+    rdfs:label "typically leads to"@en ;
+    rdfs:comment "Schema-level: typical outcomes for this cascade type."@en .
+
+csf:triggeredByFrame a owl:ObjectProperty ;
+    rdfs:domain csf:CascadeFrame ;
+    rdfs:range csf:CorticoidogenicFrame ;
+    rdfs:label "triggered by frame"@en ;
+    rdfs:comment "Schema-level: which corticoidogenic frame triggers this cascade."@en .
+
+#################################################################
+#    INSTANCE-LEVEL OBJECT PROPERTIES (Event Relations)
+#################################################################
+
+# NOTE (v3.1 / Req 14): The BRI (Bind-Reify-Integrate) heuristic governs instantiation
+# of schema-level types into instance-level occurrences. This is a procedural process
+# not fully capturable in OWL2 DL axioms alone. SHACL shapes or SPIN rules are
+# recommended for validation of correct BRI application in production systems.
+# Step Occurrence-Type Execution (taskexecution pattern)
+csf:executesStep a owl:ObjectProperty ;
+    rdfs:subPropertyOf taskex:executesTask ;
+    rdfs:domain csf:CascadeStepOccurrence ;
+    rdfs:range csf:CascadeStep ;
+    rdfs:label "executes step"@en ;
+    rdfs:comment """INSTANCE→SCHEMA: An actual step occurrence executes (fills) a step type.
+    Aligned with taskexecution:executesTask. This is the BRI BIND relation."""@en .
+
+csf:isExecutedIn a owl:ObjectProperty ;
+    owl:inverseOf csf:executesStep ;
+    rdfs:subPropertyOf taskex:isExecutedIn ;
+    rdfs:domain csf:CascadeStep ;
+    rdfs:range csf:CascadeStepOccurrence ;
+    rdfs:label "is executed in"@en .
+
+# Cascade Occurrence Composition
+csf:hasStepOccurrence a owl:ObjectProperty ;
+    rdfs:subPropertyOf dul:hasPart ;
+    rdfs:domain csf:CascadeOccurrence ;
+    rdfs:range csf:CascadeStepOccurrence ;
+    rdfs:label "has step occurrence"@en ;
+    rdfs:comment "Links a cascade occurrence to its constituent step occurrences."@en .
+
+csf:isStepIn a owl:ObjectProperty ;
+    owl:inverseOf csf:hasStepOccurrence ;
+    rdfs:subPropertyOf dul:isPartOf ;
+    rdfs:domain csf:CascadeStepOccurrence ;
+    rdfs:range csf:CascadeOccurrence ;
+    rdfs:label "is step in"@en .
+
+# Situation-Cascade Triggering (instance-level)
+csf:triggersCascade a owl:ObjectProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range csf:CascadeOccurrence ;
+    rdfs:label "triggers cascade"@en ;
+    rdfs:comment "Instance-level: actual situation triggers actual cascade occurrence."@en .
+
+# Cascade-Outcome (instance-level)
+csf:leadsToOutcome a owl:ObjectProperty ;
+    rdfs:domain csf:CascadeOccurrence ;
+    rdfs:range csf:ClinicalOutcome ;
+    rdfs:label "leads to outcome"@en ;
+    rdfs:comment "Instance-level: actual cascade leads to actual clinical outcome."@en .
+
+#################################################################
+#    Moderator Relations
+#################################################################
+
+csf:amplifierIn a owl:ObjectProperty ;
+    rdfs:domain csf:Moderator ;
+    rdfs:range csf:CascadeFrame ;
+    rdfs:comment "Links a moderator to a cascade frame with role of amplifier."@en ;
+    rdfs:label "amplifier in"@en .
+
+csf:bufferIn a owl:ObjectProperty ;
+    rdfs:domain csf:Moderator ;
+    rdfs:range csf:CascadeFrame ;
+    rdfs:comment "Links a moderator to a cascade frame with role of buffer."@en ;
+    rdfs:label "buffer in"@en .
+
+csf:amplifies a owl:ObjectProperty ;
+    rdfs:domain csf:Moderator ;
+    rdfs:range csf:CascadeOccurrence ;
+    rdfs:comment "Links a moderator interaction to one of its participating moderators."@en ;
+    rdfs:label "amplifies"@en .
+
+csf:buffers a owl:ObjectProperty ;
+    rdfs:domain csf:Moderator ;
+    rdfs:range csf:CascadeOccurrence ;
+    rdfs:comment "Links a moderator interaction to one of its participating moderators."@en ;
+    rdfs:label "buffers"@en .
+
+csf:isAmplifiedBy a owl:ObjectProperty ;
+    owl:inverseOf csf:amplifies .
+
+csf:isBufferedBy a owl:ObjectProperty ;
+    owl:inverseOf csf:buffers .
+
+#################################################################
+#    MODERATOR INTERACTION FORMALISM (v3.1 extension)
+#################################################################
+
+# Addresses moderator independence presupposition (Req 4).
+# Moderators can now interact with each other, not just with cascades.
+
+csf:ModeratorInteraction a owl:Class ;
+    rdfs:subClassOf dul:Situation ;
+    rdfs:label "Moderator Interaction"@en ;
+    rdfs:comment "A reified interaction between two or more moderators, capturing synergistic, antagonistic, or conditional effects. Added in v3.1 to address moderator independence gap."@en .
+
+csf:hasInteractingModerator a owl:ObjectProperty ;
+    rdfs:domain csf:ModeratorInteraction ;
+    rdfs:range csf:Moderator ;
+    rdfs:label "has interacting moderator"@en ;
+    rdfs:comment "Links a moderator interaction to one of its participating moderators."@en .
+
+csf:interactionType a owl:DatatypeProperty ;
+    rdfs:domain csf:ModeratorInteraction ;
+    rdfs:range [ a rdfs:Datatype ;
+                 owl:oneOf ("synergistic" "antagonistic" "conditional" "additive") ] ;
+    rdfs:label "interaction type"@en ;
+    rdfs:comment "Type of moderator interaction: synergistic (multiplicative amplification), antagonistic (cancellation), conditional (one enables the other), or additive."@en .
+
+csf:interactionMagnitude a owl:DatatypeProperty ;
+    rdfs:domain csf:ModeratorInteraction ;
+    rdfs:range xsd:float ;
+    rdfs:label "interaction magnitude"@en ;
+    rdfs:comment "Magnitude of the interaction effect (multiplicative factor)."@en .
+
+#################################################################
+#    Data Properties
+#################################################################
+
+csf:controllabilityScore a owl:DatatypeProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range [ a rdfs:Datatype ;
+                 owl:onDatatype xsd:float ;
+                 owl:withRestrictions ( [ xsd:minInclusive "0.0"^^xsd:float ]
+                                        [ xsd:maxInclusive "1.0"^^xsd:float ] ) ] ;
+    rdfs:label "controllability score"@en ;
+    rdfs:comment "0.0 = no control, 1.0 = full control"@en .
+
+csf:durationWeeks a owl:DatatypeProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range xsd:positiveInteger ;
+    rdfs:label "duration in weeks"@en .
+
+csf:developmentalOnsetAge a owl:DatatypeProperty ;
+    rdfs:domain dul:Situation ;
+    rdfs:range xsd:nonNegativeInteger ;
+    rdfs:label "developmental onset age"@en ;
+    rdfs:comment "Age in years when stressor exposure began. -1 for prenatal."@en .
+
+csf:severityIndex a owl:DatatypeProperty ;
+    rdfs:domain csf:ClinicalOutcome ;
+    rdfs:range xsd:float ;
+    rdfs:label "severity index"@en ;
+    rdfs:comment "Computed severity based on m04-SEVERITYESTIMATION heuristic."@en .
+
+csf:lifespanEffect a owl:DatatypeProperty ;
+    rdfs:domain csf:CascadeFrame ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "lifespan effect"@en ;
+    rdfs:comment "Whether this cascade type produces effects persisting across the lifespan."@en .
+
+#################################################################
+#    Severity and Reversibility Levels
+#################################################################
+
+csf:SeverityLevel a owl:Class ;
+    rdfs:subClassOf dul:Quality ;
+    rdfs:label "Severity Level"@en ;
+    owl:equivalentClass [ a owl:Class ;
+                          owl:oneOf ( csf:Subclinical csf:Moderate csf:High csf:VeryHigh ) ] .
+
+csf:Subclinical a csf:SeverityLevel ; rdfs:label "Subclinical"@en .
+csf:Moderate a csf:SeverityLevel ; rdfs:label "Moderate"@en .
+csf:High a csf:SeverityLevel ; rdfs:label "High"@en .
+csf:VeryHigh a csf:SeverityLevel ; rdfs:label "Very High"@en .
+
+csf:ReversibilityLevel a owl:Class ;
+    rdfs:subClassOf dul:Quality ;
+    rdfs:label "Reversibility Level"@en ;
+    owl:equivalentClass [ a owl:Class ;
+                          owl:oneOf ( csf:FullyReversible csf:PartiallyReversible csf:DifficultToReverse csf:Irreversible ) ] .
+
+csf:FullyReversible a csf:ReversibilityLevel ; rdfs:label "Fully Reversible"@en .
+csf:PartiallyReversible a csf:ReversibilityLevel ; rdfs:label "Partially Reversible"@en .
+csf:DifficultToReverse a csf:ReversibilityLevel ; rdfs:label "Difficult to Reverse"@en .
+csf:Irreversible a csf:ReversibilityLevel ; rdfs:label "Irreversible"@en .
+
+csf:hasSeverity a owl:ObjectProperty ;
+    rdfs:domain csf:ClinicalOutcome ;
+    rdfs:range csf:SeverityLevel ;
+    rdfs:label "has severity"@en .
+
+csf:hasReversibility a owl:ObjectProperty ;
+    rdfs:domain csf:ClinicalOutcome ;
+    rdfs:range csf:ReversibilityLevel ;
+    rdfs:label "has reversibility"@en .
+    
+#################################################################
+#    SITUATION TEMPORAL PHASE MODEL (Selye GAS + Allostatic) (v3.3 extension)
+#################################################################
+
+csf:SituationPhase a owl:Class ;
+    rdfs:subClassOf dul:Description ;
+    rdfs:label "Situation Phase"@en ;
+    rdfs:comment """A discrete temporal phase in the organism's response to a chronic stress 
+    situation. Based on Selye's General Adaptation Syndrome extended with allostatic load 
+    concepts (McEwen 1998). Each phase has characteristic HPA activity patterns and 
+    distinct cascade activation profiles. Added in v3.3 per H2b (Req 12)."""@en ;
+    owl:equivalentClass [ a owl:Class ;
+                          owl:oneOf ( csf:AlarmPhase csf:ResistancePhase csf:ExhaustionPhase 
+                                     csf:AdaptationPhase csf:RecoveryGASPhase ) ] .
+
+csf:AlarmPhase a csf:SituationPhase ;
+    rdfs:label "Alarm Phase"@en ;
+    rdfs:comment """Initial stress response: HPA activation, sympathetic arousal, cortisol surge. 
+    Fight-or-flight mobilization. Duration: hours to days. Corresponds to Selye's Alarm Reaction. 
+    Cascade steps in AcutePhase are most active here."""@en ;
+    csf:hasTypicalDuration "hours-days" ;
+    csf:pubmedID "9629234" .
+
+csf:ResistancePhase a csf:SituationPhase ;
+    rdfs:label "Resistance Phase"@en ;
+    rdfs:comment """Sustained coping: organism adapts to continued stressor via allostatic 
+    accommodation. Cortisol may normalize or show altered diurnal patterns. Compensatory 
+    mechanisms active. Duration: weeks to months. Corresponds to Selye's Stage of Resistance 
+    and McEwen's allostatic state."""@en ;
+    csf:hasTypicalDuration "weeks-months" ;
+    csf:pubmedID "9629234" .
+
+csf:ExhaustionPhase a csf:SituationPhase ;
+    rdfs:label "Exhaustion Phase"@en ;
+    rdfs:comment """Allostatic overload: compensatory mechanisms fail. Cortisol dysregulation 
+    (either hyper- or hypocortisolism), immune compromise, neural structural changes. 
+    Clinical outcomes emerge. Duration: months to permanent. Corresponds to McEwen's 
+    Type 2 allostatic load (failure to shut off)."""@en ;
+    csf:hasTypicalDuration "months-permanent" ;
+    csf:pubmedID "9629234" .
+
+csf:AdaptationPhase a csf:SituationPhase ;
+    rdfs:label "Adaptation Phase"@en ;
+    rdfs:comment """Successful allostatic accommodation: new set-point established without 
+    pathological consequences. Not all situations reach this phase; it represents the 
+    resilience pathway. Present when protective frames (H1) are active and moderator 
+    buffers are sufficient."""@en ;
+    csf:hasTypicalDuration "weeks-months" .
+
+csf:RecoveryGASPhase a csf:SituationPhase ;
+    rdfs:label "Recovery Phase (GAS)"@en ;
+    rdfs:comment """Post-stressor recovery: return toward baseline. Rate and completeness 
+    depend on phase reached before stressor offset, developmental timing, and 
+    intervention. NOTE: Named RecoveryGASPhase to avoid collision with 
+    csf:RecoveryPhase (cascade temporal phase)."""@en ;
+    csf:hasTypicalDuration "variable" .
+
+#################################################################
+#    PHASE TRANSITION CONDITIONS
+#################################################################
+
+csf:PhaseTransition a owl:Class ;
+    rdfs:subClassOf dul:Description ;
+    rdfs:label "Phase Transition"@en ;
+    rdfs:comment """A condition or set of conditions governing transition from one 
+    situation phase to the next. Transition is not automatic; it depends on 
+    stressor persistence, moderator configuration, and biological state."""@en .
+
+csf:hasTransitionFrom a owl:ObjectProperty ;
+    rdfs:domain csf:PhaseTransition ;
+    rdfs:range csf:SituationPhase ;
+    rdfs:label "has transition from"@en .
+
+csf:hasTransitionTo a owl:ObjectProperty ;
+    rdfs:domain csf:PhaseTransition ;
+    rdfs:range csf:SituationPhase ;
+    rdfs:label "has transition to"@en .
+
+csf:hasTransitionCondition a owl:DatatypeProperty ;
+    rdfs:domain csf:PhaseTransition ;
+    rdfs:range xsd:string ;
+    rdfs:label "has transition condition"@en ;
+    rdfs:comment "Human-readable description of the biological/behavioral condition triggering transition."@en .
+
+csf:hasTypicalTransitionTime a owl:DatatypeProperty ;
+    rdfs:domain csf:PhaseTransition ;
+    rdfs:range xsd:string ;
+    rdfs:label "has typical transition time"@en .
+
+# --- Situation phase property ---
+
+csf:hasSituationPhase a owl:ObjectProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range csf:SituationPhase ;
+    rdfs:label "has situation phase"@en ;
+    rdfs:comment "Links a situation instance to its current GAS phase."@en .
+
+csf:hasPhaseSequence a owl:ObjectProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range co:List ;
+    rdfs:label "has phase sequence"@en ;
+    rdfs:comment "Links a situation type to its expected phase progression (co:List of SituationPhases)."@en .
+
+#################################################################
+#    STANDARD PHASE TRANSITIONS
+#################################################################
+
+csf:AlarmToResistance a csf:PhaseTransition ;
+    csf:hasTransitionFrom csf:AlarmPhase ;
+    csf:hasTransitionTo csf:ResistancePhase ;
+    csf:hasTransitionCondition "Stressor persists beyond acute HPA response window; glucocorticoid negative feedback engages; behavioral coping initiated." ;
+    csf:hasTypicalTransitionTime "days-weeks" ;
+    rdfs:label "Alarm → Resistance"@en .
+
+csf:ResistanceToExhaustion a csf:PhaseTransition ;
+    csf:hasTransitionFrom csf:ResistancePhase ;
+    csf:hasTransitionTo csf:ExhaustionPhase ;
+    csf:hasTransitionCondition "Allostatic accommodation fails: GR downregulation, cortisol diurnal rhythm disruption, immune glucocorticoid resistance, loss of negative feedback efficiency." ;
+    csf:hasTypicalTransitionTime "weeks-months" ;
+    csf:pubmedID "9629234" ;
+    rdfs:label "Resistance → Exhaustion"@en .
+
+csf:ResistanceToAdaptation a csf:PhaseTransition ;
+    csf:hasTransitionFrom csf:ResistancePhase ;
+    csf:hasTransitionTo csf:AdaptationPhase ;
+    csf:hasTransitionCondition "Sufficient buffers (social support, coping, agency) enable new allostatic set-point without pathology. Protective frames (P1-P4) active." ;
+    csf:hasTypicalTransitionTime "weeks-months" ;
+    rdfs:label "Resistance → Adaptation"@en .
+
+csf:AlarmToRecovery a csf:PhaseTransition ;
+    csf:hasTransitionFrom csf:AlarmPhase ;
+    csf:hasTransitionTo csf:RecoveryGASPhase ;
+    csf:hasTransitionCondition "Stressor removed before resistance phase onset. Full recovery expected." ;
+    csf:hasTypicalTransitionTime "hours-days" ;
+    rdfs:label "Alarm → Recovery"@en .
+
+csf:ExhaustionToRecovery a csf:PhaseTransition ;
+    csf:hasTransitionFrom csf:ExhaustionPhase ;
+    csf:hasTransitionTo csf:RecoveryGASPhase ;
+    csf:hasTransitionCondition "Stressor removed or intervention applied. Recovery partial; degree depends on duration in exhaustion and developmental timing." ;
+    csf:hasTypicalTransitionTime "months-years" ;
+    rdfs:label "Exhaustion → Recovery (partial)"@en .
+
+#################################################################
+#    PHASE-CASCADE ACTIVATION MAPPING
+#################################################################
+
+# Which cascade temporal phases are predominantly active in each situation phase
+
+csf:activatesCascadePhase a owl:ObjectProperty ;
+    rdfs:domain csf:SituationPhase ;
+    rdfs:range csf:CascadeTemporalPhase ;
+    rdfs:label "activates cascade phase"@en ;
+    rdfs:comment "Links a GAS situation phase to the cascade temporal phases predominantly active during it."@en .
+
+csf:AlarmPhase csf:activatesCascadePhase csf:AcutePhase .
+csf:ResistancePhase csf:activatesCascadePhase csf:SubacutePhase .
+csf:ExhaustionPhase csf:activatesCascadePhase csf:ChronicPhase .
+csf:RecoveryGASPhase csf:activatesCascadePhase csf:RecoveryPhase .

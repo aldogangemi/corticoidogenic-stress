@@ -1,0 +1,359 @@
+@prefix : <http://purl.org/csf/frames#> .
+@prefix csf: <http://purl.org/csf/> .
+@prefix core: <http://purl.org/csf/core#> .
+@prefix frm: <http://purl.org/csf/frames#> .
+@prefix csc: <http://purl.org/csf/cascades#> .
+@prefix out: <http://purl.org/csf/outcomes#> .
+@prefix pol: <http://purl.org/polanyi/heuristics#> .
+@prefix fschema: <https://w3id.org/framester/schema/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+csf:frames
+    a owl:Ontology ;
+    owl:imports csf:core ;
+    dcterms:title "CSF Frames Module"@en ;
+    owl:versionInfo "3.3.0" ;
+    dcterms:description """Frame definitions for the CSF ontology network. Contains two frame 
+    families aligned via fschema:Frame and dul:Description:
+    
+    CORTICOIDOGENIC FRAMES (A-G): Situation-type descriptions that characterize life 
+    conditions structurally predisposed to chronic HPA axis activation. Each frame 
+    specifies core and peripheral semantic roles (CSFRole subclasses) following 
+    Fillmorean frame semantics. Situations EVOKE corticoidogenic frames (D&S pattern):
+        A. ChronicSubordinationFrame    (McEwen 1998, PMID 9629234)
+        B. UncontrollableThreatFrame    (Herman 2020, PMID 33345670)
+        C. CaregivingEntrapmentFrame    (Kiecolt-Glaser 1991, PMID 1656478)
+        D. EarlyLifeProgrammingFrame    (Weaver 2004, PMID 15220929)
+        E. ChronicIdentityThreatFrame   (Slavich & Irwin 2014, PMID 24417575)
+        F. CircadianMisalignmentFrame   (Zeng 2024, PMID 39680766)
+        G. SocialDisconnectionFrame     (Cole 2007, PMID 17854483)
+    
+    PROTECTIVE FRAMES (P1-P4, v3.3): Frame types that characterize conditions under 
+    which cascade severity is attenuated or redirected toward resilience outcomes. 
+    Added in v3.3 to address the systematic via-negativa commitment identified by 
+    the DARKSIDE audit (Req 11): the ontology previously modeled only harm pathways 
+    with no resilience, coping, or recovery frames.
+    
+    Protective frames are NOT inverse corticoidogenic frames. They are distinct frame 
+    types that MODULATE ongoing cascades rather than triggering cascades of their own. 
+    This avoids the error of treating resilience as merely 'negative stress.' They 
+    operate at the situation-cascade interface via frm:bufferedByFrame (the positive-
+    pathway counterpart to csf:evokes):
+        P1. SocialSupportFrame          (Hostinar et al. 2014, PMID 23607429)
+        P2. AgencyRestorationFrame      (Deci & Ryan 2000, PMID 11392867)
+        P3. CulturalContinuityFrame     (Chandler & Lalonde 2008)
+        P4. MeaningMakingFrame          (Park 2010, PMID 20192563)
+    
+    ARCHITECTURAL NOTES:
+    - ProtectiveFrame is subClassOf CorticoidogenicFrame for taxonomic coherence 
+      (both are fschema:Frame, dul:Description), not because protective frames are 
+      stress-inducing. An alternative design with a common CSFFrame superclass was 
+      considered but rejected for backward compatibility.
+    - Each frame specifies frm:buffersAgainstFrame → CorticoidogenicFrame to indicate 
+      which harm pathways it attenuates, and frm:protectiveStrength (xsd:float 0-1) 
+      for estimated attenuation magnitude.
+    - Protective frame strength values are literature-informed estimates, not 
+      empirically calibrated parameters. They should be treated as prior defaults 
+      subject to Bayesian updating from clinical data.
+    """@en ;
+    rdfs:comment """v3.3 / Req 11 (H1 — Protective Frames): This module now contains both 
+    corticoidogenic and protective frames. The addition of protective frames addresses 
+    three identified gaps:
+    
+    1. RESILIENCE EXCLUSION (DARKSIDE trail): All 14 CSF_Situation types previously 
+       evoked only harm/stress frames. No situation could link to a protective or 
+       recovery description. Protective frames restore this missing pathway via 
+       frm:bufferedByFrame, enabling situations to be simultaneously classified as 
+       stressful (via csf:evokes) and buffered (via frm:bufferedByFrame).
+    
+    2. MODERATOR-FRAME DISCONNECT: mod:Buffer individuals in csf-moderators.ttl 
+       attenuated cascade severity but had no frame-level representation. Protective 
+       frames provide the schema-level description that buffers instantiate — e.g., 
+       mod:HighSocialSupport is an instance of the SocialSupportFrame's protective 
+       pattern, and int:PeerSupportProgram (H7) activates SocialSupportFrame via 
+       int:activatesProtectiveFrame.
+    
+    3. OUTCOME TRAJECTORY ASYMMETRY: csf:typicallyLeadsTo linked cascade frames only 
+       to negative ClinicalOutcome classes. With protective frames, the cascade can 
+       be redirected toward csf:ResilienceOutcome and csf:RecoveryOutcome (defined 
+       in csf-core.ttl v3.1) via csf:hasProtectiveTrajectory.
+    
+    The four protective frame types were selected based on meta-analytic evidence for 
+    HPA axis buffering effects: social buffering via oxytocin-mediated pathways 
+    (Hostinar et al. 2014); perceived control and self-determination reducing cortisol 
+    reactivity (Deci & Ryan 2000; Dickerson & Kemeny 2004); cultural continuity as 
+    protective against suicide and allostatic load in Indigenous and immigrant 
+    populations (Chandler & Lalonde 2008); and meaning-making / cognitive reappraisal 
+    reducing cortisol via prefrontal regulation of amygdala (Park 2010).
+    
+    KNOWN LIMITATION: The protectiveStrength values (0.45-0.60) are aggregate estimates.
+    In reality, protective frame effectiveness is moderated by: (a) timing relative to 
+    GAS phase (H2b) — social support is more effective in Resistance than Exhaustion; 
+    (b) match between protective frame type and stressor type — CulturalContinuity 
+    specifically buffers IdentityThreat, not CircadianMisalignment; (c) dose — 
+    intermittent vs. sustained buffering. These interaction effects are partially 
+    captured via the frm:buffersAgainstFrame specificity but not via dose-response 
+    modeling, which is deferred to future work."""@en ;
+    pol:designHeuristic pol:b01-FRAMEBINDING ;
+    rdfs:seeAlso 
+        <https://pubmed.ncbi.nlm.nih.gov/23607429/> ,
+        <https://pubmed.ncbi.nlm.nih.gov/11392867/> ,
+        <https://pubmed.ncbi.nlm.nih.gov/20192563/> .
+
+frm:typicalCascade a owl:ObjectProperty .
+frm:typicalSeverity a owl:ObjectProperty .
+frm:typicalOutcomes a owl:ObjectProperty .
+frm:compoundsWithFrame a owl:ObjectProperty .
+csf:hasCSFRole a owl:ObjectProperty .
+
+# ==========================================
+# TYPE A: CHRONIC SUBORDINATION
+# ==========================================
+frm:ChronicSubordinationFrame a csf:CorticoidogenicFrame, owl:NamedIndividual ;
+    rdfs:label "Chronic Subordination Frame"@en ;
+    csf:hasCSFRole csf:Experiencer, csf:Stressor, csf:Context,
+                   frm:HierarchyStructure, frm:StatusPosition, frm:DominanceBehavior ;
+    csf:pubmedID "9629234" ;
+    csf:evidenceStrength "systematic-review" ;
+    frm:typicalCascade csc:SubordinationCascade ;
+    frm:typicalSeverity csf:Moderate, csf:High ;
+    frm:typicalOutcomes out:Depression, out:Anxiety, out:MetabolicSyndrome, out:Burnout .
+
+frm:HierarchyStructure a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Hierarchy Structure"@en .
+
+frm:StatusPosition a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Status Position"@en .
+
+frm:DominanceBehavior a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Dominance Behavior"@en .
+
+# ==========================================
+# TYPE B: UNCONTROLLABLE THREAT
+# ==========================================
+frm:UncontrollableThreatFrame a csf:CorticoidogenicFrame, owl:NamedIndividual ;
+    rdfs:label "Uncontrollable Threat Frame"@en ;
+    csf:hasCSFRole csf:Experiencer, csf:Stressor, csf:Context,
+                   frm:ThreatSource, frm:ResponseFutility, frm:VigilanceRequirement ;
+    csf:pubmedID "33345670" ;
+    frm:typicalCascade csc:UncontrollableThreatCascade ;
+    frm:typicalSeverity csf:High, csf:VeryHigh ;
+    frm:typicalOutcomes out:PTSD, out:ComplexTrauma, out:TreatmentResistantDepression, out:Dissociation .
+
+frm:ThreatSource a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Threat Source"@en .
+
+frm:ResponseFutility a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Response Futility"@en .
+
+frm:VigilanceRequirement a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Vigilance Requirement"@en .
+
+# ==========================================
+# TYPE C: CAREGIVING ENTRAPMENT
+# ==========================================
+frm:CaregivingEntrapmentFrame a csf:CorticoidogenicFrame, owl:NamedIndividual ;
+    rdfs:label "Caregiving Entrapment Frame"@en ;
+    csf:hasCSFRole csf:Experiencer, csf:Stressor, csf:Context,
+                   frm:CareRecipient, frm:CaregivingDemand, frm:SupportDeficit, 
+                   frm:RoleEndpoint, frm:AmbiguousLoss ;
+    csf:pubmedID "1656478" ;
+    frm:compoundsWithFrame frm:CircadianMisalignmentFrame ;
+    frm:typicalCascade csc:CaregivingEntrapmentCascade ;
+    frm:typicalSeverity csf:High, csf:VeryHigh ;
+    frm:typicalOutcomes out:Depression, out:CaregiverBurnout, out:ImmuneDysregulation .
+
+frm:CareRecipient a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Care Recipient"@en .
+
+frm:CaregivingDemand a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Caregiving Demand"@en .
+
+frm:SupportDeficit a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Support Deficit"@en .
+
+frm:RoleEndpoint a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Role Endpoint"@en .
+
+frm:AmbiguousLoss a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Ambiguous Loss"@en .
+
+# ==========================================
+# TYPE D: EARLY LIFE PROGRAMMING
+# ==========================================
+frm:EarlyLifeProgrammingFrame a csf:CorticoidogenicFrame, owl:NamedIndividual ;
+    rdfs:label "Early Life Programming Frame"@en ;
+    csf:hasCSFRole csf:Experiencer, csf:Stressor, csf:Context,
+                   frm:DevelopmentalWindow, frm:Caregiver, frm:AttachmentQuality,
+                   frm:EpigeneticModification, frm:HPASetPoint ;
+    csf:pubmedID "15220929" ;
+    frm:compoundsWithFrame frm:UncontrollableThreatFrame ;
+    frm:typicalCascade csc:EarlyLifeProgrammingCascade ;
+    frm:typicalSeverity csf:VeryHigh ;
+    frm:typicalOutcomes out:LifelongVulnerability, out:RecurrentDepression, out:PTSD .
+
+frm:DevelopmentalWindow a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Developmental Window"@en .
+
+frm:Caregiver a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Caregiver"@en .
+
+frm:AttachmentQuality a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Attachment Quality"@en .
+
+frm:EpigeneticModification a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Epigenetic Modification"@en .
+
+frm:HPASetPoint a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "HPA Set Point"@en .
+
+# ==========================================
+# TYPE E: CHRONIC IDENTITY THREAT
+# ==========================================
+frm:ChronicIdentityThreatFrame a csf:CorticoidogenicFrame, owl:NamedIndividual ;
+    rdfs:label "Chronic Identity Threat Frame"@en ;
+    csf:hasCSFRole csf:Experiencer, csf:Stressor, csf:Context,
+                   frm:IdentityDimension, frm:DiscriminationSource, frm:ConcealmentCost,
+                   frm:MinorityStatus, frm:IdentityVigilance ;
+    csf:pubmedID "24417575" ;
+    frm:compoundsWithFrame frm:ChronicSubordinationFrame ;
+    frm:typicalCascade csc:IdentityThreatCascade ;
+    frm:typicalSeverity csf:Moderate, csf:High .
+
+frm:IdentityDimension a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Identity Dimension"@en .
+
+frm:DiscriminationSource a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Discrimination Source"@en .
+
+frm:ConcealmentCost a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Concealment Cost"@en .
+
+frm:MinorityStatus a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Minority Status"@en .
+
+frm:IdentityVigilance a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Identity Vigilance"@en .
+
+# ==========================================
+# TYPE F: CIRCADIAN MISALIGNMENT
+# ==========================================
+frm:CircadianMisalignmentFrame a csf:CorticoidogenicFrame, owl:NamedIndividual ;
+    rdfs:label "Circadian Misalignment Frame"@en ;
+    csf:hasCSFRole csf:Experiencer, csf:Stressor, csf:Context,
+                   frm:ScheduleDisruptor, frm:SleepQuality, frm:CARPattern,
+                   frm:LightExposure, frm:SocialZeitgeber ;
+    csf:pubmedID "39680766" ;
+    frm:typicalCascade csc:CircadianMisalignmentCascade ;
+    frm:typicalSeverity csf:Moderate, csf:High .
+
+frm:ScheduleDisruptor a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Schedule Disruptor"@en .
+
+frm:SleepQuality a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Sleep Quality"@en .
+
+frm:CARPattern a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "CAR Pattern"@en .
+
+frm:LightExposure a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Light Exposure"@en .
+
+frm:SocialZeitgeber a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Social Zeitgeber"@en .
+
+# ==========================================
+# TYPE G: SOCIAL DISCONNECTION
+# ==========================================
+frm:SocialDisconnectionFrame a csf:CorticoidogenicFrame, owl:NamedIndividual ;
+    rdfs:label "Social Disconnection Frame"@en ;
+    csf:hasCSFRole csf:Experiencer, csf:Stressor, csf:Context,
+                   frm:SocialNetworkSize, frm:SocialIntegration, frm:PerceivedLoneliness,
+                   frm:CoRegulationPartner, frm:SocialRejection ;
+    csf:pubmedID "17854483" ;
+    frm:compoundsWithFrame frm:CircadianMisalignmentFrame ;
+    frm:typicalCascade csc:SocialDisconnectionCascade ;
+    frm:typicalSeverity csf:Moderate, csf:High .
+
+frm:SocialNetworkSize a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Social Network Size"@en .
+
+frm:SocialIntegration a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "true"^^xsd:boolean ] ;
+    rdfs:label "Social Integration"@en .
+
+frm:PerceivedLoneliness a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Perceived Loneliness"@en .
+
+frm:CoRegulationPartner a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Co-Regulation Partner"@en .
+
+frm:SocialRejection a owl:Class ;
+    rdfs:subClassOf csf:CSFRole ,
+        [ a owl:Restriction ; owl:onProperty csf:coreElement ; owl:hasValue "false"^^xsd:boolean ] ;
+    rdfs:label "Social Rejection"@en .

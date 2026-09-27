@@ -1,0 +1,333 @@
+@prefix : <http://purl.org/csf/interventions#> .
+@prefix csf: <http://purl.org/csf/> .
+@prefix core: <http://purl.org/csf/core#> .
+@prefix frm: <http://purl.org/csf/frames#> .
+@prefix sit: <http://purl.org/csf/situations#> .
+@prefix csc: <http://purl.org/csf/cascades#> .
+@prefix out: <http://purl.org/csf/outcomes#> .
+@prefix mod: <http://purl.org/csf/moderators#> .
+@prefix int: <http://purl.org/csf/interventions#> .
+@prefix pol: <http://purl.org/polanyi/heuristics#> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+csf:interventions
+    a owl:Ontology ;
+    owl:imports csf:moderators ;
+    dcterms:title "CSF Interventions Module"@en ;
+    dcterms:description """v3.3 NEW MODULE — Hypothesis H7 (Req 17). 
+    
+    Intervention vocabulary for the CSF ontology network. Distinguishes interventions 
+    from naturally-occurring buffers (mod:Buffer). Interventions are intentional, 
+    evidence-graded actions that target specific cascade mechanisms or situational 
+    conditions. They are linked to situations via int:mitigates, to cascade steps 
+    via int:targetsMechanism, and to frames via int:activatesProtectiveFrame.
+    
+    ARCHITECTURAL DISTINCTION FROM MODERATORS:
+    - mod:Buffer: naturally-occurring protective factor (e.g., secure attachment)
+    - int:Intervention: deliberate therapeutic/policy/social action
+    - A buffer may BECOME an intervention target (e.g., enhancing social support)
+    - Interventions have evidence grades, dosage, and timing constraints
+    
+    DESIGN PATTERN: Intervention aligns with dul:Plan (an intentional description 
+    of actions to achieve a goal). InterventionOccurrence aligns with dul:Activity 
+    (actual execution of an intervention plan).
+    """@en ;
+    owl:versionInfo "3.3.0" ;
+    pol:designHeuristic pol:BRI .
+
+#################################################################
+#    INTERVENTION CLASSES
+#################################################################
+
+int:Intervention a owl:Class ;
+    rdfs:subClassOf dul:Plan ;
+    rdfs:label "Intervention"@en ;
+    rdfs:comment """SCHEMA LEVEL: An intentional therapeutic, social, or policy action 
+    designed to mitigate stress situations, interrupt cascade mechanisms, or redirect 
+    outcomes toward resilience. Distinct from mod:Buffer (naturally-occurring). 
+    Follows dul:Plan pattern."""@en .
+
+int:TherapeuticIntervention a owl:Class ;
+    rdfs:subClassOf int:Intervention ;
+    rdfs:label "Therapeutic Intervention"@en ;
+    rdfs:comment "Clinical treatment: psychotherapy, pharmacotherapy, neuromodulation."@en .
+
+int:SocialIntervention a owl:Class ;
+    rdfs:subClassOf int:Intervention ;
+    rdfs:label "Social Intervention"@en ;
+    rdfs:comment "Social programs: peer support, community building, mentorship."@en .
+
+int:PolicyIntervention a owl:Class ;
+    rdfs:subClassOf int:Intervention ;
+    rdfs:label "Policy Intervention"@en ;
+    rdfs:comment "Structural/policy changes: workplace regulations, anti-discrimination law, housing."@en .
+
+int:LifestyleIntervention a owl:Class ;
+    rdfs:subClassOf int:Intervention ;
+    rdfs:label "Lifestyle Intervention"@en ;
+    rdfs:comment "Behavioral changes: exercise programs, sleep hygiene, nutritional interventions."@en .
+
+int:PreventiveIntervention a owl:Class ;
+    rdfs:subClassOf int:Intervention ;
+    rdfs:label "Preventive Intervention"@en ;
+    rdfs:comment "Early intervention targeting at-risk populations before clinical outcomes emerge."@en .
+
+# --- Instance-level ---
+
+int:InterventionOccurrence a owl:Class ;
+    rdfs:subClassOf dul:Activity ;
+    rdfs:label "Intervention Occurrence"@en ;
+    rdfs:comment """INSTANCE LEVEL: An actual intervention being applied to a specific 
+    person/situation. Follows dul:Activity pattern."""@en .
+
+#################################################################
+#    INTERVENTION PROPERTIES
+#################################################################
+
+# --- Schema-level links ---
+
+int:mitigates a owl:ObjectProperty ;
+    rdfs:domain int:Intervention ;
+    rdfs:range csf:CSF_Situation ;
+    rdfs:label "mitigates"@en ;
+    rdfs:comment "Links an intervention to the situation type(s) it targets."@en .
+
+int:targetsMechanism a owl:ObjectProperty ;
+    rdfs:domain int:Intervention ;
+    rdfs:range csf:CascadeStep ;
+    rdfs:label "targets mechanism"@en ;
+    rdfs:comment """Links an intervention to the specific cascade step type(s) it aims 
+    to interrupt or modulate. This enables mechanism-based intervention matching."""@en .
+
+int:activatesProtectiveFrame a owl:ObjectProperty ;
+    rdfs:domain int:Intervention ;
+    rdfs:range frm:ProtectiveFrame ;
+    rdfs:label "activates protective frame"@en ;
+    rdfs:comment "Links an intervention to the protective frame it instantiates or strengthens."@en .
+
+int:enhancesBuffer a owl:ObjectProperty ;
+    rdfs:domain int:Intervention ;
+    rdfs:range mod:Buffer ;
+    rdfs:label "enhances buffer"@en ;
+    rdfs:comment "Links an intervention to a naturally-occurring buffer it enhances."@en .
+
+int:contraindicated a owl:ObjectProperty ;
+    rdfs:domain int:Intervention ;
+    rdfs:range csf:SituationPhase ;
+    rdfs:label "contraindicated in"@en ;
+    rdfs:comment "Links an intervention to phases where it should NOT be applied."@en .
+
+int:optimalPhase a owl:ObjectProperty ;
+    rdfs:domain int:Intervention ;
+    rdfs:range csf:SituationPhase ;
+    rdfs:label "optimal phase"@en ;
+    rdfs:comment "Links an intervention to the GAS phase where it is most effective."@en .
+
+# --- Evidence grading ---
+
+int:evidenceLevel a owl:DatatypeProperty ;
+    rdfs:domain int:Intervention ;
+    rdfs:range [ a rdfs:Datatype ;
+                 owl:oneOf ("Ia" "Ib" "IIa" "IIb" "III" "IV") ] ;
+    rdfs:label "evidence level"@en ;
+    rdfs:comment """Oxford CEBM evidence level: 
+    Ia = meta-analysis of RCTs, Ib = single RCT, 
+    IIa = well-designed controlled non-randomized, IIb = quasi-experimental, 
+    III = non-experimental (comparative, correlation), IV = expert committee/opinion."""@en .
+
+int:effectSizeRange a owl:DatatypeProperty ;
+    rdfs:domain int:Intervention ;
+    rdfs:range xsd:string ;
+    rdfs:label "effect size range"@en ;
+    rdfs:comment "Reported effect size range (e.g., 'Cohen d = 0.4-0.8')."@en .
+
+int:numberNeededToTreat a owl:DatatypeProperty ;
+    rdfs:domain int:Intervention ;
+    rdfs:range xsd:positiveInteger ;
+    rdfs:label "number needed to treat"@en .
+
+# --- Dosage and timing ---
+
+int:minimumDuration a owl:DatatypeProperty ;
+    rdfs:domain int:Intervention ;
+    rdfs:range xsd:string ;
+    rdfs:label "minimum duration"@en ;
+    rdfs:comment "Minimum intervention duration for expected effect (e.g., '8 weeks')."@en .
+
+int:recommendedFrequency a owl:DatatypeProperty ;
+    rdfs:domain int:Intervention ;
+    rdfs:range xsd:string ;
+    rdfs:label "recommended frequency"@en .
+
+# --- Instance-level ---
+
+int:appliedTo a owl:ObjectProperty ;
+    rdfs:domain int:InterventionOccurrence ;
+    rdfs:range csf:CSF_Situation ;
+    rdfs:label "applied to"@en ;
+    rdfs:comment "Instance-level: links an intervention occurrence to the actual situation."@en .
+
+int:implementsPlan a owl:ObjectProperty ;
+    rdfs:domain int:InterventionOccurrence ;
+    rdfs:range int:Intervention ;
+    rdfs:label "implements plan"@en ;
+    rdfs:comment "Instance-level: links an intervention occurrence to its schema-level plan."@en .
+
+int:interruptsStep a owl:ObjectProperty ;
+    rdfs:domain int:InterventionOccurrence ;
+    rdfs:range csf:CascadeStepOccurrence ;
+    rdfs:label "interrupts step"@en ;
+    rdfs:comment "Instance-level: links an intervention occurrence to the cascade step it actually interrupts."@en .
+
+int:redirectsToOutcome a owl:ObjectProperty ;
+    rdfs:domain int:InterventionOccurrence ;
+    rdfs:range csf:ClinicalOutcome ;
+    rdfs:label "redirects to outcome"@en ;
+    rdfs:comment "Instance-level: the actual outcome after intervention (may be resilience)."@en .
+
+#################################################################
+#    INTERVENTION INDIVIDUALS (Representative Set)
+#################################################################
+
+# --- THERAPEUTIC ---
+
+int:CBT a int:TherapeuticIntervention, owl:NamedIndividual ;
+    rdfs:label "Cognitive Behavioral Therapy"@en ;
+    int:mitigates sit:OngoingDomesticViolence, sit:WorkplaceSubordination ;
+    int:targetsMechanism csc:RuminativeCopingType, csc:HypervigilanceType, 
+                         csc:CognitiveRigidityType ;
+    int:activatesProtectiveFrame frm:AgencyRestorationFrame, frm:MeaningMakingFrame ;
+    int:evidenceLevel "Ia" ;
+    int:effectSizeRange "d = 0.5-1.0 for PTSD, d = 0.4-0.7 for depression" ;
+    int:minimumDuration "8-12 weeks" ;
+    int:optimalPhase csf:ResistancePhase ;
+    csf:pubmedID "33606254" .
+
+int:EMDR a int:TherapeuticIntervention, owl:NamedIndividual ;
+    rdfs:label "Eye Movement Desensitization and Reprocessing"@en ;
+    int:mitigates sit:WarZoneExposure, sit:OngoingDomesticViolence, sit:ChildhoodAbuseNeglect ;
+    int:targetsMechanism csc:AmygdalaSensitizationType, csc:ImpairedContextualizationType, 
+                         csc:PTSDMaintenanceLoopType ;
+    int:activatesProtectiveFrame frm:MeaningMakingFrame ;
+    int:evidenceLevel "Ia" ;
+    int:effectSizeRange "d = 0.6-1.2 for PTSD" ;
+    int:minimumDuration "6-12 sessions" ;
+    int:optimalPhase csf:ResistancePhase .
+
+int:TraumaFocusedCBT a int:TherapeuticIntervention, owl:NamedIndividual ;
+    rdfs:label "Trauma-Focused CBT (for children)"@en ;
+    int:mitigates sit:ChildhoodAbuseNeglect ;
+    int:targetsMechanism csc:NR3C1MethylationType, csc:AmygdalaSensitizationType ;
+    int:activatesProtectiveFrame frm:AgencyRestorationFrame ;
+    int:evidenceLevel "Ia" ;
+    int:minimumDuration "12-16 sessions" ;
+    int:optimalPhase csf:AlarmPhase, csf:ResistancePhase ;
+    rdfs:comment "Early intervention critical for epigenetic pathway interruption."@en .
+
+int:MindfulnessBasedStressReduction a int:TherapeuticIntervention, owl:NamedIndividual ;
+    rdfs:label "Mindfulness-Based Stress Reduction (MBSR)"@en ;
+    int:mitigates sit:WorkplaceSubordination, sit:ChronicInsomnia, sit:DementiaCaregiving ;
+    int:targetsMechanism csc:RuminativeCopingType, csc:SleepDisruptionType, 
+                         csc:PFCDownregulationType ;
+    int:enhancesBuffer mod:MindfulnessPractice ;
+    int:evidenceLevel "Ib" ;
+    int:effectSizeRange "d = 0.3-0.5 for cortisol, d = 0.4-0.6 for anxiety" ;
+    int:minimumDuration "8 weeks" ;
+    int:optimalPhase csf:ResistancePhase .
+
+int:SSRIPharmacotherapy a int:TherapeuticIntervention, owl:NamedIndividual ;
+    rdfs:label "SSRI Pharmacotherapy"@en ;
+    int:targetsMechanism csc:SustainedHPAActivationType, csc:DepressionMaintenanceLoopType ;
+    int:evidenceLevel "Ia" ;
+    int:effectSizeRange "d = 0.3-0.5 for depression" ;
+    int:minimumDuration "6-8 weeks onset, 6-12 months maintenance" ;
+    int:optimalPhase csf:ExhaustionPhase ;
+    rdfs:comment "May be combined with psychotherapy for better outcomes."@en .
+
+# --- SOCIAL ---
+
+int:PeerSupportProgram a int:SocialIntervention, owl:NamedIndividual ;
+    rdfs:label "Peer Support Program"@en ;
+    int:mitigates sit:ElderlyIsolation, sit:ImmigrantIsolation, sit:SocialOstracism ;
+    int:targetsMechanism csc:SocialWithdrawalType, csc:LossSocialBufferingType ;
+    int:activatesProtectiveFrame frm:SocialSupportFrame ;
+    int:enhancesBuffer mod:HighSocialSupport, mod:CommunityEmbeddedness ;
+    int:evidenceLevel "IIa" ;
+    int:optimalPhase csf:ResistancePhase, csf:AlarmPhase .
+
+int:CaregiverRespiteService a int:SocialIntervention, owl:NamedIndividual ;
+    rdfs:label "Caregiver Respite Service"@en ;
+    int:mitigates sit:DementiaCaregiving ;
+    int:targetsMechanism csc:SleepDisruptionType, csc:CARFlatteningType ;
+    int:enhancesBuffer mod:HealthySleepPatterns ;
+    int:evidenceLevel "IIb" ;
+    int:optimalPhase csf:ResistancePhase ;
+    rdfs:comment "Timing critical: must be initiated before exhaustion phase."@en .
+
+int:CulturalContinuityProgram a int:SocialIntervention, owl:NamedIndividual ;
+    rdfs:label "Cultural Continuity Program"@en ;
+    int:mitigates sit:ForcedMigration, sit:ImmigrantIsolation, sit:RacialDiscrimination ;
+    int:targetsMechanism csc:RuminativeCopingType, csc:SocialWithdrawalType ;
+    int:activatesProtectiveFrame frm:CulturalContinuityFrame ;
+    int:evidenceLevel "III" ;
+    int:optimalPhase csf:ResistancePhase .
+
+# --- POLICY ---
+
+int:WorkplaceAntiHarassmentPolicy a int:PolicyIntervention, owl:NamedIndividual ;
+    rdfs:label "Workplace Anti-Harassment Policy"@en ;
+    int:mitigates sit:WorkplaceSubordination ;
+    int:targetsMechanism csc:FailureToHabituateType ;
+    int:activatesProtectiveFrame frm:AgencyRestorationFrame ;
+    int:evidenceLevel "III" ;
+    rdfs:comment "Structural intervention reducing stressor intensity at source."@en .
+
+int:AntiDiscriminationLegislation a int:PolicyIntervention, owl:NamedIndividual ;
+    rdfs:label "Anti-Discrimination Legislation"@en ;
+    int:mitigates sit:RacialDiscrimination, sit:CasteBasedDiscrimination ;
+    int:targetsMechanism csc:FailureToHabituateType ;
+    int:evidenceLevel "III" ;
+    rdfs:comment "Macro-level intervention. Effect sizes difficult to estimate but structural."@en .
+
+# --- LIFESTYLE ---
+
+int:AerobicExerciseProgram a int:LifestyleIntervention, owl:NamedIndividual ;
+    rdfs:label "Structured Aerobic Exercise Program"@en ;
+    int:targetsMechanism csc:InflammatoryActivationType, csc:NeuroinflammationType, 
+                         csc:ReducedNeurogenesisType, csc:HippocampalVolumeReductionType ;
+    int:enhancesBuffer mod:PhysicalExercise ;
+    int:evidenceLevel "Ia" ;
+    int:effectSizeRange "d = 0.3-0.5 for depression, increases hippocampal volume" ;
+    int:minimumDuration "8-12 weeks, 3x/week" ;
+    int:optimalPhase csf:ResistancePhase, csf:RecoveryGASPhase ;
+    csf:pubmedID "24026850" .
+
+int:SleepHygieneIntervention a int:LifestyleIntervention, owl:NamedIndividual ;
+    rdfs:label "Sleep Hygiene / CBT-I"@en ;
+    int:mitigates sit:ChronicShiftWork, sit:ChronicInsomnia ;
+    int:targetsMechanism csc:SleepDisruptionType, csc:CARFlatteningType, 
+                         csc:DiurnalRhythmDisruptionType ;
+    int:enhancesBuffer mod:HealthySleepPatterns ;
+    int:evidenceLevel "Ia" ;
+    int:effectSizeRange "d = 0.8-1.0 for insomnia (CBT-I)" ;
+    int:minimumDuration "4-8 weeks" .
+
+# --- PREVENTIVE ---
+
+int:EarlyChildhoodAttachmentProgram a int:PreventiveIntervention, owl:NamedIndividual ;
+    rdfs:label "Attachment-Based Early Childhood Program"@en ;
+    int:mitigates sit:ChildhoodAbuseNeglect ;
+    int:targetsMechanism csc:NR3C1MethylationType, csc:FKBP5DemethylationType ;
+    int:enhancesBuffer mod:SecureAttachment ;
+    int:activatesProtectiveFrame frm:SocialSupportFrame ;
+    int:evidenceLevel "Ib" ;
+    int:optimalPhase csf:AlarmPhase ;
+    int:contraindicated csf:ExhaustionPhase ;
+    rdfs:comment "Critical developmental window: effectiveness decreases sharply after age 3."@en ;
+    csf:pubmedID "15084670" .

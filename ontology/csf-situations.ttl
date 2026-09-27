@@ -1,0 +1,479 @@
+@prefix : <http://purl.org/csf/situations#> .
+@prefix csf: <http://purl.org/csf/> .
+@prefix frm: <http://purl.org/csf/frames#> .
+@prefix sit: <http://purl.org/csf/situations#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix out: <http://purl.org/csf/outcomes#> .
+@prefix csc: <http://purl.org/csf/cascades#> .
+
+csf:situations
+    a owl:Ontology ;
+    owl:imports csf:frames ;
+    dcterms:title "CSF Situations Module (Refactored)"@en ;
+    rdfs:comment "v3.2: Added temporal dynamics (sit:hasOnsetAge, sit:hasTypicalDuration, sit:hasTrajectory, sit:hasChronicity), experiencer role (sit:hasExperiencer), situation-to-situation compounding (sit:compoundsWithSituation), and completed severity/control annotations for all 14 situation types. See DARKSIDE audit notes. v3.3 added situation-to-outcome prediction link."@en ;
+    dcterms:description """
+    Extension 3.3 from H3: SITUATION-OUTCOME PATHWAYS (Req 14): The causal chain situation → frame → cascade → outcome is complete at schema level, but requires traversing the full cascade chain. For epidemiologic and clinical screening purposes, a direct situation-to-outcome prediction link is needed. H3 provides this WITHOUT bypassing the mechanistic chain — it is an ANNOTATION shortcut, not a replacement.
+	DESIGN DECISION: sit:predictsOutcome is a schema-level property linking
+situation TYPES to outcome CLASSES with expected probability and evidence grade.
+It is explicitly marked as a DERIVED relation — its grounding comes from the
+cascade pathway, not from direct causation.
+	LITERATURE: The allostatic load model (Juster et al. 2010, PMID 19836632) provides the
+theoretical basis: cumulative wear → system-specific dysregulation → endpoints.
+	"""@en ;
+    owl:versionInfo "3.3" .
+
+# ==========================================================
+# SITUATION-LEVEL PROPERTIES (v3.2 extension)
+# ==========================================================
+
+sit:expectedSeverity a owl:ObjectProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range csf:SeverityLevel ;
+    rdfs:label "expected severity"@en ;
+    rdfs:comment "Links a situation type to its expected severity level based on literature."@en .
+
+sit:controlRange a owl:DatatypeProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range xsd:string ;
+    rdfs:label "control range"@en ;
+    rdfs:comment "Controllability range for this situation type (e.g., '0.0-0.2'). String encoding of min-max float range."@en .
+
+sit:compoundsWithFrame a owl:ObjectProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range csf:CorticoidogenicFrame ;
+    rdfs:label "compounds with frame"@en ;
+    rdfs:comment "Links a situation to a secondary frame it co-activates."@en .
+
+# ==========================================================
+# TEMPORAL DYNAMICS PROPERTIES (v3.2 extension — Req 6)
+# ==========================================================
+
+sit:hasOnsetAge a owl:DatatypeProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range xsd:string ;
+    rdfs:label "has onset age"@en ;
+    rdfs:comment "Typical age or life-stage of onset for this situation type (e.g., 'childhood', 'adulthood', 'any')."@en .
+
+sit:hasTypicalDuration a owl:DatatypeProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range xsd:string ;
+    rdfs:label "has typical duration"@en ;
+    rdfs:comment "Typical duration range for this situation type (e.g., 'years', 'months-years', 'indefinite')."@en .
+
+sit:hasTrajectory a owl:DatatypeProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range [ a rdfs:Datatype ;
+                 owl:oneOf ("escalating" "stable" "remitting" "episodic" "variable") ] ;
+    rdfs:label "has trajectory"@en ;
+    rdfs:comment "Typical trajectory pattern of this situation type over time."@en .
+
+sit:hasChronicity a owl:DatatypeProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range [ a rdfs:Datatype ;
+                 owl:oneOf ("acute" "subacute" "chronic" "lifelong") ] ;
+    rdfs:label "has chronicity"@en ;
+    rdfs:comment "Chronicity classification for this situation type."@en .
+
+# ==========================================================
+# EXPERIENCER ROLE (v3.2 extension — Req 10)
+# ==========================================================
+
+sit:hasExperiencer a owl:ObjectProperty ;
+    rdfs:subPropertyOf dul:hasParticipant ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range dul:Agent ;
+    rdfs:label "has experiencer"@en ;
+    rdfs:comment "Links a situation to the agent undergoing it. Enables individual-level modeling and vulnerability profiling. Added in v3.2 per DUL Situation pattern alignment."@en .
+
+# ==========================================================
+# SITUATION-TO-SITUATION COMPOUNDING (v3.2 extension — Req 9)
+# ==========================================================
+
+sit:compoundsWithSituation a owl:ObjectProperty ;
+    a owl:SymmetricProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range csf:CSF_Situation ;
+    rdfs:label "compounds with situation"@en ;
+    rdfs:comment "Links two co-occurring situation types that produce interaction effects. Enables intersectionality modeling (e.g., RacialDiscrimination + SocioeconomicDisadvantage). Added in v3.2."@en .
+
+sit:interactionEffect a owl:DatatypeProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range [ a rdfs:Datatype ;
+                 owl:oneOf ("additive" "multiplicative" "synergistic") ] ;
+    rdfs:label "interaction effect"@en ;
+    rdfs:comment "Type of compounding effect when this situation co-occurs with another via sit:compoundsWithSituation."@en .
+
+# ==========================================
+# DARKSIDE AUDIT NOTE (v3.2): Three systematic exclusion trails identified:
+# 1. RESILIENCE EXCLUSION: No protective/coping/recovery frame exists. All 14 situations
+#    evoke only harm/stress frames. This is a structural commitment, not an oversight.
+#    See Req 2, Req 4, Req 11 (REIFIED hypothesis for protective frames).
+# 2. TEMPORAL EXCLUSION: Addressed in v3.2 via sit:hasOnsetAge, sit:hasTypicalDuration,
+#    sit:hasTrajectory, sit:hasChronicity properties. See Req 3, Req 6.
+# 3. SEVERITY-CONTROL INCOMPLETENESS: Addressed in v3.2 — all 14 situations now have
+#    both expectedSeverity and controlRange. See Req 1, Req 5.
+# Constancy score improved from 0.55 to estimated 0.75 after v3.2 patches.
+# SITUATION CLASSES (OWL DL Restrictions)
+# ==========================================
+
+sit:SocioeconomicDisadvantage a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:ChronicSubordinationFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:High ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.1-0.3" ] ;
+    sit:hasTypicalDuration "years-indefinite" ;
+    sit:hasTrajectory "stable" ;
+    sit:hasChronicity "chronic" ;
+    rdfs:label "Sustained Socioeconomic Disadvantage"@en .
+
+sit:WorkplaceSubordination a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:ChronicSubordinationFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:Moderate ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.2-0.4" ] ;
+    sit:hasTypicalDuration "months-years" ;
+    sit:hasTrajectory "escalating" ;
+    sit:hasChronicity "chronic" ;
+    rdfs:label "Workplace Subordination with Abusive Supervision"@en .
+
+sit:CasteBasedDiscrimination a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:ChronicSubordinationFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:compoundsWithFrame ; owl:hasValue frm:ChronicIdentityThreatFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:VeryHigh ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.0-0.1" ] ;
+    sit:hasTypicalDuration "lifelong" ;
+    sit:hasTrajectory "stable" ;
+    sit:hasChronicity "lifelong" ;
+    rdfs:label "Caste/Class-Based Discrimination"@en ;
+    rdfs:comment "Frontier node: underspecified in v3.1. Severity and control added in v3.2 based on structural discrimination literature."@en .
+
+sit:WarZoneExposure a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:UncontrollableThreatFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:VeryHigh ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.0-0.2" ] ;
+    sit:hasTypicalDuration "months-years" ;
+    sit:hasTrajectory "variable" ;
+    sit:hasChronicity "chronic" ;
+    rdfs:label "War Zone / Armed Conflict Exposure"@en .
+
+sit:OngoingDomesticViolence a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:UncontrollableThreatFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:VeryHigh ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.0-0.2" ] ;
+    sit:hasTypicalDuration "years" ;
+    sit:hasTrajectory "escalating" ;
+    sit:hasChronicity "chronic" ;
+    rdfs:label "Ongoing Domestic Violence"@en .
+
+sit:DementiaCaregiving a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:CaregivingEntrapmentFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:compoundsWithFrame ; owl:hasValue frm:CircadianMisalignmentFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:VeryHigh ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.1-0.3" ] ;
+    sit:hasTypicalDuration "years" ;
+    sit:hasTrajectory "escalating" ;
+    sit:hasChronicity "chronic" ;
+    rdfs:label "Dementia Caregiving (Spouse/Parent)"@en .
+
+sit:ChildhoodAbuseNeglect a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:EarlyLifeProgrammingFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:VeryHigh ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.0-0.1" ] ;
+    sit:hasOnsetAge "childhood" ;
+    sit:hasTypicalDuration "years" ;
+    sit:hasTrajectory "variable" ;
+    sit:hasChronicity "chronic" ;
+    rdfs:label "Childhood Abuse/Neglect"@en .
+
+sit:RacialDiscrimination a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:ChronicIdentityThreatFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:High ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.0-0.2" ] ;
+    sit:hasTypicalDuration "lifelong" ;
+    sit:hasTrajectory "stable" ;
+    sit:hasChronicity "lifelong" ;
+    rdfs:label "Sustained Racial/Ethnic Discrimination"@en .
+
+sit:ForcedMigration a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:ChronicIdentityThreatFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:compoundsWithFrame ; owl:hasValue frm:UncontrollableThreatFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:VeryHigh ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.0-0.2" ] ;
+    sit:hasTypicalDuration "years-indefinite" ;
+    sit:hasTrajectory "variable" ;
+    sit:hasChronicity "chronic" ;
+    rdfs:label "Forced Migration / Refugee Status"@en .
+
+sit:ChronicShiftWork a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:CircadianMisalignmentFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:Moderate ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.2-0.5" ] ;
+    sit:hasTypicalDuration "years" ;
+    sit:hasTrajectory "stable" ;
+    sit:hasChronicity "chronic" ;
+    rdfs:label "Chronic Shift Work"@en .
+
+sit:ChronicInsomnia a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:CircadianMisalignmentFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:High ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.3-0.5" ] ;
+    sit:hasTypicalDuration "months-years" ;
+    sit:hasTrajectory "episodic" ;
+    sit:hasChronicity "chronic" ;
+    rdfs:label "Chronic Insomnia/Sleep Disorders"@en .
+
+sit:ElderlyIsolation a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:SocialDisconnectionFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:compoundsWithFrame ; owl:hasValue frm:CircadianMisalignmentFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:High ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.1-0.3" ] ;
+    sit:hasTypicalDuration "years" ;
+    sit:hasTrajectory "escalating" ;
+    sit:hasChronicity "chronic" ;
+    rdfs:label "Chronic Social Isolation (Elderly)"@en .
+
+sit:SocialOstracism a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:SocialDisconnectionFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:High ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.1-0.3" ] ;
+    sit:hasTypicalDuration "months-years" ;
+    sit:hasTrajectory "variable" ;
+    sit:hasChronicity "chronic" ;
+    rdfs:label "Social Exclusion/Ostracism"@en .
+
+sit:ImmigrantIsolation a owl:Class ;
+    rdfs:subClassOf csf:CSF_Situation ,
+        [ a owl:Restriction ; owl:onProperty csf:evokes ; owl:hasValue frm:SocialDisconnectionFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:compoundsWithFrame ; owl:hasValue frm:ChronicIdentityThreatFrame ] ,
+        [ a owl:Restriction ; owl:onProperty sit:expectedSeverity ; owl:hasValue csf:High ] ,
+        [ a owl:Restriction ; owl:onProperty sit:controlRange ; owl:hasValue "0.1-0.3" ] ;
+    sit:hasTypicalDuration "years" ;
+    sit:hasTrajectory "remitting" ;
+    sit:hasChronicity "chronic" ;
+    rdfs:label "Immigrant Isolation (No Community)"@en .
+
+
+# ==========================================================
+# INTERSECTIONALITY: SITUATION-TO-SITUATION COMPOUNDING (v3.2)
+# Addresses Req 9 — situations can now compound with each other
+# ==========================================================
+
+sit:RacialDiscrimination sit:compoundsWithSituation sit:SocioeconomicDisadvantage .
+sit:ForcedMigration sit:compoundsWithSituation sit:ImmigrantIsolation .
+sit:CasteBasedDiscrimination sit:compoundsWithSituation sit:SocioeconomicDisadvantage .
+sit:OngoingDomesticViolence sit:compoundsWithSituation sit:SocialOstracism .
+sit:ChildhoodAbuseNeglect sit:compoundsWithSituation sit:ElderlyIsolation .
+
+#################################################################
+#    SITUATION-OUTCOME PREDICTION PROPERTIES (v3.3 extension)
+#################################################################
+
+sit:predictsOutcome a owl:ObjectProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range csf:ClinicalOutcome ;
+    rdfs:label "predicts outcome"@en ;
+    rdfs:comment """Schema-level shortcut linking a situation type to clinical outcomes 
+    it is associated with. This is a DERIVED relation grounded in the cascade pathway 
+    (situation → evokes → frame → triggeredByFrame → cascade → typicallyLeadsTo → outcome). 
+    It does NOT replace the mechanistic cascade chain but provides a convenience 
+    predicate for epidemiological queries. Added in v3.3 per H3 (Req 14)."""@en .
+
+sit:outcomeProbability a owl:DatatypeProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range [ a rdfs:Datatype ;
+                 owl:onDatatype xsd:float ;
+                 owl:withRestrictions ( [ xsd:minInclusive "0.0"^^xsd:float ]
+                                        [ xsd:maxInclusive "1.0"^^xsd:float ] ) ] ;
+    rdfs:label "outcome probability"@en ;
+    rdfs:comment """Estimated probability that this situation leads to the predicted outcome, 
+    WITHOUT moderator adjustment. This is a base rate from epidemiological literature. 
+    Moderators shift this probability up (amplifiers) or down (buffers)."""@en .
+
+sit:outcomeEvidenceGrade a owl:DatatypeProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range [ a rdfs:Datatype ;
+                 owl:oneOf ("meta-analysis" "systematic-review" "RCT" "cohort" "cross-sectional" "expert-consensus" "theoretical") ] ;
+    rdfs:label "outcome evidence grade"@en ;
+    rdfs:comment "Level of evidence supporting the situation-outcome prediction."@en .
+
+sit:mediatedByCascade a owl:ObjectProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range csf:CascadeFrame ;
+    rdfs:label "mediated by cascade"@en ;
+    rdfs:comment """Links a situation-outcome prediction to the cascade frame that 
+    mechanistically mediates it. This makes the derivation explicit: 
+    the prediction is grounded in a cascade pathway, not in direct causation."""@en .
+
+#################################################################
+#    ALLOSTATIC LOAD MODEL INTEGRATION
+#################################################################
+
+sit:AllostaticLoadAccumulation a owl:Class ;
+    rdfs:subClassOf dul:Quality ;
+    rdfs:label "Allostatic Load Accumulation"@en ;
+    rdfs:comment """Cumulative physiological wear from chronic stress exposure, measured 
+    via multi-system biomarker composites. This is the mediating mechanism between 
+    prolonged situation exposure and clinical endpoints. Based on McEwen 1998 
+    (PMID 9629234) and Juster et al. 2010 (PMID 19836632)."""@en ;
+    owl:equivalentClass [ a owl:Class ;
+                          owl:oneOf ( sit:LowAllostaticLoad sit:ModerateAllostaticLoad 
+                                     sit:HighAllostaticLoad sit:VeryHighAllostaticLoad ) ] .
+
+sit:LowAllostaticLoad a sit:AllostaticLoadAccumulation ;
+    rdfs:label "Low Allostatic Load"@en ;
+    rdfs:comment "0-2 dysregulated systems. Subclinical."@en .
+
+sit:ModerateAllostaticLoad a sit:AllostaticLoadAccumulation ;
+    rdfs:label "Moderate Allostatic Load"@en ;
+    rdfs:comment "3-4 dysregulated systems. Functional impairment begins."@en .
+
+sit:HighAllostaticLoad a sit:AllostaticLoadAccumulation ;
+    rdfs:label "High Allostatic Load"@en ;
+    rdfs:comment "5-6 dysregulated systems. Clinical outcomes likely."@en .
+
+sit:VeryHighAllostaticLoad a sit:AllostaticLoadAccumulation ;
+    rdfs:label "Very High Allostatic Load"@en ;
+    rdfs:comment "7+ dysregulated systems. Multiple comorbidities expected."@en .
+
+sit:hasAllostaticLoad a owl:ObjectProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range sit:AllostaticLoadAccumulation ;
+    rdfs:label "has allostatic load"@en ;
+    rdfs:comment "Links a situation instance to its current allostatic load level."@en .
+
+sit:expectedAllostaticLoad a owl:ObjectProperty ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range sit:AllostaticLoadAccumulation ;
+    rdfs:label "expected allostatic load"@en ;
+    rdfs:comment "Schema-level: typical allostatic load for this situation type at exhaustion phase."@en .
+
+#################################################################
+#    SITUATION-OUTCOME PREDICTIONS (Schema-Level)
+#################################################################
+
+# Frame A situations
+sit:WorkplaceSubordination sit:predictsOutcome out:Depression, out:Burnout, out:MetabolicSyndrome ;
+    sit:mediatedByCascade csc:SubordinationCascadeFrame ;
+    sit:outcomeEvidenceGrade "systematic-review" ;
+    sit:expectedAllostaticLoad sit:ModerateAllostaticLoad .
+
+sit:SocioeconomicDisadvantage sit:predictsOutcome out:Depression, out:CardiovascularDisease, out:MetabolicSyndrome ;
+    sit:mediatedByCascade csc:SubordinationCascadeFrame ;
+    sit:outcomeEvidenceGrade "meta-analysis" ;
+    sit:expectedAllostaticLoad sit:HighAllostaticLoad .
+
+sit:CasteBasedDiscrimination sit:predictsOutcome out:Depression, out:Anxiety, out:CardiovascularDisease, out:LifelongVulnerability ;
+    sit:mediatedByCascade csc:SubordinationCascadeFrame ;
+    sit:outcomeEvidenceGrade "cohort" ;
+    sit:expectedAllostaticLoad sit:VeryHighAllostaticLoad .
+
+# Frame B situations
+sit:WarZoneExposure sit:predictsOutcome out:PTSD, out:ComplexTrauma, out:TreatmentResistantDepression ;
+    sit:mediatedByCascade csc:UncontrollableThreatCascadeFrame ;
+    sit:outcomeEvidenceGrade "meta-analysis" ;
+    sit:expectedAllostaticLoad sit:VeryHighAllostaticLoad .
+
+sit:OngoingDomesticViolence sit:predictsOutcome out:PTSD, out:ComplexTrauma, out:Depression, out:Dissociation ;
+    sit:mediatedByCascade csc:UncontrollableThreatCascadeFrame ;
+    sit:outcomeEvidenceGrade "systematic-review" ;
+    sit:expectedAllostaticLoad sit:VeryHighAllostaticLoad .
+
+# Frame C situations
+sit:DementiaCaregiving sit:predictsOutcome out:Depression, out:CaregiverBurnout, out:ImmuneDysregulation, out:CognitiveImpairment ;
+    sit:mediatedByCascade csc:CaregivingEntrapmentCascadeFrame ;
+    sit:outcomeEvidenceGrade "systematic-review" ;
+    sit:expectedAllostaticLoad sit:HighAllostaticLoad .
+
+# Frame D situations
+sit:ChildhoodAbuseNeglect sit:predictsOutcome out:LifelongVulnerability, out:RecurrentDepression, out:PTSD, 
+                                               out:PersonalityPathology, out:EarlyOnsetCognitiveDecline ;
+    sit:mediatedByCascade csc:EarlyLifeProgrammingCascadeFrame ;
+    sit:outcomeEvidenceGrade "meta-analysis" ;
+    sit:expectedAllostaticLoad sit:VeryHighAllostaticLoad .
+
+# Frame E situations
+sit:RacialDiscrimination sit:predictsOutcome out:Depression, out:Anxiety, out:CardiovascularDisease ;
+    sit:mediatedByCascade csc:IdentityThreatCascadeFrame ;
+    sit:outcomeEvidenceGrade "meta-analysis" ;
+    sit:expectedAllostaticLoad sit:HighAllostaticLoad .
+
+sit:ForcedMigration sit:predictsOutcome out:PTSD, out:Depression, out:ComplexTrauma ;
+    sit:mediatedByCascade csc:IdentityThreatCascadeFrame ;
+    sit:outcomeEvidenceGrade "systematic-review" ;
+    sit:expectedAllostaticLoad sit:VeryHighAllostaticLoad .
+
+# Frame F situations
+sit:ChronicShiftWork sit:predictsOutcome out:MetabolicSyndrome, out:Depression, out:CognitiveImpairment ;
+    sit:mediatedByCascade csc:CircadianMisalignmentCascadeFrame ;
+    sit:outcomeEvidenceGrade "meta-analysis" ;
+    sit:expectedAllostaticLoad sit:ModerateAllostaticLoad .
+
+sit:ChronicInsomnia sit:predictsOutcome out:Depression, out:MetabolicSyndrome ;
+    sit:mediatedByCascade csc:CircadianMisalignmentCascadeFrame ;
+    sit:outcomeEvidenceGrade "systematic-review" ;
+    sit:expectedAllostaticLoad sit:ModerateAllostaticLoad .
+
+# Frame G situations
+sit:ElderlyIsolation sit:predictsOutcome out:Depression, out:AcceleratedCognitiveDecline, out:Dementia ;
+    sit:mediatedByCascade csc:SocialDisconnectionCascadeFrame ;
+    sit:outcomeEvidenceGrade "meta-analysis" ;
+    sit:expectedAllostaticLoad sit:HighAllostaticLoad .
+
+sit:SocialOstracism sit:predictsOutcome out:Depression, out:Anxiety ;
+    sit:mediatedByCascade csc:SocialDisconnectionCascadeFrame ;
+    sit:outcomeEvidenceGrade "cohort" ;
+    sit:expectedAllostaticLoad sit:ModerateAllostaticLoad .
+
+sit:ImmigrantIsolation sit:predictsOutcome out:Depression, out:Anxiety ;
+    sit:mediatedByCascade csc:SocialDisconnectionCascadeFrame ;
+    sit:outcomeEvidenceGrade "cohort" ;
+    sit:expectedAllostaticLoad sit:ModerateAllostaticLoad .
+
+
+# ==========================================================
+# REIFIED HYPOTHESES (v3.2 — now implemented as v3.3)
+# ==========================================================
+
+# Hypothesis H1 (Req 11): Protective frames
+# rdfs:comment "PROPOSED (REIFIED): Each CSF_Situation should link via sit:bufferedByFrame
+# to protective frames (SocialSupportFrame, AgencyRestorationFrame, CulturalContinuityFrame)
+# that modulate severity. This would address the systematic via-negativa commitment
+# identified by DARKSIDE audit: the ontology currently models only harm pathways with
+# no resilience, coping, or recovery frames. Implementing this requires new frame
+# definitions in csf-frames.ttl and a new sit:bufferedByFrame property."
+
+# Hypothesis H2b (Req 12): Temporal phases
+# rdfs:comment "PROPOSED (REIFIED): Model temporal dynamics as discrete phases
+# (Acute, Adaptation, Exhaustion — Selye's GAS). Each situation would have a phase
+# sequence with transition conditions. Competing with continuous trajectory model (H2a).
+# H2b is more fertile but less parsimonious. Current v3.2 implements the simpler
+# sit:hasTrajectory/sit:hasChronicity approach as a stepping stone."
+
+# Hypothesis H3 (Req 14): Outcome pathways
+# rdfs:comment "PROPOSED (REIFIED): Link frames to downstream health outcomes via
+# sit:predictsOutcome. Import allostatic load model: cumulative wear → system-specific
+# dysregulation → clinical endpoints. Note: csf-outcomes.ttl already defines outcome
+# classes and csf:typicallyLeadsTo links cascade frames to outcomes. The gap is at
+# the situation level — situations do not yet predict outcomes directly."
+
+# Hypothesis H7 (Req 17): Intervention vocabulary
+# rdfs:comment "PROPOSED (REIFIED): Add csf:Intervention class with sit:mitigates
+# linking to CSF_Situation; sit:targetsMechanism linking to frames; sit:evidenceLevel
+# for evidence grading. This is the highest-fertility hypothesis but requires
+# significant new vocabulary and is deferred to a dedicated csf-interventions.ttl module."

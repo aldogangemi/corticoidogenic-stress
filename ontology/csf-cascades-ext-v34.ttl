@@ -1,0 +1,55 @@
+# =====================================================================
+# CSF cascades extension v3.4 -- mechanistic pathway for Frame H
+# (SocioeconomicStrainFrame). Reuses existing csc: step types; follows the
+# CascadeFrame + Collection-Ontology sequence pattern of the other cascades.
+# Pathway: chronic financial strain -> sustained HPA activation -> cortisol
+# release -> glucocorticoid resistance -> chronic low-grade inflammation
+# (-> metabolic dysregulation / depression).
+# =====================================================================
+@prefix csf:  <http://purl.org/csf/> .
+@prefix csc:  <http://purl.org/csf/cascades#> .
+@prefix frm:  <http://purl.org/csf/frames#> .
+@prefix out:  <http://purl.org/csf/outcomes#> .
+@prefix co:   <http://purl.org/co/> .
+@prefix pol:  <http://purl.org/polanyi/heuristics#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+csc:SocioeconomicStrainCascadeFrame a csf:CascadeFrame, owl:NamedIndividual ;
+    rdfs:label "Socioeconomic Strain Cascade Frame"@en ;
+    rdfs:comment """SCHEMA: chronic financial strain / material scarcity →
+    sustained HPA activation → cortisol release → glucocorticoid resistance →
+    chronic low-grade inflammation → metabolic dysregulation."""@en ;
+    csf:triggeredByFrame frm:SocioeconomicStrainFrame ;
+    csf:hasStep csc:SustainedHPAActivationType, csc:CortisolReleaseType,
+                csc:GlucocorticoidResistanceType, csc:ChronicLowGradeInflammationType ;
+    csf:hasSequence csc:SESSequence ;
+    csf:typicallyLeadsTo out:Depression, out:MetabolicSyndrome ;
+    csf:pubmedID "15094289" ;
+    pol:designHeuristic pol:m03-CASCADEMODELING .
+
+csc:SESSequence a csf:CascadeSequence ;
+    co:firstItem csc:SESSeq1 ;
+    co:lastItem  csc:SESSeq4 ;
+    co:size "4"^^xsd:positiveInteger .
+
+csc:SESSeq1 a csf:CascadeSequenceItem ;
+    co:index "1"^^xsd:positiveInteger ;
+    co:itemContent csc:SustainedHPAActivationType ;
+    co:nextItem csc:SESSeq2 .
+csc:SESSeq2 a csf:CascadeSequenceItem ;
+    co:index "2"^^xsd:positiveInteger ;
+    co:itemContent csc:CortisolReleaseType ;
+    co:nextItem csc:SESSeq3 .
+csc:SESSeq3 a csf:CascadeSequenceItem ;
+    co:index "3"^^xsd:positiveInteger ;
+    co:itemContent csc:GlucocorticoidResistanceType ;
+    co:nextItem csc:SESSeq4 .
+csc:SESSeq4 a csf:CascadeSequenceItem ;
+    co:index "4"^^xsd:positiveInteger ;
+    co:itemContent csc:ChronicLowGradeInflammationType .
+
+# link the frame to its cascade (parallels frm:typicalCascade on other frames)
+frm:SocioeconomicStrainFrame frm:typicalCascade csc:SocioeconomicStrainCascadeFrame .

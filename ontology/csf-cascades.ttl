@@ -1,0 +1,859 @@
+@prefix : <http://purl.org/csf/cascades#> .
+@prefix csf: <http://purl.org/csf/> .
+@prefix core: <http://purl.org/csf/core#> .
+@prefix frm: <http://purl.org/csf/frames#> .
+@prefix sit: <http://purl.org/csf/situations#> .
+@prefix csc: <http://purl.org/csf/cascades#> .
+@prefix out: <http://purl.org/csf/outcomes#> .
+@prefix pol: <http://purl.org/polanyi/heuristics#> .
+@prefix co: <http://purl.org/co/> .
+@prefix cflow: <http://www.ontologydesignpatterns.org/cp/owl/controlflow.owl#> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+csf:cascades
+    a owl:Ontology ;
+    owl:imports csf:situations ;
+    dcterms:title "CSF Cascades Module"@en ;
+    dcterms:description """SCHEMA-LEVEL cascade frames and step types. v3.0 properly separates:
+    
+    - CascadeFrame: workflow SCHEMA (what cascade pattern looks like)
+    - CascadeStep: step ROLES in the schema (aligned with controlflow:Task)
+    - CascadeSequence (co:List): ordered list of step TYPES
+    
+    Instance-level entities (CascadeOccurrence, CascadeStepOccurrence) are created 
+    when applying the schema to actual patient data via BRI heuristics."""@en ;
+    owl:versionInfo "3.1" ;
+    pol:designHeuristic pol:m03-CASCADEMODELING, pol:BRI .
+
+#################################################################
+#    Workflow Pattern Classes (Schema-Level)
+#################################################################
+
+csc:ParallelBranch a owl:Class ;
+    rdfs:subClassOf csf:CascadeStep, cflow:ConcurrencyTask ;
+    rdfs:label "Parallel Branch"@en ;
+    rdfs:comment """A workflow construct indicating parallel execution of multiple step types.
+    Used at schema level to indicate concurrency."""@en .
+
+csc:ChoiceBranch a owl:Class ;
+    rdfs:subClassOf csf:CascadeStep, cflow:CaseTask ;
+    rdfs:label "Choice Branch"@en ;
+    rdfs:comment "A workflow construct indicating alternative paths (XOR)."@en .
+
+csc:FeedforwardLoop a owl:Class ;
+    rdfs:subClassOf csf:LoopStep ;
+    rdfs:label "Feedforward Loop"@en ;
+    rdfs:comment "A self-amplifying loop pattern in the cascade schema."@en .
+
+csc:hasBranchElement a owl:ObjectProperty ;
+    rdfs:subPropertyOf co:element ;
+    rdfs:domain csc:ParallelBranch ;
+    rdfs:range csf:CascadeStep ;
+    rdfs:label "has branch element"@en ;
+    rdfs:comment "Links a parallel branch to its constituent parallel step types."@en .
+
+csc:hasAlternative a owl:ObjectProperty ;
+    rdfs:domain csc:ChoiceBranch ;
+    rdfs:range csf:CascadeStep ;
+    rdfs:label "has alternative"@en ;
+    rdfs:comment "Links a choice branch to one of its alternative paths."@en .
+    
+co:firstItem a owl:ObjectProperty .
+
+co:lastItem a owl:ObjectProperty .
+
+co:nextItem a owl:ObjectProperty .
+
+co:itemContent a owl:ObjectProperty .
+
+co:index a owl:DatatypeProperty .
+
+co:size a owl:DatatypeProperty .
+
+
+#################################################################
+#    CASCADE STEP TYPES (Schema-Level Reusable Building Blocks)
+#################################################################
+
+# Each step type is a SCHEMA element - it defines WHAT happens at this position
+# Actual occurrences will EXECUTE these step types via csf:executesStep
+
+# ===== LEVEL 1: Initial Physiological Response Types =====
+
+csc:HPAActivationType a csf:NeuroendocrineStep, owl:NamedIndividual ;
+    rdfs:label "HPA Axis Activation (Type)"@en ;
+    rdfs:comment "Step type: initial activation of hypothalamic-pituitary-adrenal axis."@en ;
+    csf:pubmedID "17615391" ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/17615391/> .
+
+# ===== AUTONOMIC/VAGAL STEP TYPES (v3.1 extension) =====
+# Fills the largest identified gap (significance 0.92): polyvagal theory mechanisms
+# Grounded in Porges 2011 and Thayer & Lane 2009
+
+csc:ParasympatheticWithdrawalType a csf:AutonomicStep, owl:NamedIndividual ;
+    rdfs:label "Parasympathetic Withdrawal (Type)"@en ;
+    rdfs:comment "Step type: reduction in parasympathetic (vagal) tone in response to chronic stress. Vagal withdrawal shifts autonomic balance toward sympathetic dominance, reducing heart rate variability and impairing stress recovery."@en ;
+    csf:hasTemporalPhase csf:AcutePhase ;
+    csf:hasTypicalOnset "minutes" ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/21753751/> ;
+    rdfs:comment "Added in v3.1 per polyvagal theory (Porges 2011)."@en .
+
+csc:VagalToneReductionType a csf:AutonomicStep, owl:NamedIndividual ;
+    rdfs:label "Chronic Vagal Tone Reduction (Type)"@en ;
+    rdfs:comment "Step type: sustained reduction in resting vagal tone (indexed by HRV). Chronic low vagal tone impairs emotion regulation, social engagement, and inflammatory control."@en ;
+    csf:directlyPrecedes csc:AutonomicImbalanceType ;
+    csf:hasTemporalPhase csf:SubacutePhase ;
+    csf:hasTypicalOnset "weeks" ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/19100528/> ;
+    rdfs:comment "Added in v3.1 per neurovisceral integration model (Thayer & Lane 2009)."@en .
+
+csc:AutonomicImbalanceType a csf:AutonomicStep, owl:NamedIndividual ;
+    rdfs:label "Autonomic Imbalance (Type)"@en ;
+    rdfs:comment "Step type: chronic sympathetic-parasympathetic imbalance with sympathetic dominance. Contributes to cardiovascular risk, inflammatory activation, and impaired social engagement."@en ;
+    csf:feedsForwardTo csc:InflammatoryActivationType ;
+    csf:hasTemporalPhase csf:ChronicPhase ;
+    csf:hasTypicalOnset "months" ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/21753751/> ;
+    rdfs:comment "Added in v3.1. Bridges autonomic and inflammatory pathways."@en .
+
+# ===== SOCIAL GENOMICS / CTRA STEP TYPES (v3.1 extension) =====
+# Formalizes Cole's Conserved Transcriptional Response to Adversity
+# Grounded in Cole et al. 2007 and Slavich & Cole 2013
+
+csc:NFkBUpregulationType a csf:SocialGenomicsStep, owl:NamedIndividual ;
+    rdfs:label "NF-kB Pathway Upregulation (Type)"@en ;
+    rdfs:comment "Step type: upregulation of NF-kB-mediated pro-inflammatory gene expression in response to chronic social threat. Part of the Conserved Transcriptional Response to Adversity (CTRA)."@en ;
+    csf:feedsForwardTo csc:InflammatoryActivationType ;
+    csf:hasTemporalPhase csf:SubacutePhase ;
+    csf:hasTypicalOnset "days-weeks" ;
+    csf:pubmedID "17201568" ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/17201568/> ;
+    rdfs:comment "Added in v3.1 per CTRA theory (Cole et al. 2007)."@en .
+
+csc:AntiviralDownregulationType a csf:SocialGenomicsStep, owl:NamedIndividual ;
+    rdfs:label "Antiviral/Antibody Gene Downregulation (Type)"@en ;
+    rdfs:comment "Step type: downregulation of IRF-mediated antiviral and antibody gene expression. The complement of NF-kB upregulation in the CTRA pattern, increasing vulnerability to viral infection."@en ;
+    csf:hasTemporalPhase csf:SubacutePhase ;
+    csf:hasTypicalOnset "days-weeks" ;
+    csf:pubmedID "25071120" ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/25071120/> ;
+    rdfs:comment "Added in v3.1 per social signal transduction theory (Slavich & Cole 2013)."@en .
+
+# ===== INFLAMMATORY CONVERGENCE NODE (v3.1 extension) =====
+# Architecturally significant: connects HPA, vagal, and CTRA pathways
+
+csc:ChronicLowGradeInflammationType a csf:ImmuneStep, owl:NamedIndividual ;
+    rdfs:label "Chronic Low-Grade Inflammation (Type)"@en ;
+    rdfs:comment "Step type: sustained low-grade systemic inflammation (elevated CRP, IL-6, TNF-alpha) resulting from convergence of HPA dysregulation, autonomic imbalance, and CTRA activation. This is a convergence node where three previously disconnected cascade pathways meet. Added in v3.1."@en ;
+    csf:feedsForwardTo csc:NeuroinflammationType ;
+    csf:hasTemporalPhase csf:ChronicPhase ;
+    csf:hasTypicalOnset "months" ;
+    csf:pubmedID "32389588" ;
+    rdfs:comment "Convergence node connecting HPA (GlucocorticoidResistanceType), vagal (AutonomicImbalanceType), and CTRA (NFkBUpregulationType) pathways."@en .
+
+csc:CortisolReleaseType a csf:NeuroendocrineStep, owl:NamedIndividual ;
+    rdfs:label "Cortisol Release (Type)"@en ;
+    rdfs:comment "Step type: release of cortisol from adrenal cortex."@en ;
+    csf:directlyPrecedes csc:GRActivationType ;
+    csf:pubmedID "17615391" .
+
+csc:CatecholamineReleaseType a csf:AutonomicStep, owl:NamedIndividual ;  # v3.4: sympathetic-adrenomedullary -> L4 (was NeuroendocrineStep)
+    rdfs:label "Catecholamine Release (Type)"@en ;
+    rdfs:comment "Step type: release of norepinephrine and epinephrine."@en ;
+    csf:pubmedID "17615391" .
+
+csc:GRActivationType a csf:NeuroendocrineStep, owl:NamedIndividual ;
+    rdfs:label "Glucocorticoid Receptor Activation (Type)"@en ;
+    rdfs:comment "Step type: binding of cortisol to GR in brain and periphery."@en ;
+    csf:pubmedID "26981074" ;
+    pol:groundingReference <https://pmc.ncbi.nlm.nih.gov/articles/PMC11801288/> .
+
+csc:MRActivationType a csf:NeuroendocrineStep, owl:NamedIndividual ;
+    rdfs:label "Mineralocorticoid Receptor Activation (Type)"@en ;
+    rdfs:comment "Step type: binding of cortisol to MR (high affinity, tonic signaling)."@en ;
+    csf:pubmedID "17615391" .
+
+# ===== LEVEL 2: Neural Circuit Effect Types =====
+
+csc:AmygdalaActivationType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "Amygdala Activation (Type)"@en ;
+    rdfs:comment "Step type: activation of amygdala in response to threat."@en ;
+    csf:pubmedID "33345670" ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/33345670/> .
+
+csc:AmygdalaSensitizationType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "Amygdala Sensitization (Type)"@en ;
+    rdfs:comment "Step type: LTP in amygdala producing heightened threat sensitivity."@en ;
+    csf:directlyPrecedes csc:HypervigilanceType ;
+    csf:pubmedID "33345670" .
+
+csc:AmygdalaHypertrophyType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "Amygdala Dendritic Hypertrophy (Type)"@en ;
+    rdfs:comment "Step type: increased dendritic arborization in BLA."@en ;
+    csf:pubmedID "26981074" .
+
+csc:PFCDownregulationType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "Prefrontal Cortex Downregulation (Type)"@en ;
+    rdfs:comment "Step type: reduced PFC activity and top-down control."@en ;
+    csf:pubmedID "33345670" ;
+    csf:mechanisticSupport "GR activation in chronic stress reduces PFC dendritic complexity."@en .
+
+csc:PFCDendriticRetractionType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "PFC Dendritic Retraction (Type)"@en ;
+    rdfs:comment "Step type: atrophy of mPFC pyramidal neuron dendrites."@en ;
+    csf:pubmedID "26981074" .
+
+csc:HippocampalVolumeReductionType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "Hippocampal Volume Reduction (Type)"@en ;
+    rdfs:comment "Step type: hippocampal volume loss from dendritic retraction + reduced neurogenesis."@en ;
+    csf:pubmedID "17615391" ;
+    csf:mechanisticSupport "Chronic cortisol reduces hippocampal neurogenesis and dendritic complexity."@en .
+
+csc:HippocampalDendriticRetractionType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "Hippocampal CA3 Dendritic Retraction (Type)"@en ;
+    rdfs:comment "Step type: retraction of CA3 apical dendrites."@en ;
+    csf:pubmedID "17615391" .
+
+csc:ReducedNeurogenesisType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "Reduced Adult Neurogenesis (Type)"@en ;
+    rdfs:comment "Step type: suppression of DG neurogenesis."@en ;
+    csf:pubmedID "26981074" ;
+    pol:groundingReference <https://pmc.ncbi.nlm.nih.gov/articles/PMC4055840/> .
+
+csc:LossOfTopDownInhibitionType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "Loss of Top-Down HPA Inhibition (Type)"@en ;
+    rdfs:comment "Step type: impaired prefrontal/hippocampal inhibition of HPA via BST."@en ;
+    csf:directlyPrecedes csc:SustainedHPAActivationType ;
+    csf:pubmedID "33345670" .
+
+csc:ImpairedContextualizationType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "Impaired Threat Contextualization (Type)"@en ;
+    rdfs:comment "Step type: reduced hippocampal threat contextualization → overgeneralization."@en ;
+    csf:directlyPrecedes csc:PTSDMaintenanceLoopType ;
+    csf:pubmedID "19167389" .
+
+# ===== LEVEL 3: Sustained/Dysregulated Response Types =====
+
+# v3.1 NOTE: Loop steps (LoopStep subclasses) should specify hasTerminationCondition
+# and hasDampingFactor to prevent unbounded inference. See TerminationCondition class.
+csc:SustainedHPAActivationType a csf:NeuroendocrineStep, csf:LoopStep, owl:NamedIndividual ;
+    rdfs:label "Sustained HPA Activation (Type)"@en ;
+    rdfs:comment "Step type: failure to terminate HPA response after stressor offset."@en ;
+    csf:pubmedID "9629234" ;
+    csf:mechanisticSupport "Type 2 allostatic load: failure to shut off allostatic activity."@en ;
+	csf:hasTerminationCondition csf:AllostaticAccommodation, csf:ExternalIntervention ;
+	csf:hasDampingFactor "0.05"^^xsd:float .
+
+csc:FailureToHabituateType a csf:NeuroendocrineStep, csf:LoopStep, owl:NamedIndividual ;
+    rdfs:label "Failure to Habituate (Type)"@en ;
+    rdfs:comment "Step type: lack of habituation to repeated homotypic stressors."@en ;
+    csf:pubmedID "9629234" ;
+    csf:mechanisticSupport "Type 1 allostatic load: frequent activation without habituation."@en ;
+csf:hasTerminationCondition csf:ReceptorDownregulation ;
+csf:hasDampingFactor "0.15"^^xsd:float .
+
+csc:CARFlatteningType a csf:NeuroendocrineStep, owl:NamedIndividual ;
+    rdfs:label "CAR Flattening (Type)"@en ;
+    rdfs:comment "Step type: blunted or absent cortisol awakening response."@en ;
+    csf:pubmedID "39680766" ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/39680766/> ;
+    csf:mechanisticSupport "CAR flattening associated with depression, burnout, chronic stress."@en .
+
+csc:DiurnalRhythmDisruptionType a csf:NeuroendocrineStep, owl:NamedIndividual ;
+    rdfs:label "Diurnal Rhythm Disruption (Type)"@en ;
+    rdfs:comment "Step type: loss of normal diurnal cortisol slope."@en ;
+    csf:pubmedID "32807491" .
+
+# ===== LEVEL 4: Inflammatory/Immune Effect Types =====
+
+csc:InflammatoryActivationType a csf:ImmuneStep, owl:NamedIndividual ;
+    rdfs:label "Inflammatory Pathway Activation (Type)"@en ;
+    rdfs:comment "Step type: activation of pro-inflammatory cytokines (IL-6, TNF-α, CRP)."@en ;
+    csf:pubmedID "32389588" ;
+    pol:groundingReference <https://pmc.ncbi.nlm.nih.gov/articles/PMC11839829/> .
+
+csc:NeuroinflammationType a csf:ImmuneStep, owl:NamedIndividual ;
+    rdfs:label "Neuroinflammation (Type)"@en ;
+    rdfs:comment "Step type: CNS inflammation affecting neural function."@en ;
+    csf:directlyPrecedes csc:SynapticDysfunctionType ;
+    csf:pubmedID "32389588" .
+
+csc:MicroglialActivationType a csf:ImmuneStep, owl:NamedIndividual ;
+    rdfs:label "Microglial Activation (Type)"@en ;
+    rdfs:comment "Step type: activation of brain-resident immune cells."@en ;
+    csf:pubmedID "32389588" .
+
+csc:GlucocorticoidResistanceType a csf:ImmuneStep, owl:NamedIndividual ;
+    rdfs:label "Glucocorticoid Resistance (Type)"@en ;
+    rdfs:comment "Step type: reduced immune cell sensitivity to cortisol's anti-inflammatory effects."@en ;
+    csf:feedsForwardTo csc:InflammatoryActivationType ;
+    csf:pubmedID "17615391" .
+
+# ===== LEVEL 5: Epigenetic Change Types =====
+
+csc:NR3C1MethylationType a csf:EpigeneticStep, owl:NamedIndividual ;
+    rdfs:label "NR3C1 Promoter Methylation (Type)"@en ;
+    rdfs:comment "Step type: epigenetic silencing of glucocorticoid receptor gene."@en ;
+    csf:pubmedID "15084670" ;
+    pol:groundingReference <https://pubmed.ncbi.nlm.nih.gov/15084670/> ;
+    csf:mechanisticSupport "Weaver 2004: maternal behavior programs offspring GR via methylation."@en .
+
+csc:FKBP5DemethylationType a csf:EpigeneticStep, owl:NamedIndividual ;
+    rdfs:label "FKBP5 Demethylation (Type)"@en ;
+    rdfs:comment "Step type: demethylation of FKBP5 enhancing GR resistance."@en ;
+    csf:feedsForwardTo csc:ReducedGRFunctionType ;
+    csf:pubmedID "24051924" .
+
+csc:ReducedGRFunctionType a csf:EpigeneticStep, owl:NamedIndividual ;
+    rdfs:label "Reduced GR Function (Type)"@en ;
+    rdfs:comment "Step type: decreased glucocorticoid receptor expression/function."@en ;
+    csf:directlyPrecedes csc:ImpairedNegativeFeedbackType ;
+    csf:pubmedID "15084670" .
+
+csc:ImpairedNegativeFeedbackType a csf:NeuroendocrineStep, owl:NamedIndividual ;
+    rdfs:label "Impaired HPA Negative Feedback (Type)"@en ;
+    rdfs:comment "Step type: reduced efficiency of cortisol negative feedback."@en ;
+    csf:feedsForwardTo csc:SustainedHPAActivationType ;
+    csf:pubmedID "33345670" .
+
+# ===== LEVEL 6: Behavioral Step Types =====
+
+csc:HypervigilanceType a csf:BehavioralStep, owl:NamedIndividual ;
+    rdfs:label "Hypervigilance (Type)"@en ;
+    rdfs:comment "Step type: sustained heightened alertness and threat scanning."@en ;
+    csf:feedsForwardTo csc:SleepDisruptionType .
+
+csc:AvoidanceType a csf:BehavioralStep, owl:NamedIndividual ;
+    rdfs:label "Avoidance Behavior (Type)"@en ;
+    rdfs:comment "Step type: behavioral avoidance of threat-related stimuli."@en .
+
+csc:SocialWithdrawalType a csf:BehavioralStep, owl:NamedIndividual ;
+    rdfs:label "Social Withdrawal (Type)"@en ;
+    rdfs:comment "Step type: reduction in social engagement."@en ;
+    csf:feedsForwardTo csc:LossSocialBufferingType .
+
+csc:LossSocialBufferingType a csf:BehavioralStep, owl:NamedIndividual ;
+    rdfs:label "Loss of Social Buffering (Type)"@en ;
+    rdfs:comment "Step type: absence of social support moderation."@en ;
+    csf:feedsForwardTo csc:SustainedHPAActivationType .
+
+csc:RuminativeCopingType a csf:BehavioralStep, owl:NamedIndividual ;
+    rdfs:label "Ruminative Coping (Type)"@en ;
+    rdfs:comment "Step type: perseverative thinking maintaining activation."@en ;
+    csf:feedsForwardTo csc:SustainedHPAActivationType .
+
+csc:SleepDisruptionType a csf:BehavioralStep, owl:NamedIndividual ;
+    rdfs:label "Sleep Disruption (Type)"@en ;
+    rdfs:comment "Step type: impaired sleep quality/continuity."@en ;
+    csf:feedsForwardTo csc:CARFlatteningType, csc:ImpairedEmotionalProcessingType .
+
+csc:LearnedHelplessnessType a csf:BehavioralStep, owl:NamedIndividual ;
+    rdfs:label "Learned Helplessness (Type)"@en ;
+    rdfs:comment "Step type: behavioral passivity from uncontrollable stress."@en ;
+    csf:pubmedID "26981074" .
+
+# ===== LEVEL 7: Cognitive/Emotional Processing Types =====
+
+csc:ImpairedEmotionalProcessingType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "Impaired Emotional Processing (Type)"@en ;
+    rdfs:comment "Step type: deficits in emotional discrimination and regulation."@en ;
+    csf:pubmedID "39680766" .
+
+csc:ImpairedWorkingMemoryType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "Impaired Working Memory (Type)"@en ;
+    rdfs:comment "Step type: deficits from PFC dysfunction."@en ;
+    csf:pubmedID "17615391" .
+
+csc:CognitiveRigidityType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "Cognitive Rigidity (Type)"@en ;
+    rdfs:comment "Step type: impaired cognitive flexibility and set-shifting."@en ;
+    csf:pubmedID "17615391" .
+
+csc:SynapticDysfunctionType a csf:NeuralPlasticityStep, owl:NamedIndividual ;
+    rdfs:label "Synaptic Dysfunction (Type)"@en ;
+    rdfs:comment "Step type: impaired synaptic plasticity and neurotransmission."@en .
+
+# ===== Feedforward Loop Types =====
+
+csc:PTSDMaintenanceLoopType a csc:FeedforwardLoop, owl:NamedIndividual ;
+    rdfs:label "PTSD Maintenance Loop (Type)"@en ;
+    rdfs:comment "Loop type: impaired contextualization → overgeneralized fear → hypervigilance → sustained activation."@en ;
+    csf:hasStep csc:ImpairedContextualizationType, csc:AmygdalaSensitizationType, 
+                    csc:HypervigilanceType, csc:SustainedHPAActivationType ;
+    csf:feedsForwardTo csc:ImpairedContextualizationType .
+
+csc:DepressionMaintenanceLoopType a csc:FeedforwardLoop, owl:NamedIndividual ;
+    rdfs:label "Depression Maintenance Loop (Type)"@en ;
+    rdfs:comment "Loop type: inflammation → anhedonia → withdrawal → loss of buffering → sustained activation."@en ;
+    csf:hasStep csc:InflammatoryActivationType, csc:SocialWithdrawalType, 
+                    csc:LossSocialBufferingType, csc:SustainedHPAActivationType ;
+    csf:feedsForwardTo csc:InflammatoryActivationType .
+
+# ===== Outcome-Situation Feedback Loop Types (v3.1 extension) =====
+
+csc:DepressionWithdrawalFeedbackType a csc:FeedforwardLoop, owl:NamedIndividual ;
+    rdfs:label "Depression-Withdrawal Feedback Loop (Type)"@en ;
+    rdfs:comment "Loop type: depression (outcome) → social withdrawal → loss of social buffering → new SocialDisconnection situation → further cascade activation. This formalizes the outcome-to-situation feedback missing in v3.0. Added in v3.1."@en ;
+    csf:hasTerminationCondition csf:ExternalIntervention ;
+    csf:hasDampingFactor "0.1"^^xsd:float ;
+    rdfs:comment "Low damping factor reflects clinical observation that this loop is self-sustaining without intervention."@en .
+
+#################################################################
+#    CASCADE FRAMES (Schema-Level Workflow Patterns)
+#################################################################
+
+# ============================================================
+# TYPE A: SUBORDINATION CASCADE FRAME
+# ============================================================
+
+csc:SubordinationCascadeFrame a csf:CascadeFrame, owl:NamedIndividual ;
+    rdfs:label "Subordination Cascade Frame"@en ;
+    rdfs:comment """SCHEMA: Low status → social defeat stress → failure to habituate → 
+    sustained GR activation → hippocampal atrophy + amygdalar hyperreactivity → 
+    anxiety/depression comorbidity."""@en ;
+    
+    csf:triggeredByFrame frm:ChronicSubordinationFrame ;
+    
+    csf:hasStep csc:HPAActivationType, csc:CortisolReleaseType, csc:GRActivationType,
+                    csc:FailureToHabituateType, csc:AmygdalaSensitizationType, 
+                    csc:HippocampalDendriticRetractionType, csc:SustainedHPAActivationType ;
+    
+    csf:hasSequence csc:SubordinationSequence ;
+    
+    csf:typicallyLeadsTo out:Depression, out:Anxiety, out:MetabolicSyndrome ;
+    csf:pubmedID "9629234" ;
+    pol:designHeuristic pol:m03-CASCADEMODELING .
+
+csc:SubordinationSequence a csf:CascadeSequence ;
+    co:firstItem csc:SubSeq1 ;
+    co:lastItem csc:SubSeq7 ;
+    co:size "7"^^xsd:positiveInteger .
+
+csc:SubSeq1 a csf:CascadeSequenceItem ;
+    co:index "1"^^xsd:positiveInteger ;
+    co:itemContent csc:HPAActivationType ;
+    co:nextItem csc:SubSeq2 .
+
+csc:SubSeq2 a csf:CascadeSequenceItem ;
+    co:index "2"^^xsd:positiveInteger ;
+    co:itemContent csc:CortisolReleaseType ;
+    co:nextItem csc:SubSeq3 .
+
+csc:SubSeq3 a csf:CascadeSequenceItem ;
+    co:index "3"^^xsd:positiveInteger ;
+    co:itemContent csc:GRActivationType ;
+    co:nextItem csc:SubSeq4 .
+
+csc:SubSeq4 a csf:CascadeSequenceItem ;
+    co:index "4"^^xsd:positiveInteger ;
+    co:itemContent csc:FailureToHabituateType ;
+    co:nextItem csc:SubSeq5 .
+
+csc:SubSeq5 a csf:CascadeSequenceItem ;
+    co:index "5"^^xsd:positiveInteger ;
+    co:itemContent csc:AmygdalaSensitizationType ;
+    co:nextItem csc:SubSeq6 .
+
+csc:SubSeq6 a csf:CascadeSequenceItem ;
+    co:index "6"^^xsd:positiveInteger ;
+    co:itemContent csc:HippocampalDendriticRetractionType ;
+    co:nextItem csc:SubSeq7 .
+
+csc:SubSeq7 a csf:CascadeSequenceItem ;
+    co:index "7"^^xsd:positiveInteger ;
+    co:itemContent csc:SustainedHPAActivationType .
+
+# ============================================================
+# TYPE B: UNCONTROLLABLE THREAT CASCADE FRAME
+# ============================================================
+
+csc:UncontrollableThreatCascadeFrame a csf:CascadeFrame, owl:NamedIndividual ;
+    rdfs:label "Uncontrollable Threat Cascade Frame"@en ;
+    rdfs:comment """SCHEMA: Uncontrollable threat → amygdala sensitization + PFC downregulation → 
+    loss of top-down inhibition → sustained cortisol → hippocampal reduction → 
+    impaired contextualization → PTSD maintenance loop."""@en ;
+    
+    csf:triggeredByFrame frm:UncontrollableThreatFrame ;
+    
+    csf:hasStep csc:HPAActivationType, csc:AmygdalaActivationType, csc:AmygdalaSensitizationType,
+                    csc:PFCDownregulationType, csc:LossOfTopDownInhibitionType, csc:SustainedHPAActivationType,
+                    csc:HippocampalVolumeReductionType, csc:ImpairedContextualizationType, csc:PTSDMaintenanceLoopType ;
+    
+    csf:hasSequence csc:UncontrollableThreatSequence ;
+    
+    csf:typicallyLeadsTo out:PTSD, out:ComplexTrauma, out:TreatmentResistantDepression ;
+    csf:pubmedID "33345670" ;
+    pol:designHeuristic pol:m03-CASCADEMODELING .
+
+csc:UncontrollableThreatSequence a csf:CascadeSequence ;
+    co:firstItem csc:UTSeq1 ;
+    co:lastItem csc:UTSeq7 ;
+    co:size "7"^^xsd:positiveInteger .
+
+csc:UTSeq1 a csf:CascadeSequenceItem ;
+    co:index "1"^^xsd:positiveInteger ;
+    co:itemContent csc:HPAActivationType ;
+    co:nextItem csc:UTSeq2 .
+
+csc:UTSeq2 a csf:CascadeSequenceItem ;
+    co:index "2"^^xsd:positiveInteger ;
+    co:itemContent csc:UTParallelBranch1 ;
+    co:nextItem csc:UTSeq3 .
+
+# Parallel branch: Amygdala + PFC effects simultaneous
+csc:UTParallelBranch1 a csc:ParallelBranch ;
+    rdfs:label "Amygdala-PFC Parallel Effects"@en ;
+    csc:hasBranchElement csc:AmygdalaSensitizationType, csc:PFCDownregulationType .
+
+csc:UTSeq3 a csf:CascadeSequenceItem ;
+    co:index "3"^^xsd:positiveInteger ;
+    co:itemContent csc:LossOfTopDownInhibitionType ;
+    co:nextItem csc:UTSeq4 .
+
+csc:UTSeq4 a csf:CascadeSequenceItem ;
+    co:index "4"^^xsd:positiveInteger ;
+    co:itemContent csc:SustainedHPAActivationType ;
+    co:nextItem csc:UTSeq5 .
+
+csc:UTSeq5 a csf:CascadeSequenceItem ;
+    co:index "5"^^xsd:positiveInteger ;
+    co:itemContent csc:HippocampalVolumeReductionType ;
+    co:nextItem csc:UTSeq6 .
+
+csc:UTSeq6 a csf:CascadeSequenceItem ;
+    co:index "6"^^xsd:positiveInteger ;
+    co:itemContent csc:ImpairedContextualizationType ;
+    co:nextItem csc:UTSeq7 .
+
+csc:UTSeq7 a csf:CascadeSequenceItem ;
+    co:index "7"^^xsd:positiveInteger ;
+    co:itemContent csc:PTSDMaintenanceLoopType .
+
+# ============================================================
+# TYPE C: CAREGIVING ENTRAPMENT CASCADE FRAME
+# ============================================================
+
+csc:CaregivingEntrapmentCascadeFrame a csf:CascadeFrame, owl:NamedIndividual ;
+    rdfs:label "Caregiving Entrapment Cascade Frame"@en ;
+    rdfs:comment """SCHEMA: Caregiving burden → sleep disruption → CAR dysregulation → 
+    impaired emotional discrimination → reduced coping → depression → feedforward."""@en ;
+    
+    csf:triggeredByFrame frm:CaregivingEntrapmentFrame ;
+    
+    csf:hasStep csc:HPAActivationType, csc:SleepDisruptionType, csc:CARFlatteningType,
+                    csc:ImpairedEmotionalProcessingType, csc:SocialWithdrawalType, 
+                    csc:LossSocialBufferingType, csc:DepressionMaintenanceLoopType ;
+    
+    csf:hasSequence csc:CaregivingSequence ;
+    
+    csf:typicallyLeadsTo out:Depression, out:CaregiverBurnout, out:ImmuneDysregulation ;
+    csf:pubmedID "39680766" ;
+    pol:designHeuristic pol:m03-CASCADEMODELING .
+
+csc:CaregivingSequence a csf:CascadeSequence ;
+    co:firstItem csc:CGSeq1 ;
+    co:lastItem csc:CGSeq7 ;
+    co:size "7"^^xsd:positiveInteger .
+
+csc:CGSeq1 a csf:CascadeSequenceItem ;
+    co:index "1"^^xsd:positiveInteger ;
+    co:itemContent csc:HPAActivationType ;
+    co:nextItem csc:CGSeq2 .
+
+csc:CGSeq2 a csf:CascadeSequenceItem ;
+    co:index "2"^^xsd:positiveInteger ;
+    co:itemContent csc:SleepDisruptionType ;
+    co:nextItem csc:CGSeq3 .
+
+csc:CGSeq3 a csf:CascadeSequenceItem ;
+    co:index "3"^^xsd:positiveInteger ;
+    co:itemContent csc:CARFlatteningType ;
+    co:nextItem csc:CGSeq4 .
+
+csc:CGSeq4 a csf:CascadeSequenceItem ;
+    co:index "4"^^xsd:positiveInteger ;
+    co:itemContent csc:ImpairedEmotionalProcessingType ;
+    co:nextItem csc:CGSeq5 .
+
+csc:CGSeq5 a csf:CascadeSequenceItem ;
+    co:index "5"^^xsd:positiveInteger ;
+    co:itemContent csc:SocialWithdrawalType ;
+    co:nextItem csc:CGSeq6 .
+
+csc:CGSeq6 a csf:CascadeSequenceItem ;
+    co:index "6"^^xsd:positiveInteger ;
+    co:itemContent csc:LossSocialBufferingType ;
+    co:nextItem csc:CGSeq7 .
+
+csc:CGSeq7 a csf:CascadeSequenceItem ;
+    co:index "7"^^xsd:positiveInteger ;
+    co:itemContent csc:DepressionMaintenanceLoopType .
+
+# ============================================================
+# TYPE D: EARLY LIFE PROGRAMMING CASCADE FRAME
+# ============================================================
+
+csc:EarlyLifeProgrammingCascadeFrame a csf:CascadeFrame, owl:NamedIndividual ;
+    rdfs:label "Early Life Programming Cascade Frame"@en ;
+    rdfs:comment """SCHEMA: Early adversity → epigenetic modification of GR/FKBP5 → 
+    reduced negative feedback → lifelong HPA hyperreactivity → amplified adult stress."""@en ;
+    
+    csf:triggeredByFrame frm:EarlyLifeProgrammingFrame ;
+    
+    csf:hasStep csc:HPAActivationType, csc:NR3C1MethylationType, csc:FKBP5DemethylationType,
+                    csc:ReducedGRFunctionType, csc:ImpairedNegativeFeedbackType, 
+                    csc:SustainedHPAActivationType ;
+    
+    csf:hasSequence csc:EarlyLifeSequence ;
+    csf:lifespanEffect "true"^^xsd:boolean ;
+    
+    csf:typicallyLeadsTo out:LifelongVulnerability, out:RecurrentDepression, out:PTSD,
+                         out:PersonalityPathology, out:EarlyOnsetCognitiveDecline ;
+    csf:pubmedID "15084670" ;
+    dcterms:references <https://developingchild.harvard.edu/> ;
+    pol:designHeuristic pol:m03-CASCADEMODELING .
+
+csc:EarlyLifeSequence a csf:CascadeSequence ;
+    co:firstItem csc:ELSeq1 ;
+    co:lastItem csc:ELSeq5 ;
+    co:size "5"^^xsd:positiveInteger .
+
+csc:ELSeq1 a csf:CascadeSequenceItem ;
+    co:index "1"^^xsd:positiveInteger ;
+    co:itemContent csc:HPAActivationType ;
+    co:nextItem csc:ELSeq2 .
+
+csc:ELSeq2 a csf:CascadeSequenceItem ;
+    co:index "2"^^xsd:positiveInteger ;
+    co:itemContent csc:ELParallelBranch1 ;
+    co:nextItem csc:ELSeq3 .
+
+csc:ELParallelBranch1 a csc:ParallelBranch ;
+    rdfs:label "Parallel Epigenetic Modifications"@en ;
+    csc:hasBranchElement csc:NR3C1MethylationType, csc:FKBP5DemethylationType .
+
+csc:ELSeq3 a csf:CascadeSequenceItem ;
+    co:index "3"^^xsd:positiveInteger ;
+    co:itemContent csc:ReducedGRFunctionType ;
+    co:nextItem csc:ELSeq4 .
+
+csc:ELSeq4 a csf:CascadeSequenceItem ;
+    co:index "4"^^xsd:positiveInteger ;
+    co:itemContent csc:ImpairedNegativeFeedbackType ;
+    co:nextItem csc:ELSeq5 .
+
+csc:ELSeq5 a csf:CascadeSequenceItem ;
+    co:index "5"^^xsd:positiveInteger ;
+    co:itemContent csc:SustainedHPAActivationType .
+
+# ============================================================
+# TYPE E: IDENTITY THREAT CASCADE FRAME
+# ============================================================
+
+csc:IdentityThreatCascadeFrame a csf:CascadeFrame, owl:NamedIndividual ;
+    rdfs:label "Identity Threat Cascade Frame"@en ;
+    rdfs:comment """SCHEMA: Identity threat → chronic anticipatory stress + rumination → 
+    failure to shut off HPA → inflammation → neuroinflammation → depression."""@en ;
+    
+    csf:triggeredByFrame frm:ChronicIdentityThreatFrame ;
+    
+    csf:hasStep csc:HPAActivationType, csc:RuminativeCopingType, csc:SustainedHPAActivationType,
+                    csc:InflammatoryActivationType, csc:NeuroinflammationType, csc:DepressionMaintenanceLoopType ;
+    
+    csf:hasSequence csc:IdentityThreatSequence ;
+    
+    csf:typicallyLeadsTo out:Depression, out:Anxiety, out:CardiovascularDisease ;
+    csf:pubmedID "32389588" ;
+    pol:designHeuristic pol:m03-CASCADEMODELING .
+
+csc:IdentityThreatSequence a csf:CascadeSequence ;
+    co:firstItem csc:ITSeq1 ;
+    co:lastItem csc:ITSeq6 ;
+    co:size "6"^^xsd:positiveInteger .
+
+csc:ITSeq1 a csf:CascadeSequenceItem ;
+    co:index "1"^^xsd:positiveInteger ;
+    co:itemContent csc:HPAActivationType ;
+    co:nextItem csc:ITSeq2 .
+
+csc:ITSeq2 a csf:CascadeSequenceItem ;
+    co:index "2"^^xsd:positiveInteger ;
+    co:itemContent csc:RuminativeCopingType ;
+    co:nextItem csc:ITSeq3 .
+
+csc:ITSeq3 a csf:CascadeSequenceItem ;
+    co:index "3"^^xsd:positiveInteger ;
+    co:itemContent csc:SustainedHPAActivationType ;
+    co:nextItem csc:ITSeq4 .
+
+csc:ITSeq4 a csf:CascadeSequenceItem ;
+    co:index "4"^^xsd:positiveInteger ;
+    co:itemContent csc:InflammatoryActivationType ;
+    co:nextItem csc:ITSeq5 .
+
+csc:ITSeq5 a csf:CascadeSequenceItem ;
+    co:index "5"^^xsd:positiveInteger ;
+    co:itemContent csc:NeuroinflammationType ;
+    co:nextItem csc:ITSeq6 .
+
+csc:ITSeq6 a csf:CascadeSequenceItem ;
+    co:index "6"^^xsd:positiveInteger ;
+    co:itemContent csc:DepressionMaintenanceLoopType .
+
+# ============================================================
+# TYPE F: CIRCADIAN MISALIGNMENT CASCADE FRAME
+# ============================================================
+
+csc:CircadianMisalignmentCascadeFrame a csf:CascadeFrame, owl:NamedIndividual ;
+    rdfs:label "Circadian Misalignment Cascade Frame"@en ;
+    rdfs:comment """SCHEMA: Circadian disruption → CAR flattening → impaired proactive 
+    resource allocation → emotional + executive deficits."""@en ;
+    
+    csf:triggeredByFrame frm:CircadianMisalignmentFrame ;
+    
+    csf:hasStep csc:DiurnalRhythmDisruptionType, csc:CARFlatteningType, 
+                    csc:ImpairedEmotionalProcessingType, csc:ImpairedWorkingMemoryType ;
+    
+    csf:hasSequence csc:CircadianSequence ;
+    
+    csf:typicallyLeadsTo out:Depression, out:MetabolicSyndrome, out:CognitiveImpairment ;
+    csf:pubmedID "39680766" ;
+    pol:designHeuristic pol:m03-CASCADEMODELING .
+
+csc:CircadianSequence a csf:CascadeSequence ;
+    co:firstItem csc:CCSeq1 ;
+    co:lastItem csc:CCSeq3 ;
+    co:size "3"^^xsd:positiveInteger .
+
+csc:CCSeq1 a csf:CascadeSequenceItem ;
+    co:index "1"^^xsd:positiveInteger ;
+    co:itemContent csc:DiurnalRhythmDisruptionType ;
+    co:nextItem csc:CCSeq2 .
+
+csc:CCSeq2 a csf:CascadeSequenceItem ;
+    co:index "2"^^xsd:positiveInteger ;
+    co:itemContent csc:CARFlatteningType ;
+    co:nextItem csc:CCSeq3 .
+
+csc:CCSeq3 a csf:CascadeSequenceItem ;
+    co:index "3"^^xsd:positiveInteger ;
+    co:itemContent csc:CCParallelBranch1 .
+
+csc:CCParallelBranch1 a csc:ParallelBranch ;
+    rdfs:label "Parallel Cognitive Effects"@en ;
+    csc:hasBranchElement csc:ImpairedEmotionalProcessingType, csc:ImpairedWorkingMemoryType .
+
+# ============================================================
+# TYPE G: SOCIAL DISCONNECTION CASCADE FRAME
+# ============================================================
+
+csc:SocialDisconnectionCascadeFrame a csf:CascadeFrame, owl:NamedIndividual ;
+    rdfs:label "Social Disconnection Cascade Frame"@en ;
+    rdfs:comment """SCHEMA: Social disconnection → loss of diurnal regulation → CAR flattening → 
+    impaired emotional processing → depression → withdrawal (feedforward)."""@en ;
+    
+    csf:triggeredByFrame frm:SocialDisconnectionFrame ;
+    
+    csf:hasStep csc:LossSocialBufferingType, csc:DiurnalRhythmDisruptionType, csc:CARFlatteningType,
+                    csc:ImpairedEmotionalProcessingType, csc:SocialWithdrawalType, csc:DepressionMaintenanceLoopType ;
+    
+    csf:hasSequence csc:SocialDisconnectionSequence ;
+    
+    csf:typicallyLeadsTo out:Depression, out:AcceleratedCognitiveDecline, out:Dementia ;
+    csf:pubmedID "32807491" ;
+    pol:designHeuristic pol:m03-CASCADEMODELING .
+
+csc:SocialDisconnectionSequence a csf:CascadeSequence ;
+    co:firstItem csc:SDSeq1 ;
+    co:lastItem csc:SDSeq6 ;
+    co:size "6"^^xsd:positiveInteger .
+
+csc:SDSeq1 a csf:CascadeSequenceItem ;
+    co:index "1"^^xsd:positiveInteger ;
+    co:itemContent csc:LossSocialBufferingType ;
+    co:nextItem csc:SDSeq2 .
+
+csc:SDSeq2 a csf:CascadeSequenceItem ;
+    co:index "2"^^xsd:positiveInteger ;
+    co:itemContent csc:DiurnalRhythmDisruptionType ;
+    co:nextItem csc:SDSeq3 .
+
+csc:SDSeq3 a csf:CascadeSequenceItem ;
+    co:index "3"^^xsd:positiveInteger ;
+    co:itemContent csc:CARFlatteningType ;
+    co:nextItem csc:SDSeq4 .
+
+csc:SDSeq4 a csf:CascadeSequenceItem ;
+    co:index "4"^^xsd:positiveInteger ;
+    co:itemContent csc:ImpairedEmotionalProcessingType ;
+    co:nextItem csc:SDSeq5 .
+
+csc:SDSeq5 a csf:CascadeSequenceItem ;
+    co:index "5"^^xsd:positiveInteger ;
+    co:itemContent csc:SocialWithdrawalType ;
+    co:nextItem csc:SDSeq6 .
+
+csc:SDSeq6 a csf:CascadeSequenceItem ;
+    co:index "6"^^xsd:positiveInteger ;
+    co:itemContent csc:DepressionMaintenanceLoopType .
+
+#################################################################
+#    CASCADE FRAME COMPOUNDING
+#################################################################
+
+csc:compoundsWithCascade a owl:ObjectProperty ;
+    a owl:SymmetricProperty ;
+    rdfs:domain csf:CascadeFrame ;
+    rdfs:range csf:CascadeFrame ;
+    rdfs:label "compounds with cascade"@en ;
+    rdfs:comment "Schema-level: cascades that produce nonlinear amplification when co-occurring."@en .
+
+csc:EarlyLifeProgrammingCascadeFrame csc:compoundsWithCascade csc:UncontrollableThreatCascadeFrame .
+csc:CaregivingEntrapmentCascadeFrame csc:compoundsWithCascade csc:CircadianMisalignmentCascadeFrame .
+csc:IdentityThreatCascadeFrame csc:compoundsWithCascade csc:SubordinationCascadeFrame .
+csc:SocialDisconnectionCascadeFrame csc:compoundsWithCascade csc:CircadianMisalignmentCascadeFrame .
+
+#################################################################
+#    TEMPORAL PHASE ANNOTATIONS FOR EXISTING STEPS (v3.1)
+#################################################################
+
+# Annotate key existing step types with temporal phase information
+csc:HPAActivationType csf:hasTemporalPhase csf:AcutePhase ;
+    csf:hasTypicalOnset "seconds-minutes" .
+
+csc:CortisolReleaseType csf:hasTemporalPhase csf:AcutePhase ;
+    csf:hasTypicalOnset "minutes" .
+
+csc:AmygdalaSensitizationType csf:hasTemporalPhase csf:SubacutePhase ;
+    csf:hasTypicalOnset "days-weeks" .
+
+csc:HippocampalVolumeReductionType csf:hasTemporalPhase csf:ChronicPhase ;
+    csf:hasTypicalOnset "months-years" .
+
+csc:NR3C1MethylationType csf:hasTemporalPhase csf:ChronicPhase ;
+    csf:hasTypicalOnset "weeks-months" ;
+    csf:hasTypicalDuration "years-permanent" .
+
+csc:SustainedHPAActivationType csf:hasTemporalPhase csf:ChronicPhase ;
+    csf:hasTypicalOnset "weeks" .
+
+csc:CARFlatteningType csf:hasTemporalPhase csf:SubacutePhase ;
+    csf:hasTypicalOnset "weeks" .
+
+csc:InflammatoryActivationType csf:hasTemporalPhase csf:SubacutePhase ;
+    csf:hasTypicalOnset "days-weeks" .
+
+csc:NeuroinflammationType csf:hasTemporalPhase csf:ChronicPhase ;
+    csf:hasTypicalOnset "weeks-months" .
+
+csc:SleepDisruptionType csf:hasTemporalPhase csf:AcutePhase ;
+    csf:hasTypicalOnset "days" .
+
+csc:SocialWithdrawalType csf:hasTemporalPhase csf:SubacutePhase ;
+    csf:hasTypicalOnset "weeks" .

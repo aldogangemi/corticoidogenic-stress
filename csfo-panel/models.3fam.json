@@ -1,0 +1,37 @@
+[
+ {
+  "provider": "anthropic",
+  "model": "claude-sonnet-5",
+  "family": "anthropic",
+  "generation": "5.x (Jun 2026)",
+  "role_default": "A1_SOCIAL"
+ },
+ {
+  "provider": "openai",
+  "model": "gpt-5.6-sol",
+  "family": "openai",
+  "generation": "5.6 (2026)",
+  "role_default": "A2_PSYCH"
+ },
+ {
+  "provider": "anthropic",
+  "model": "claude-haiku-4-5-20251001",
+  "family": "anthropic",
+  "generation": "4.5 (Oct 2025), small",
+  "role_default": "A3_ENDOCRINE"
+ },
+ {
+  "provider": "google",
+  "model": "gemini-3.1-pro-preview",
+  "family": "google",
+  "generation": "3.x",
+  "role_default": "A4_NEUROIMMUNE"
+ },
+ {
+  "provider": "google",
+  "model": "gemini-2.5-pro",
+  "family": "google",
+  "generation": "2.5 (prev live)",
+  "role_default": "A5_MOLECULAR"
+ }
+]

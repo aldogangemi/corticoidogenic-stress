@@ -1,0 +1,340 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix csf: <http://purl.org/csf/> .
+@prefix csc: <http://purl.org/csf/cascades#> .
+@prefix frm: <http://purl.org/csf/frames#> .
+@prefix sit: <http://purl.org/csf/situations#> .
+@prefix mod: <http://purl.org/csf/moderators#> .
+@prefix int: <http://purl.org/csf/interventions#> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+
+#################################################################
+#    CSF SHACL Shapes v3.3
+#    Validates structural constraints for the CSF ontology network.
+#    Updated 2026-04-20: adds shapes for Situation Phases (H2b),
+#    Protective Frames (H1), Interventions (H7), and Phase Transitions.
+#################################################################
+
+#################################################################
+#    1. Descriptions & Situations (D&S) Shapes
+#################################################################
+
+csf:SituationShape
+    a sh:NodeShape ;
+    sh:targetClass csf:CSF_Situation ;
+    rdfs:label "CSF Situation Validation Shape"@en ;
+    rdfs:comment "Ensures every actual situation evokes exactly one corticoidogenic frame template."@en ;
+    
+    sh:property [
+        sh:path csf:evokes ;
+        sh:class csf:CorticoidogenicFrame ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A CSF_Situation must evoke exactly one CorticoidogenicFrame (e.g., frm:ChronicSubordinationFrame)."@en ;
+    ] .
+
+csf:CascadeOccurrenceShape
+    a sh:NodeShape ;
+    sh:targetClass csf:CascadeOccurrence ;
+    rdfs:label "Cascade Occurrence Validation Shape"@en ;
+    
+    sh:property [
+        sh:path csf:evokedBy ;
+        sh:class csf:CascadeFrame ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A CascadeOccurrence must be evoked by exactly one CascadeFrame template."@en ;
+    ] ;
+    
+    sh:property [
+        sh:path csf:hasStepOccurrence ;
+        sh:class csf:CascadeStepOccurrence ;
+        sh:minCount 1 ;
+        sh:message "A CascadeOccurrence must contain at least one CascadeStepOccurrence."@en ;
+    ] .
+
+#################################################################
+#    2. Task Execution Shapes (BRI Validation)
+#################################################################
+
+csf:StepOccurrenceShape
+    a sh:NodeShape ;
+    sh:targetClass csf:CascadeStepOccurrence ;
+    rdfs:label "Cascade Step Occurrence Validation Shape"@en ;
+    rdfs:comment "Ensures every concrete step event executes a valid step type defined in the schema."@en ;
+    
+    sh:property [
+        sh:path csf:executesStep ;
+        sh:class csf:CascadeStep ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A CascadeStepOccurrence must execute exactly one CascadeStep type (e.g., csc:CortisolReleaseType)."@en ;
+    ] ;
+    
+    sh:property [
+        sh:path csf:hasTemporalPhase ;
+        sh:class csf:CascadeTemporalPhase ;
+        sh:maxCount 1 ;
+        sh:message "A step occurrence can only have one specific temporal phase at a time."@en ;
+    ] .
+
+#################################################################
+#    3. Moderator Interaction Shapes (v3.1)
+#################################################################
+
+csf:ModeratorInteractionShape
+    a sh:NodeShape ;
+    sh:targetClass csf:ModeratorInteraction ;
+    rdfs:label "Moderator Interaction Validation Shape"@en ;
+    rdfs:comment "Ensures moderator interaction math is complete and valid."@en ;
+    
+    sh:property [
+        sh:path csf:hasInteractingModerator ;
+        sh:class csf:Moderator ;
+        sh:minCount 2 ;
+        sh:message "A ModeratorInteraction must link to at least TWO distinct csf:Moderator instances."@en ;
+    ] ;
+    
+    sh:property [
+        sh:path csf:interactionType ;
+        sh:datatype xsd:string ;
+        sh:in ( "synergistic" "antagonistic" "conditional" "additive" ) ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Interaction type must be exactly one of: synergistic, antagonistic, conditional, additive."@en ;
+    ] ;
+    
+    sh:property [
+        sh:path csf:interactionMagnitude ;
+        sh:datatype xsd:float ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A ModeratorInteraction must declare exactly one numerical magnitude (xsd:float)."@en ;
+    ] .
+
+#################################################################
+#    4. Situation Phase Shapes (v3.3 — H2b)
+#################################################################
+
+# Validates that situation instances have at most one current phase
+csf:SituationPhaseShape
+    a sh:NodeShape ;
+    sh:targetClass csf:CSF_Situation ;
+    rdfs:label "Situation Phase Validation Shape"@en ;
+    rdfs:comment "Validates GAS phase assignment on situation instances."@en ;
+    
+    sh:property [
+        sh:path csf:hasSituationPhase ;
+        sh:class csf:SituationPhase ;
+        sh:maxCount 1 ;
+        sh:message "A CSF_Situation instance can have at most one current SituationPhase (Alarm, Resistance, Exhaustion, Adaptation, or Recovery)."@en ;
+    ] .
+
+# Validates PhaseTransition completeness
+csf:PhaseTransitionShape
+    a sh:NodeShape ;
+    sh:targetClass csf:PhaseTransition ;
+    rdfs:label "Phase Transition Validation Shape"@en ;
+    rdfs:comment "Ensures every phase transition has from/to phases and a condition."@en ;
+    
+    sh:property [
+        sh:path csf:hasTransitionFrom ;
+        sh:class csf:SituationPhase ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A PhaseTransition must have exactly one source phase (hasTransitionFrom)."@en ;
+    ] ;
+    
+    sh:property [
+        sh:path csf:hasTransitionTo ;
+        sh:class csf:SituationPhase ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "A PhaseTransition must have exactly one target phase (hasTransitionTo)."@en ;
+    ] ;
+    
+    sh:property [
+        sh:path csf:hasTransitionCondition ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "A PhaseTransition must declare at least one transition condition."@en ;
+    ] .
+
+# Validates phase-cascade activation mapping consistency
+csf:PhaseActivationShape
+    a sh:NodeShape ;
+    sh:targetClass csf:SituationPhase ;
+    rdfs:label "Phase-Cascade Activation Validation Shape"@en ;
+    rdfs:comment "Each SituationPhase should map to at least one CascadeTemporalPhase."@en ;
+    
+    sh:property [
+        sh:path csf:activatesCascadePhase ;
+        sh:class csf:CascadeTemporalPhase ;
+        sh:minCount 1 ;
+        sh:message "A SituationPhase should map to at least one CascadeTemporalPhase via activatesCascadePhase."@en ;
+        sh:severity sh:Warning ;
+    ] .
+
+#################################################################
+#    5. Protective Frame Shapes (v3.3 — H1)
+#################################################################
+
+csf:ProtectiveFrameShape
+    a sh:NodeShape ;
+    sh:targetClass frm:ProtectiveFrame ;
+    rdfs:label "Protective Frame Validation Shape"@en ;
+    rdfs:comment "Validates that protective frames specify which harm pathways they attenuate and their estimated strength."@en ;
+    
+    sh:property [
+        sh:path frm:buffersAgainstFrame ;
+        sh:class csf:CorticoidogenicFrame ;
+        sh:minCount 1 ;
+        sh:message "A ProtectiveFrame must specify at least one CorticoidogenicFrame it buffers against (via frm:buffersAgainstFrame)."@en ;
+    ] ;
+    
+    sh:property [
+        sh:path frm:protectiveStrength ;
+        sh:datatype xsd:float ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:minInclusive 0.0 ;
+        sh:maxInclusive 1.0 ;
+        sh:message "A ProtectiveFrame must declare exactly one protectiveStrength (xsd:float in [0.0, 1.0])."@en ;
+    ] .
+
+#################################################################
+#    6. Intervention Shapes (v3.3 — H7)
+#################################################################
+
+# Schema-level Intervention validation
+csf:InterventionShape
+    a sh:NodeShape ;
+    sh:targetClass int:Intervention ;
+    rdfs:label "Intervention Validation Shape"@en ;
+    rdfs:comment "Validates that interventions have proper evidence grading and mechanism targets."@en ;
+    
+    sh:property [
+        sh:path int:evidenceLevel ;
+        sh:datatype xsd:string ;
+        sh:in ( "Ia" "Ib" "IIa" "IIb" "III" "IV" ) ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "An Intervention must declare exactly one Oxford CEBM evidence level (Ia, Ib, IIa, IIb, III, IV)."@en ;
+    ] ;
+    
+    # Must target at least one situation or mechanism
+    sh:or (
+        [ sh:property [
+            sh:path int:mitigates ;
+            sh:class csf:CSF_Situation ;
+            sh:minCount 1 ;
+        ] ]
+        [ sh:property [
+            sh:path int:targetsMechanism ;
+            sh:class csf:CascadeStep ;
+            sh:minCount 1 ;
+        ] ]
+    ) ;
+    sh:message "An Intervention must target at least one CSF_Situation (via int:mitigates) or CascadeStep (via int:targetsMechanism)."@en .
+
+# Validates phase-aware intervention constraints
+csf:InterventionPhaseConsistencyShape
+    a sh:NodeShape ;
+    sh:targetClass int:Intervention ;
+    rdfs:label "Intervention Phase Consistency Shape"@en ;
+    rdfs:comment "Warns if an intervention lists the same phase as both optimal and contraindicated."@en ;
+    sh:sparql [
+        sh:message "Intervention {$this} lists {?phase} as both optimalPhase and contraindicated — this is contradictory." ;
+        sh:select """
+            SELECT $this ?phase
+            WHERE {
+                $this int:optimalPhase ?phase .
+                $this int:contraindicated ?phase .
+            }
+        """ ;
+    ] .
+
+# Instance-level InterventionOccurrence validation
+csf:InterventionOccurrenceShape
+    a sh:NodeShape ;
+    sh:targetClass int:InterventionOccurrence ;
+    rdfs:label "Intervention Occurrence Validation Shape"@en ;
+    rdfs:comment "Ensures intervention occurrences link back to their schema plan and target situation."@en ;
+    
+    sh:property [
+        sh:path int:implementsPlan ;
+        sh:class int:Intervention ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "An InterventionOccurrence must implement exactly one Intervention plan."@en ;
+    ] ;
+    
+    sh:property [
+        sh:path int:appliedTo ;
+        sh:class csf:CSF_Situation ;
+        sh:minCount 1 ;
+        sh:message "An InterventionOccurrence must be applied to at least one CSF_Situation."@en ;
+    ] .
+
+#################################################################
+#    7. Situation-Outcome Prediction Shapes (v3.3 — H3)
+#################################################################
+
+csf:SituationOutcomePredictionShape
+    a sh:NodeShape ;
+    sh:targetClass csf:CSF_Situation ;
+    rdfs:label "Situation-Outcome Prediction Validation Shape"@en ;
+    rdfs:comment "Warns if a situation type predicts outcomes without specifying a mediating cascade."@en ;
+    sh:severity sh:Warning ;
+    
+    sh:sparql [
+        sh:message "Situation {$this} declares sit:predictsOutcome but lacks sit:mediatedByCascade — the mechanistic pathway is unspecified." ;
+        sh:select """
+            SELECT $this
+            WHERE {
+                $this sit:predictsOutcome ?outcome .
+                FILTER NOT EXISTS { $this sit:mediatedByCascade ?cascade }
+            }
+        """ ;
+    ] .
+
+#################################################################
+#    8. Cross-Module Consistency Shapes (v3.3)
+#################################################################
+
+# Validates that CascadeFrame triggeredByFrame links point to actual CorticoidogenicFrames
+csf:CascadeFrameTriggerShape
+    a sh:NodeShape ;
+    sh:targetClass csf:CascadeFrame ;
+    rdfs:label "Cascade Frame Trigger Consistency Shape"@en ;
+    
+    sh:property [
+        sh:path csf:triggeredByFrame ;
+        sh:class csf:CorticoidogenicFrame ;
+        sh:minCount 1 ;
+        sh:message "A CascadeFrame must be triggered by at least one CorticoidogenicFrame."@en ;
+        sh:severity sh:Warning ;
+    ] .
+
+# Validates that interventions targeting mechanisms reference steps that actually 
+# belong to cascades triggered by the situations the intervention mitigates
+csf:InterventionMechanismConsistencyShape
+    a sh:NodeShape ;
+    sh:targetClass int:Intervention ;
+    rdfs:label "Intervention-Mechanism Consistency Shape"@en ;
+    rdfs:comment "Warns if an intervention targets a cascade step not found in cascades associated with its mitigated situations."@en ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "Intervention {$this} targets mechanism {?step} but the mitigated situations do not connect to a cascade containing that step type." ;
+        sh:select """
+            SELECT $this ?step
+            WHERE {
+                $this int:targetsMechanism ?step .
+                $this int:mitigates ?sit .
+                ?sit sit:mediatedByCascade ?cascFrame .
+                FILTER NOT EXISTS { ?cascFrame csf:hasStep ?step }
+            }
+        """ ;
+    ] .

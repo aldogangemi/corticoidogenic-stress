@@ -1,0 +1,68 @@
+# Competency questions + SPARQL unit tests for the CSF cross-layer bridging pattern.
+# Positive CQs (b32): YES on A+ is desired. Negative CQs (b33): YES would be a defect
+# (paired with SHACL / ASK on A-). Run against csf-bridging.ttl (exemplar = A+).
+prefixes: |
+  PREFIX brg: <http://purl.org/csf/bridging#>
+  PREFIX csf: <http://purl.org/csf/>
+  PREFIX csc: <http://purl.org/csf/cascades#>
+  PREFIX out: <http://purl.org/csf/outcomes#>
+  PREFIX mod: <http://purl.org/csf/moderators#>
+  PREFIX pol: <https://w3id.org/polanyi/core#>
+
+cqs:
+  - id: cq+B1
+    polarity: positive
+    text: "Which adjacent cascade steps are cross-layer bridged, and how plausibly?"
+    test: {kind: sparql_select, expected: non_empty}
+    query: |
+      SELECT ?from ?rel ?to ?plaus WHERE {
+        ?b a brg:CrossLayerBridge ; brg:bridgeFrom ?from ; brg:bridgeRelation ?rel ;
+           brg:bridgeTo ?to ; brg:bridgePlausibility ?plaus .
+        FILTER(?rel IN (brg:DirectlyPrecedes, brg:FeedsForward)) }
+
+  - id: cq+B2
+    polarity: positive
+    text: "Does the pathway reach an L8 outcome (terminal step leadsToOutcome)?"
+    test: {kind: sparql_ask, expected: true}
+    query: |
+      ASK { ?b a brg:CrossLayerBridge ; brg:bridgeRelation brg:LeadsToOutcome ; brg:bridgeTo ?o . }
+
+  - id: cq+B3
+    polarity: positive
+    text: "Which moderator amplifies/buffers which specific step?"
+    test: {kind: sparql_select, expected: non_empty}
+    query: |
+      SELECT ?mod ?rel ?step WHERE {
+        ?b a brg:CrossLayerBridge ; brg:bridgeFrom ?mod ; brg:bridgeRelation ?rel ; brg:bridgeTo ?step .
+        FILTER(?rel IN (brg:Amplifies, brg:Buffers)) }
+
+  - id: cq+B4
+    polarity: positive
+    text: "Is every bridge literature-grounded (has a pathway citation)?"
+    test: {kind: sparql_ask, expected: true}   # true = NO uncited bridge exists
+    query: |
+      ASK { FILTER NOT EXISTS { ?b a brg:CrossLayerBridge . FILTER NOT EXISTS { ?b brg:pathwayCitation ?c } } }
+
+  - id: cq+B5
+    polarity: positive
+    text: "Trace a full pathway: which situation entrenches L4 -> ... -> outcome?"
+    test: {kind: sparql_select, expected: non_empty}
+    query: |
+      SELECT ?sit WHERE {
+        ?sit brg:hasCrossLayerBridge ?b1 , ?b2 .
+        ?b1 brg:bridgeRelation brg:DirectlyPrecedes .
+        ?b2 brg:bridgeRelation brg:LeadsToOutcome . }
+
+  - id: cq-B6
+    polarity: negative           # YES = defect (over-commitment): possibilia asserted as actual on abduced target
+    text: "Is any bridge marked Actual while its target step is only Abduced?"
+    test: {kind: sparql_ask, expected: false}   # SHACL NoOverCommitShape enforces
+    query: |
+      ASK { ?b brg:hasModalStatus brg:Actual ; brg:bridgeTo ?t . ?t pol:evidenceStatus pol:Abduced . }
+
+  - id: cq-B7
+    polarity: negative           # YES = defect: a bridge without a typed relation
+    text: "Is any bridge missing its typed relation?"
+    test: {kind: sparql_ask, expected: false}   # SHACL CrossLayerBridgeShape enforces
+    query: |
+      ASK { ?b a brg:CrossLayerBridge . FILTER NOT EXISTS { ?b brg:bridgeRelation ?r } }

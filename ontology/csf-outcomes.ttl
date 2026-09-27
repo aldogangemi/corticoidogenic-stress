@@ -1,0 +1,177 @@
+@prefix : <http://purl.org/csf/outcomes#> .
+@prefix csf: <http://purl.org/csf/> .
+@prefix out: <http://purl.org/csf/outcomes#> .
+@prefix sit: <http://purl.org/csf/situations#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+csf:outcomes
+    a owl:Ontology ;
+    owl:imports csf:cascades ;
+    rdfs:comment "v3.2: Added Resilience Outcomes. See DARKSIDE audit notes."@en ;
+    dcterms:title "CSF Outcomes Module (Refactored)"@en ;
+    owl:versionInfo "3.2.2" .
+
+
+out:OutcomeCategory a owl:Class ; rdfs:subClassOf csf:ClinicalOutcome .
+
+out:SubclinicalOutcome a owl:Class ;
+    rdfs:subClassOf out:OutcomeCategory ,
+        [ a owl:Restriction ; owl:onProperty csf:hasSeverity ; owl:hasValue csf:Subclinical ] ,
+        [ a owl:Restriction ; owl:onProperty csf:hasReversibility ; owl:hasValue csf:FullyReversible ] ;
+    rdfs:label "Subclinical Outcome"@en .
+
+out:ReversibleClinicalOutcome a owl:Class ;
+    rdfs:subClassOf out:OutcomeCategory ,
+        [ a owl:Restriction ; owl:onProperty csf:hasSeverity ; owl:hasValue csf:Moderate ] ,
+        [ a owl:Restriction ; owl:onProperty csf:hasReversibility ; owl:hasValue csf:PartiallyReversible ] ;
+    rdfs:label "Reversible Clinical Outcome"@en .
+
+out:PartiallyReversibleOutcome a owl:Class ;
+    rdfs:subClassOf out:OutcomeCategory ,
+        [ a owl:Restriction ; owl:onProperty csf:hasSeverity ; owl:hasValue csf:High ] ,
+        [ a owl:Restriction ; owl:onProperty csf:hasReversibility ; owl:hasValue csf:PartiallyReversible ] ;
+    rdfs:label "Partially Reversible Outcome"@en .
+
+out:DifficultToReverseOutcome a owl:Class ;
+    rdfs:subClassOf out:OutcomeCategory ,
+        [ a owl:Restriction ; owl:onProperty csf:hasSeverity ; owl:hasValue csf:VeryHigh ] ,
+        [ a owl:Restriction ; owl:onProperty csf:hasReversibility ; owl:hasValue csf:DifficultToReverse ] ;
+    rdfs:label "Difficult to Reverse Outcome"@en .
+
+out:StructuralDegenerativeOutcome a owl:Class ;
+    rdfs:subClassOf out:OutcomeCategory ,
+        [ a owl:Restriction ; owl:onProperty csf:hasSeverity ; owl:hasValue csf:VeryHigh ] ,
+        [ a owl:Restriction ; owl:onProperty csf:hasReversibility ; owl:hasValue csf:Irreversible ] ;
+    rdfs:label "Structural/Degenerative Outcome"@en .
+
+# Specific Outcomes with Restrictions applied for progression and comorbidity
+out:ElevatedAnxietySensitivity a owl:Class ;
+    rdfs:subClassOf out:SubclinicalOutcome ,
+        [ a owl:Restriction ; owl:onProperty out:progressesTo ; owl:someValuesFrom out:Anxiety ] ;
+    rdfs:label "Elevated Anxiety Sensitivity"@en .
+
+out:Depression a owl:Class ;
+    rdfs:subClassOf out:ReversibleClinicalOutcome ,
+        [ a owl:Restriction ; owl:onProperty out:progressesTo ; owl:someValuesFrom out:RecurrentDepression ] ,
+        [ a owl:Restriction ; owl:onProperty out:comorbidWith ; owl:someValuesFrom out:Anxiety ] ,
+        [ a owl:Restriction ; owl:onProperty csf:triggersSituation ; owl:someValuesFrom sit:SocialOstracism ] ;
+    rdfs:label "Major Depressive Episode"@en .
+
+out:PTSD a owl:Class ;
+    rdfs:subClassOf out:PartiallyReversibleOutcome ,
+        [ a owl:Restriction ; owl:onProperty out:progressesTo ; owl:someValuesFrom out:ComplexTrauma ] ,
+        [ a owl:Restriction ; owl:onProperty out:comorbidWith ; owl:someValuesFrom out:Depression ] ,
+        [ a owl:Restriction ; owl:onProperty csf:triggersSituation ; owl:someValuesFrom sit:SocialOstracism ] ;
+    rdfs:label "Post-Traumatic Stress Disorder"@en .
+
+out:Burnout a owl:Class ;
+    rdfs:subClassOf out:ReversibleClinicalOutcome ,
+        [ a owl:Restriction ; owl:onProperty out:comorbidWith ; owl:someValuesFrom out:Depression ] ,
+        [ a owl:Restriction ; owl:onProperty csf:triggersSituation ; owl:someValuesFrom sit:ChronicInsomnia ] ;
+    rdfs:label "Burnout Syndrome"@en .
+
+out:CaregiverBurnout a owl:Class ;
+    rdfs:subClassOf out:PartiallyReversibleOutcome ,
+        [ a owl:Restriction ; owl:onProperty csf:triggersSituation ; owl:someValuesFrom sit:ElderlyIsolation ] ;
+    rdfs:label "Caregiver Burnout"@en .
+
+out:RecurrentDepression a owl:Class ;
+    rdfs:subClassOf out:PartiallyReversibleOutcome ,
+        [ a owl:Restriction ; owl:onProperty out:progressesTo ; owl:someValuesFrom out:TreatmentResistantDepression ] ;
+    rdfs:label "Recurrent Depression"@en .
+
+out:MetabolicSyndromeOnset a owl:Class ;
+    rdfs:subClassOf out:ReversibleClinicalOutcome ,
+        [ a owl:Restriction ; owl:onProperty out:progressesTo ; owl:someValuesFrom out:MetabolicSyndrome ] ;
+    rdfs:label "Metabolic Syndrome Onset"@en .
+
+out:MetabolicSyndrome a owl:Class ;
+    rdfs:subClassOf out:PartiallyReversibleOutcome ,
+        [ a owl:Restriction ; owl:onProperty out:progressesTo ; owl:someValuesFrom out:CardiovascularDisease ] ,
+        [ a owl:Restriction ; owl:onProperty out:comorbidWith ; owl:someValuesFrom out:CardiovascularDisease ] ;
+    rdfs:label "Metabolic Syndrome"@en .
+
+out:HippocampalVolumeReduction a owl:Class ;
+    rdfs:subClassOf out:PartiallyReversibleOutcome ,
+        [ a owl:Restriction ; owl:onProperty out:progressesTo ; owl:someValuesFrom out:CognitiveImpairment ] ;
+    rdfs:label "Hippocampal Volume Reduction"@en .
+
+out:CognitiveImpairment a owl:Class ;
+    rdfs:subClassOf out:DifficultToReverseOutcome ,
+        [ a owl:Restriction ; owl:onProperty out:progressesTo ; owl:someValuesFrom out:AcceleratedCognitiveDecline ] ;
+    rdfs:label "Cognitive Impairment"@en .
+
+out:AcceleratedCognitiveDecline a owl:Class ;
+    rdfs:subClassOf out:DifficultToReverseOutcome ,
+        [ a owl:Restriction ; owl:onProperty out:progressesTo ; owl:someValuesFrom out:Dementia ] ;
+    rdfs:label "Accelerated Cognitive Decline"@en .
+
+out:ChronicPainSyndromes a owl:Class ;
+    rdfs:subClassOf out:DifficultToReverseOutcome ,
+        [ a owl:Restriction ; owl:onProperty out:comorbidWith ; owl:someValuesFrom out:Depression ] ;
+    rdfs:label "Chronic Pain Syndromes"@en .
+
+out:ComplexTrauma a owl:Class ; rdfs:subClassOf out:DifficultToReverseOutcome .
+out:Anxiety a owl:Class ; rdfs:subClassOf out:ReversibleClinicalOutcome .
+out:CardiovascularDisease a owl:Class ; rdfs:subClassOf out:PartiallyReversibleOutcome .
+out:Dementia a owl:Class ; rdfs:subClassOf out:StructuralDegenerativeOutcome .
+out:TreatmentResistantDepression a owl:Class ; rdfs:subClassOf out:DifficultToReverseOutcome .
+
+out:ImmuneDysregulation a owl:Class ;
+    rdfs:subClassOf out:PartiallyReversibleOutcome ;
+    rdfs:label "Immune Dysregulation"@en ;
+    rdfs:comment "Chronic immune system dysregulation including elevated inflammatory markers."@en .
+
+out:LifelongVulnerability a owl:Class ;
+    rdfs:subClassOf out:DifficultToReverseOutcome ;
+    rdfs:label "Lifelong Vulnerability"@en ;
+    rdfs:comment "Persistent heightened vulnerability to stress-related disorders across the lifespan, typically resulting from early life programming."@en .
+
+out:PersonalityPathology a owl:Class ;
+    rdfs:subClassOf out:DifficultToReverseOutcome ;
+    rdfs:label "Personality Pathology"@en ;
+    rdfs:comment "Enduring maladaptive personality patterns resulting from chronic developmental stress."@en .
+
+out:EarlyOnsetCognitiveDecline a owl:Class ;
+    rdfs:subClassOf out:DifficultToReverseOutcome ,
+        [ a owl:Restriction ; owl:onProperty out:progressesTo ; owl:someValuesFrom out:Dementia ] ;
+    rdfs:label "Early-Onset Cognitive Decline"@en ;
+    rdfs:comment "Premature cognitive decline associated with chronic stress exposure."@en .
+
+out:Dissociation a owl:Class ;
+    rdfs:subClassOf out:PartiallyReversibleOutcome ;
+    rdfs:label "Dissociative Symptoms"@en ;
+    rdfs:comment "Dissociative symptoms arising from uncontrollable threat exposure."@en .
+
+out:progressesTo a owl:ObjectProperty ;
+    rdfs:domain csf:ClinicalOutcome ;
+    rdfs:range csf:ClinicalOutcome ;
+    rdfs:label "progresses to"@en ;
+    rdfs:comment "Links a clinical outcome to a more severe outcome it may progress to."@en .
+
+out:comorbidWith a owl:ObjectProperty ;
+    a owl:SymmetricProperty ;
+    rdfs:domain csf:ClinicalOutcome ;
+    rdfs:range csf:ClinicalOutcome ;
+    rdfs:label "comorbid with"@en ;
+    rdfs:comment "Links two clinical outcomes that frequently co-occur."@en .
+
+# ==========================================================
+# RESILIENCE OUTCOMES (v3.2 — instantiating core classes)
+# ==========================================================
+
+out:StressInoculation a csf:ResilienceOutcome, owl:NamedIndividual ;
+    rdfs:label "Stress Inoculation"@en ;
+    rdfs:comment "Positive adaptation: moderate stress exposure builds future resilience."@en .
+
+out:PostTraumaticGrowth a csf:ResilienceOutcome, owl:NamedIndividual ;
+    rdfs:label "Post-Traumatic Growth"@en ;
+    rdfs:comment "Positive adaptation: enhanced meaning-making and personal growth following adversity."@en .
+
+out:FunctionalRecovery a csf:RecoveryOutcome, owl:NamedIndividual ;
+    rdfs:label "Functional Recovery"@en ;
+    rdfs:comment "Return to baseline functioning after cascade activation, with or without intervention."@en .

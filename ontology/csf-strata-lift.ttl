@@ -1,0 +1,73 @@
+@prefix csc: <http://purl.org/csf/cascades#> .
+@prefix csf: <http://purl.org/csf/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://purl.org/csf/strata-lift> a owl:Ontology ;
+  rdfs:label "CSF stratum-lift (step-type -> biological step class)"@en ;
+  rdfs:comment "Mirrors each cascade step-type's punned 'a csf:YStep' as rdfs:subClassOf, so atStratum propagates by reasoning to already-extracted step occurrences. No re-extraction required. Auto-generated from csf-cascades."@en ;
+  owl:imports <http://purl.org/csf/> , <http://purl.org/csf/strata> ;
+  owl:versionInfo "3.4-2026-08" .
+
+# Stratum-lift: mirror each step-type's punned 'a csf:YStep' as rdfs:subClassOf so that
+# atStratum (via the YStep hasValue restriction) propagates to ALREADY-EXTRACTED step
+# occurrences (occ a csc:XType). Deterministic; no re-extraction. Generated from the ontology.
+
+csc:AmygdalaActivationType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:AmygdalaHypertrophyType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:AmygdalaSensitizationType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:AntiviralDownregulationType rdfs:subClassOf csf:SocialGenomicsStep .
+csc:AutonomicImbalanceType rdfs:subClassOf csf:AutonomicStep .
+csc:AvoidanceType rdfs:subClassOf csf:BehavioralStep .
+csc:CARFlatteningType rdfs:subClassOf csf:NeuroendocrineStep .
+# SETTLED v3.4: catecholamine release is sympathetic-adrenomedullary -> AUTONOMIC (L4),
+# not neuroendocrine (L5). The ontology's original NeuroendocrineStep typing is corrected
+# here and in csf-cascades.ttl; this aligns the stratum with the extractor and the
+# psychophysiological consensus (cf. Porges 2011; Thayer & Lane 2000).
+csc:CatecholamineReleaseType rdfs:subClassOf csf:AutonomicStep .
+# RETAINED v3.4: glucocorticoid resistance denotes the FUNCTIONAL immunological read-out
+# (cortisol fails to restrain inflammation) -> ImmuneStep (L6). Its molecular substrate is
+# represented separately by csc:NR3C1MethylationType (L7); the extractor's "molecular"
+# reading conflates the two. Kept at L6 deliberately.
+csc:ChronicLowGradeInflammationType rdfs:subClassOf csf:ImmuneStep .
+csc:CognitiveRigidityType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:CortisolReleaseType rdfs:subClassOf csf:NeuroendocrineStep .
+csc:DiurnalRhythmDisruptionType rdfs:subClassOf csf:NeuroendocrineStep .
+csc:FKBP5DemethylationType rdfs:subClassOf csf:EpigeneticStep .
+csc:FailureToHabituateType rdfs:subClassOf csf:NeuroendocrineStep .
+csc:GRActivationType rdfs:subClassOf csf:NeuroendocrineStep .
+csc:GlucocorticoidResistanceType rdfs:subClassOf csf:ImmuneStep .
+csc:HPAActivationType rdfs:subClassOf csf:NeuroendocrineStep .
+csc:HippocampalDendriticRetractionType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:HippocampalVolumeReductionType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:HypervigilanceType rdfs:subClassOf csf:BehavioralStep .
+csc:ImpairedContextualizationType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:ImpairedEmotionalProcessingType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:ImpairedNegativeFeedbackType rdfs:subClassOf csf:NeuroendocrineStep .
+csc:ImpairedWorkingMemoryType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:InflammatoryActivationType rdfs:subClassOf csf:ImmuneStep .
+csc:LearnedHelplessnessType rdfs:subClassOf csf:BehavioralStep .
+csc:LossOfTopDownInhibitionType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:LossSocialBufferingType rdfs:subClassOf csf:BehavioralStep .
+csc:MRActivationType rdfs:subClassOf csf:NeuroendocrineStep .
+csc:MicroglialActivationType rdfs:subClassOf csf:ImmuneStep .
+csc:NFkBUpregulationType rdfs:subClassOf csf:SocialGenomicsStep .
+csc:NR3C1MethylationType rdfs:subClassOf csf:EpigeneticStep .
+csc:NeuroinflammationType rdfs:subClassOf csf:ImmuneStep .
+csc:PFCDendriticRetractionType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:PFCDownregulationType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:ParasympatheticWithdrawalType rdfs:subClassOf csf:AutonomicStep .
+csc:ReducedGRFunctionType rdfs:subClassOf csf:EpigeneticStep .
+csc:ReducedNeurogenesisType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:RuminativeCopingType rdfs:subClassOf csf:BehavioralStep .
+csc:SleepDisruptionType rdfs:subClassOf csf:BehavioralStep .
+csc:SocialWithdrawalType rdfs:subClassOf csf:BehavioralStep .
+csc:SustainedHPAActivationType rdfs:subClassOf csf:NeuroendocrineStep .
+csc:SynapticDysfunctionType rdfs:subClassOf csf:NeuralPlasticityStep .
+csc:VagalToneReductionType rdfs:subClassOf csf:AutonomicStep .
+
+# appraisal step-types (v3.4) -> AppraisalStep, so L2 propagates to occurrences
+csc:PrimaryAppraisalType   rdfs:subClassOf csf:AppraisalStep .
+csc:SecondaryAppraisalType rdfs:subClassOf csf:AppraisalStep .
+csc:ReappraisalType        rdfs:subClassOf csf:AppraisalStep .
+csc:ThreatAppraisalType    rdfs:subClassOf csf:AppraisalStep .

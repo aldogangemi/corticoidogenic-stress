@@ -1,0 +1,285 @@
+#--- Source: doc_002_doc_006_csf.ttl ---
+@prefix csf: <http://purl.org/csf/> .
+@prefix core: <http://purl.org/csf/core#> .
+@prefix frm: <http://purl.org/csf/frames#> .
+@prefix sit: <http://purl.org/csf/situations#> .
+@prefix csc: <http://purl.org/csf/cascades#> .
+@prefix out: <http://purl.org/csf/outcomes#> .
+@prefix mod: <http://purl.org/csf/moderators#> .
+@prefix pol: <http://purl.org/polanyi/heuristics#> .
+@prefix co: <http://purl.org/co/> .
+@prefix cflow: <http://www.ontologydesignpatterns.org/cp/owl/controlflow.owl#> .
+@prefix taskex: <http://www.ontologydesignpatterns.org/cp/owl/taskexecution.owl#> .
+@prefix fschema: <https://w3id.org/framester/schema/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix cc: <http://creativecommons.org/ns#> .
+
+csf:hub 
+    a owl:Ontology ;
+     # Module imports (forming complete ontology network)
+    owl:imports csf:interventions , csf:strata , csf:strata-lift , csf:bridging , csf:appraisal ;  # +v3.4 strata, bridging, appraisal(L2)
+    dcterms:title "Corticoidogenic Stress Frames Ontology (CSF)"@en ;
+    dcterms:description """A comprehensive OWL2 ontology representing the integration of cortisol 
+    pathways, neural pathways, and behavioral pathways leading to chronic stress and clinical outcomes.
+    
+    VERSION 3.0 KEY ARCHITECTURE:
+    Properly separates SCHEMA LEVEL (frames/descriptions) from INSTANCE LEVEL (situations/events)
+    following the controlflow and D&S (Descriptions & Situations) patterns.
+    
+    SCHEMA LEVEL (Description/Frame/Plan):
+    ├── CorticoidogenicFrame (subClassOf fschema:Frame, dul:Description)
+    │   └── Describes a TYPE of stress situation (subordination, threat, caregiving, etc.)
+    ├── CascadeFrame (subClassOf fschema:Frame, dul:Description)
+    │   └── Describes a cascade WORKFLOW PATTERN (template)
+    ├── CascadeStep (subClassOf fschema:SemanticRole, controlflow:Task)
+    │   └── Step ROLES in the cascade schema
+    └── CascadeSequence (subClassOf co:List)
+        └── Ordered list of step TYPES via co:itemContent
+    
+    INSTANCE LEVEL (Situation/Event/Action):
+    ├── CSF_Situation (subClassOf dul:Situation)
+    │   └── Actual situation EVOKING a corticoidogenic frame
+    ├── CascadeOccurrence (subClassOf dul:Process, dul:Situation)
+    │   └── Actual cascade OCCURRING in a person, evokes CascadeFrame
+    └── CascadeStepOccurrence (subClassOf dul:Event, taskex:Action)
+        └── Actual step event EXECUTING a CascadeStep
+    
+    KEY RELATIONS:
+    ├── csf:evokes / csf:evokedBy (Frame ↔ Situation, D&S pattern)
+    ├── csf:executesStep (StepOccurrence → Step, taskexecution pattern)
+    ├── csf:hasStepOccurrence (CascadeOccurrence → StepOccurrence)
+    └── co:itemContent (SequenceItem → Step, Collection Ontology)
+    
+    BRI META-HEURISTIC APPLICATION:
+    ├── BIND: Real-world events bind to CascadeStep roles via csf:executesStep
+    ├── REIFY: Bindings are reified as CascadeStepOccurrence individuals
+    └── INTEGRATE: Step occurrences form CascadeOccurrence that evokes CascadeFrame
+    """@en ;
+    
+    dcterms:creator "Designed by Aldo Gangemi and Chiara Lucifora using POLANYI++ methodology"@en ;
+    dcterms:created "2026-03-08"^^xsd:date ;
+	dcterms:modified "2026-04-07"^^xsd:date ;
+	dcterms:modified "2026-04-16"^^xsd:date ;
+	owl:versionInfo "3.3" ;
+    	vann:preferredNamespacePrefix "csf" ;
+    	vann:preferredNamespaceUri "http://purl.org/csf/core#" ;
+    	cc:license <http://creativecommons.org/licenses/by/4.0/> ;
+    
+    # Key external alignments
+    rdfs:seeAlso 
+        <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl> ,
+        <http://purl.org/co/> ,
+        <https://w3id.org/framester/schema/> ,
+        <http://www.ontologydesignpatterns.org/cp/owl/controlflow.owl> ;
+    
+    # Key literature references
+    rdfs:seeAlso 
+        <https://pubmed.ncbi.nlm.nih.gov/17615391/> ,  # McEwen 2007
+        <https://pubmed.ncbi.nlm.nih.gov/9629234/> ,   # McEwen 1998
+        <https://pubmed.ncbi.nlm.nih.gov/15084670/> ,  # Weaver 2004
+        <https://pubmed.ncbi.nlm.nih.gov/39680766/> ,  # Zeng 2024
+        <https://pubmed.ncbi.nlm.nih.gov/33345670/> ,  # Herman 2020
+		<https://pubmed.ncbi.nlm.nih.gov/21753751/> ,  # Porges 2011
+		<https://pubmed.ncbi.nlm.nih.gov/19100528/> ,  # Thayer & Lane 2009
+		<https://pubmed.ncbi.nlm.nih.gov/17201568/> ,  # Cole 2007
+		<https://pubmed.ncbi.nlm.nih.gov/25071120/> ;  # Slavich & Cole 2013
+    
+    pol:designHeuristic 
+        pol:b01-FRAMEBINDING ,
+        pol:b02-BIOMARKERBINDING ,
+        pol:b03-NEURALBINDING ,
+        pol:b04-TEMPORALBINDING ,
+        pol:m01-SITUATIONTYPING ,
+        pol:m02-ROLEEXTRACTION ,
+        pol:m03-CASCADEMODELING ,
+        pol:m04-SEVERITYESTIMATION ,
+        pol:BRI ;
+    
+    rdfs:comment """
+    This hub enables the import chain: csf → interventions → moderators → outcomes → cascades → situations → frames → core
+    It enables external imports (via csf-core): DUL, Collection Ontology, Framester Schema, Controlflow
+
+    ONTOLOGY STRUCTURE v3.3
+    =======================
+    
+    EXTERNAL DEPENDENCIES:
+    ├── DUL (DOLCE-Ultralite) - Upper ontology
+    ├── Collection Ontology (CO) - Ordered sequences  
+    ├── Framester Schema - Frame semantics alignment
+    └── Controlflow Pattern - Workflow task/action distinction
+    
+    MODULES (Import Hierarchy):
+    └── csf-core.ttl          : Core classes, properties, POLANYI++ heuristics
+        │                       Schema: CorticoidogenicFrame, CascadeFrame, CascadeStep
+        │                       Instance: CSF_Situation, CascadeOccurrence, CascadeStepOccurrence
+        └── csf-frames.ttl    : 7 corticoidogenic frame types (A-G)
+            └── csf-situations.ttl : 20+ concrete situation TYPES
+                └── csf-cascades.ttl  : 7 CascadeFrames with step TYPE sequences
+                    └── csf-outcomes.ttl   : 40+ clinical outcomes
+                        └── csf-moderators.ttl : 30+ amplifiers and buffers
+                        	└── csf-interventions.ttl : Intervention buffers (planned)
+    
+    FRAME TYPES (A-G):
+    A. ChronicSubordinationFrame    → SubordinationCascadeFrame
+    B. UncontrollableThreatFrame    → UncontrollableThreatCascadeFrame
+    C. CaregivingEntrapmentFrame    → CaregivingEntrapmentCascadeFrame
+    D. EarlyLifeProgrammingFrame    → EarlyLifeProgrammingCascadeFrame
+    E. ChronicIdentityThreatFrame   → IdentityThreatCascadeFrame
+    F. CircadianMisalignmentFrame   → CircadianMisalignmentCascadeFrame
+    G. SocialDisconnectionFrame     → SocialDisconnectionCascadeFrame
+    
+    CASCADE SEQUENCE PATTERN (using CO + controlflow):
+    
+    CascadeFrame (SCHEMA)
+      --csf:hasSequence--> CascadeSequence (co:List)
+        --co:firstItem--> CascadeSequenceItem (co:ListItem)
+          --co:itemContent--> CascadeStep (controlflow:Task)
+          --co:nextItem--> CascadeSequenceItem ...
+          --co:index--> xsd:positiveInteger
+    
+    CascadeOccurrence (INSTANCE)
+      --csf:evokedBy--> CascadeFrame
+      --csf:hasStepOccurrence--> CascadeStepOccurrence (taskex:Action)
+        --csf:executesStep--> CascadeStep
+    
+    """@en ;
+
+ rdfs:comment """   
+
+ ==========================================================
+ REIFIED HYPOTHESES (v3.2 — proposals for future work, from Polanyi++ DISCOVERY-REVISE modes)
+ ==========================================================
+
+ Hypothesis H1 (Req 11): Protective frames
+ rdfs:comment "PROPOSED (REIFIED): Each CSF_Situation should link via sit:bufferedByFrame
+ to protective frames (SocialSupportFrame, AgencyRestorationFrame, CulturalContinuityFrame)
+ that modulate severity. This would address the systematic via-negativa commitment
+ identified by DARKSIDE audit: the ontology currently models only harm pathways with
+ no resilience, coping, or recovery frames. Implementing this requires new frame
+ definitions in csf-frames.ttl and a new sit:bufferedByFrame property."
+
+ Hypothesis H2b (Req 12): Temporal phases
+ rdfs:comment "PROPOSED (REIFIED): Model temporal dynamics as discrete phases
+ (Acute, Adaptation, Exhaustion — Selye's GAS). Each situation would have a phase
+ sequence with transition conditions. Competing with continuous trajectory model (H2a).
+ H2b is more fertile but less parsimonious. Current v3.2 implements the simpler
+ sit:hasTrajectory/sit:hasChronicity approach as a stepping stone."
+
+ Hypothesis H3 (Req 14): Outcome pathways
+ rdfs:comment "PROPOSED (REIFIED): Link frames to downstream health outcomes via
+ sit:predictsOutcome. Import allostatic load model: cumulative wear → system-specific
+ dysregulation → clinical endpoints. Note: csf-outcomes.ttl already defines outcome
+ classes and csf:typicallyLeadsTo links cascade frames to outcomes. The gap is at
+ the situation level — situations do not yet predict outcomes directly."
+
+ Hypothesis H7 (Req 17): Intervention vocabulary
+ rdfs:comment "PROPOSED (REIFIED): Add csf:Intervention class with sit:mitigates
+ linking to CSF_Situation; sit:targetsMechanism linking to frames; sit:evidenceLevel
+ for evidence grading. This is the highest-fertility hypothesis but requires
+ significant new vocabulary and is deferred to a dedicated csf-interventions.ttl module."
+"""@en ;
+
+rdfs:comment """   
+ 
+################################################################
+    Competency Questions (CQ) for Validation
+################################################################
+
+ CQ1: What cascade frame is triggered by a corticoidogenic frame?
+ SPARQL: SELECT ?cascadeFrame WHERE { 
+   ?cascadeFrame csf:triggeredByFrame frm:CaregivingEntrapmentFrame 
+ }
+
+ CQ2: What is the ordered sequence of step types in a cascade frame?
+ SPARQL: SELECT ?Step ?index WHERE { 
+   csc:SubordinationCascadeFrame csf:hasSequence ?seq .
+   ?seq co:item ?item .
+   ?item co:itemContent ?Step ; co:index ?index 
+ } ORDER BY ?index
+
+ CQ3: What step type does a step occurrence execute? (BRI BIND)
+ SPARQL: SELECT ?stepOccurrence ?Step WHERE {
+   ?stepOccurrence csf:executesStep ?Step
+ }
+
+ CQ4: What cascade occurrence does a step occurrence belong to? (BRI INTEGRATE)
+ SPARQL: SELECT ?cascadeOcc ?stepOcc WHERE {
+   ?cascadeOcc csf:hasStepOccurrence ?stepOcc
+ }
+
+ CQ5: What frame does a cascade occurrence evoke?
+ SPARQL: SELECT ?cascadeOcc ?frame WHERE {
+   ?cascadeOcc csf:evokedBy ?frame .
+   ?frame a csf:CascadeFrame
+ }
+
+ CQ6: What clinical outcomes are typical for a cascade frame?
+
+ CQ7: What outcomes trigger new stress situations? (Feedback loop)
+ SPARQL: SELECT ?outcome ?newSituation WHERE {
+   ?outcome csf:triggersSituation ?newSituation
+ }
+
+ CQ8: What temporal phase is a cascade step occurrence in?
+ SPARQL: SELECT ?stepOcc ?phase WHERE {
+   ?stepOcc csf:hasTemporalPhase ?phase
+ }
+
+ CQ9: What resilience outcomes are associated with buffered cascades?
+ SPARQL: SELECT ?cascade ?resilience WHERE {
+   ?cascade csf:leadsToOutcome ?resilience .
+   ?resilience a csf:ResilienceOutcome
+ }
+
+ CQ10: What autonomic/vagal steps participate in a cascade?
+ SPARQL: SELECT ?cascade ?vagalStep WHERE {
+   ?cascade csf:hasStepOccurrence ?occ .
+   ?occ csf:executesStep ?vagalStep .
+   ?vagalStep a csf:AutonomicStep
+ }
+ SPARQL: SELECT ?cascadeFrame ?outcome WHERE {
+   ?cascadeFrame csf:typicallyLeadsTo ?outcome
+ }
+
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX csf: <http://purl.org/csf/>
+PREFIX mod: <http://purl.org/csf/moderators#>
+
+SELECT ?cascadeOcc ?interaction ?interactionType ?interactionMag
+WHERE {
+    # 1. Identify a specific patient's Cascade Occurrence
+    ?cascadeOcc rdf:type csf:CascadeOccurrence .
+ 
+    # 2. Look for any defined Moderator Interactions in the schema
+    ?interaction rdf:type csf:ModeratorInteraction ;
+                 csf:interactionType ?interactionType ;
+                 csf:interactionMagnitude ?interactionMag .
+              
+    # 3. Find two distinct moderators participating in this interaction
+    ?interaction csf:hasInteractingModerator ?mod1 .
+    ?interaction csf:hasInteractingModerator ?mod2 .
+    FILTER (?mod1 != ?mod2)
+  
+    # 4. Verify that the patient's cascade is actually affected by BOTH moderators
+    # (Checking both amplifiers and buffers using UNION)
+    {
+      { ?mod1 csf:amplifies ?cascadeOcc } 
+      UNION 
+      { ?mod1 csf:buffers ?cascadeOcc }
+    }
+    {
+      { ?mod2 csf:amplifies ?cascadeOcc } 
+      UNION 
+      { ?mod2 csf:buffers ?cascadeOcc }
+    }
+}
+GROUP BY ?cascadeOcc ?interaction ?interactionType ?interactionMag
+ORDER BY DESC(?interactionMag)
+
+"""@en .

@@ -1,0 +1,27 @@
+{
+ "defects": {
+  "frame_without_uri": 197,
+  "moderator_unmappable": 184,
+  "step_coined_uri": 92,
+  "bridge_underspecified": 384,
+  "bridge_uncited": 263,
+  "bridge_layer_skip": 25,
+  "bridge_feedsback_downstream": 1,
+  "observed_below_L3": 5,
+  "stratum_conflict_L7_vs_L6": 14,
+  "bridge_feedsforward_upstream": 2,
+  "stratum_conflict_L4_vs_L5": 12,
+  "stratum_conflict_L1_vs_L2": 1,
+  "bridge_direction_inverted": 1
+ },
+ "step_stratum_inconsistent": {
+  "csc:ThreatAppraisalType": {
+   "L2": 13,
+   "L1": 1
+  },
+  "csc:GlucocorticoidResistanceType": {
+   "L6": 5,
+   "L7": 14
+  }
+ }
+}

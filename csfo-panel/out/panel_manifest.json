@@ -1,0 +1,119 @@
+{
+ "agents": {
+  "A1_SOCIAL": {
+   "owns": [
+    "L1"
+   ],
+   "persona": "social epidemiology and social genomics",
+   "contexts": {
+    "L0": "contexts/A1_SOCIAL.L0.md",
+    "L1": "contexts/A1_SOCIAL.L1.md",
+    "L2": "contexts/A1_SOCIAL.L2.md"
+   }
+  },
+  "A2_PSYCH": {
+   "owns": [
+    "L2",
+    "L3"
+   ],
+   "persona": "cognitive-affective science (appraisal) and health behaviour",
+   "contexts": {
+    "L0": "contexts/A2_PSYCH.L0.md",
+    "L1": "contexts/A2_PSYCH.L1.md",
+    "L2": "contexts/A2_PSYCH.L2.md"
+   }
+  },
+  "A3_ENDOCRINE": {
+   "owns": [
+    "L4",
+    "L5"
+   ],
+   "persona": "psychoneuroendocrinology and autonomic psychophysiology",
+   "contexts": {
+    "L0": "contexts/A3_ENDOCRINE.L0.md",
+    "L1": "contexts/A3_ENDOCRINE.L1.md",
+    "L2": "contexts/A3_ENDOCRINE.L2.md"
+   }
+  },
+  "A4_NEUROIMMUNE": {
+   "owns": [
+    "L6"
+   ],
+   "persona": "psychoneuroimmunology and inflammatory/metabolic stress biology",
+   "contexts": {
+    "L0": "contexts/A4_NEUROIMMUNE.L0.md",
+    "L1": "contexts/A4_NEUROIMMUNE.L1.md",
+    "L2": "contexts/A4_NEUROIMMUNE.L2.md"
+   }
+  },
+  "A5_MOLECULAR": {
+   "owns": [
+    "L7"
+   ],
+   "persona": "behavioural genetics, epigenetics and stress neurobiology",
+   "contexts": {
+    "L0": "contexts/A5_MOLECULAR.L0.md",
+    "L1": "contexts/A5_MOLECULAR.L1.md",
+    "L2": "contexts/A5_MOLECULAR.L2.md"
+   }
+  }
+ },
+ "item_types": [
+  "T1_FRAME",
+  "T2_ROLE",
+  "T3_MODERATOR",
+  "T4_STEP",
+  "T5_BRIDGE",
+  "T6_OUTCOME_BRIDGE"
+ ],
+ "strata": {
+  "L1": {
+   "label": "L1 Situational",
+   "order": 1,
+   "next": "L2",
+   "n_terms": 44
+  },
+  "L2": {
+   "label": "L2 Appraisal",
+   "order": 2,
+   "next": "L3",
+   "n_terms": 14
+  },
+  "L3": {
+   "label": "L3 Behavioral",
+   "order": 3,
+   "next": "L4",
+   "n_terms": 15
+  },
+  "L4": {
+   "label": "L4 Autonomic",
+   "order": 4,
+   "next": "L5",
+   "n_terms": 4
+  },
+  "L5": {
+   "label": "L5 Endocrine",
+   "order": 5,
+   "next": "L6",
+   "n_terms": 11
+  },
+  "L6": {
+   "label": "L6 Inflammatory/metabolic",
+   "order": 6,
+   "next": "L7",
+   "n_terms": 6
+  },
+  "L7": {
+   "label": "L7 Molecular",
+   "order": 7,
+   "next": "L8",
+   "n_terms": 26
+  },
+  "L8": {
+   "label": "L8 Outcome",
+   "order": 8,
+   "next": null,
+   "n_terms": 34
+  }
+ }
+}

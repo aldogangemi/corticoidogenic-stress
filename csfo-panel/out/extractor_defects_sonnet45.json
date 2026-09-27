@@ -1,0 +1,36 @@
+{
+ "defects": {
+  "frame_without_uri": 147,
+  "moderator_unmappable": 140,
+  "step_coined_uri": 95,
+  "bridge_underspecified": 291,
+  "bridge_layer_skip": 28,
+  "bridge_uncited": 25,
+  "bridge_feedsback_downstream": 1,
+  "stratum_conflict_L7_vs_L6": 9,
+  "observed_below_L3": 6,
+  "stratum_conflict_L1_vs_L5": 2,
+  "stratum_conflict_L3_vs_L5": 1,
+  "stratum_conflict_L4_vs_L5": 8
+ },
+ "step_stratum_inconsistent": {
+  "csc:SustainedHPAActivationType": {
+   "L5": 27,
+   "L4": 1
+  },
+  "csc:GlucocorticoidResistanceType": {
+   "L6": 3,
+   "L7": 9
+  },
+  "csc:HPAActivationType": {
+   "L5": 7,
+   "L1": 2,
+   "L3": 1,
+   "L4": 4
+  },
+  "csc:CatecholamineReleaseType": {
+   "L5": 2,
+   "L4": 3
+  }
+ }
+}

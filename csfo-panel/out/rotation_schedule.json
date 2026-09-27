@@ -1,0 +1,37 @@
+[
+ {
+  "A1_SOCIAL": "claude-sonnet-5",
+  "A2_PSYCH": "gpt-5.6-sol",
+  "A3_ENDOCRINE": "claude-haiku-4-5-20251001",
+  "A4_NEUROIMMUNE": "gemini-3.1-pro-preview",
+  "A5_MOLECULAR": "gemini-2.5-pro"
+ },
+ {
+  "A1_SOCIAL": "gpt-5.6-sol",
+  "A2_PSYCH": "claude-haiku-4-5-20251001",
+  "A3_ENDOCRINE": "gemini-3.1-pro-preview",
+  "A4_NEUROIMMUNE": "gemini-2.5-pro",
+  "A5_MOLECULAR": "claude-sonnet-5"
+ },
+ {
+  "A1_SOCIAL": "claude-haiku-4-5-20251001",
+  "A2_PSYCH": "gemini-3.1-pro-preview",
+  "A3_ENDOCRINE": "gemini-2.5-pro",
+  "A4_NEUROIMMUNE": "claude-sonnet-5",
+  "A5_MOLECULAR": "gpt-5.6-sol"
+ },
+ {
+  "A1_SOCIAL": "gemini-3.1-pro-preview",
+  "A2_PSYCH": "gemini-2.5-pro",
+  "A3_ENDOCRINE": "claude-sonnet-5",
+  "A4_NEUROIMMUNE": "gpt-5.6-sol",
+  "A5_MOLECULAR": "claude-haiku-4-5-20251001"
+ },
+ {
+  "A1_SOCIAL": "gemini-2.5-pro",
+  "A2_PSYCH": "claude-sonnet-5",
+  "A3_ENDOCRINE": "gpt-5.6-sol",
+  "A4_NEUROIMMUNE": "claude-haiku-4-5-20251001",
+  "A5_MOLECULAR": "gemini-3.1-pro-preview"
+ }
+]

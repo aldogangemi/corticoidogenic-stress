@@ -1,0 +1,492 @@
+=== Tue Aug 25 08:36:28 CEST 2026 starting ===
+
+--- 0. verify model ids against the live provider lists
+  claude-sonnet-5            anthropic  OK
+  gpt-5.6-sol                openai     OK
+  claude-haiku-4-5-20251001  anthropic  OK
+  gemini-3.1-pro-preview     google     OK
+  gemini-2.5-pro             google     OK
+
+all ids verified.
+
+--- 1. dry run (no API calls, checks the plumbing)
+
+SAMPLED pool: 402 items (1232 judgments per fold)
+
+========================================================================
+DESIGN
+========================================================================
+items 402   judgments per fold 1232   arms per fold 1
+
+power target: detect a self-preference gap of +0.05 around p=0.30 at alpha=0.05, power=0.8
+  required n per group          : 1377
+  smallest per-fold cell (role) : 70
+  -> replications per cell R    : 8   (folds = 5R = 40)
+
+  per-role items by origin, per fold:
+    role               opus5  sonnet45    both  binding
+    A1_SOCIAL            100        90      51       90
+    A2_PSYCH             106       106      72      106
+    A3_ENDOCRINE         122        84      67       84
+    A4_NEUROIMMUNE        90        73      56       73
+    A5_MOLECULAR          91        70      54       70
+
+rotation: 5 folds, 25/25 (role,model) cells covered, reps per cell [1]
+estimated model calls: ~513  (batch size 12)
+
+[6/7] panel
+  fold 0 [claude-sonnet-5, gpt-5.6-sol, claude-haiku-4-5-20251001, gemini-3.1-pro-preview, gemini-2.5-pro] L1 r1
+  $ python3 run_panel.py --out out --depth L1 --round 1 --backbones /Users/aldogangemi/Dropbox/Koi/Docs_Work/Ricerca/iTAF/iTAF/orchestrationlanguage/xPOL8/CSF-demo/csfo-agentic-eval/csfo-panel/out/backbones.f0.json --fold 0 --seed 1000 --dry-run
+A1_SOCIAL         241 verdicts     0 unparsed   model=claude-sonnet-5
+A2_PSYCH          284 verdicts     0 unparsed   model=gpt-5.6-sol
+A3_ENDOCRINE      273 verdicts     0 unparsed   model=claude-haiku-4-5-20251001
+A4_NEUROIMMUNE    219 verdicts     0 unparsed   model=gemini-3.1-pro-preview
+A5_MOLECULAR      215 verdicts     0 unparsed   model=gemini-2.5-pro
+-> out/verdicts.L1.r1.f0.jsonl
+  fold 1 [gpt-5.6-sol, claude-haiku-4-5-20251001, gemini-3.1-pro-preview, gemini-2.5-pro, claude-sonnet-5] L1 r1
+  $ python3 run_panel.py --out out --depth L1 --round 1 --backbones /Users/aldogangemi/Dropbox/Koi/Docs_Work/Ricerca/iTAF/iTAF/orchestrationlanguage/xPOL8/CSF-demo/csfo-agentic-eval/csfo-panel/out/backbones.f1.json --fold 1 --seed 1001 --dry-run
+A1_SOCIAL         241 verdicts     0 unparsed   model=gpt-5.6-sol
+A2_PSYCH          284 verdicts     0 unparsed   model=claude-haiku-4-5-20251001
+A3_ENDOCRINE      273 verdicts     0 unparsed   model=gemini-3.1-pro-preview
+A4_NEUROIMMUNE    219 verdicts     0 unparsed   model=gemini-2.5-pro
+A5_MOLECULAR      215 verdicts     0 unparsed   model=claude-sonnet-5
+-> out/verdicts.L1.r1.f1.jsonl
+  fold 2 [claude-haiku-4-5-20251001, gemini-3.1-pro-preview, gemini-2.5-pro, claude-sonnet-5, gpt-5.6-sol] L1 r1
+  $ python3 run_panel.py --out out --depth L1 --round 1 --backbones /Users/aldogangemi/Dropbox/Koi/Docs_Work/Ricerca/iTAF/iTAF/orchestrationlanguage/xPOL8/CSF-demo/csfo-agentic-eval/csfo-panel/out/backbones.f2.json --fold 2 --seed 1002 --dry-run
+A1_SOCIAL         241 verdicts     0 unparsed   model=claude-haiku-4-5-20251001
+A2_PSYCH          284 verdicts     0 unparsed   model=gemini-3.1-pro-preview
+A3_ENDOCRINE      273 verdicts     0 unparsed   model=gemini-2.5-pro
+A4_NEUROIMMUNE    219 verdicts     0 unparsed   model=claude-sonnet-5
+A5_MOLECULAR      215 verdicts     0 unparsed   model=gpt-5.6-sol
+-> out/verdicts.L1.r1.f2.jsonl
+  fold 3 [gemini-3.1-pro-preview, gemini-2.5-pro, claude-sonnet-5, gpt-5.6-sol, claude-haiku-4-5-20251001] L1 r1
+  $ python3 run_panel.py --out out --depth L1 --round 1 --backbones /Users/aldogangemi/Dropbox/Koi/Docs_Work/Ricerca/iTAF/iTAF/orchestrationlanguage/xPOL8/CSF-demo/csfo-agentic-eval/csfo-panel/out/backbones.f3.json --fold 3 --seed 1003 --dry-run
+A1_SOCIAL         241 verdicts     0 unparsed   model=gemini-3.1-pro-preview
+A2_PSYCH          284 verdicts     0 unparsed   model=gemini-2.5-pro
+A3_ENDOCRINE      273 verdicts     0 unparsed   model=claude-sonnet-5
+A4_NEUROIMMUNE    219 verdicts     0 unparsed   model=gpt-5.6-sol
+A5_MOLECULAR      215 verdicts     0 unparsed   model=claude-haiku-4-5-20251001
+-> out/verdicts.L1.r1.f3.jsonl
+  fold 4 [gemini-2.5-pro, claude-sonnet-5, gpt-5.6-sol, claude-haiku-4-5-20251001, gemini-3.1-pro-preview] L1 r1
+  $ python3 run_panel.py --out out --depth L1 --round 1 --backbones /Users/aldogangemi/Dropbox/Koi/Docs_Work/Ricerca/iTAF/iTAF/orchestrationlanguage/xPOL8/CSF-demo/csfo-agentic-eval/csfo-panel/out/backbones.f4.json --fold 4 --seed 1004 --dry-run
+A1_SOCIAL         241 verdicts     0 unparsed   model=gemini-2.5-pro
+A2_PSYCH          284 verdicts     0 unparsed   model=claude-sonnet-5
+A3_ENDOCRINE      273 verdicts     0 unparsed   model=gpt-5.6-sol
+A4_NEUROIMMUNE    219 verdicts     0 unparsed   model=claude-haiku-4-5-20251001
+A5_MOLECULAR      215 verdicts     0 unparsed   model=gemini-3.1-pro-preview
+-> out/verdicts.L1.r1.f4.jsonl
+
+[7/7] aggregate
+  $ python3 to_ds.py --verdicts out/verdicts.L1.r1.f0.jsonl --out out --items out/items.jsonl --assignment out/assignment.json
+  $ python3 to_ds.py --verdicts out/verdicts.L1.r1.f1.jsonl --out out --items out/items.jsonl --assignment out/assignment.json
+  $ python3 to_ds.py --verdicts out/verdicts.L1.r1.f2.jsonl --out out --items out/items.jsonl --assignment out/assignment.json
+  $ python3 to_ds.py --verdicts out/verdicts.L1.r1.f3.jsonl --out out --items out/items.jsonl --assignment out/assignment.json
+  $ python3 to_ds.py --verdicts out/verdicts.L1.r1.f4.jsonl --out out --items out/items.jsonl --assignment out/assignment.json
+
+done. pool the per-fold fits with variance components before reporting: role, model, and role x model are now separable by construction.
+
+--- 2. real run
+
+SAMPLED pool: 402 items (1232 judgments per fold)
+
+========================================================================
+DESIGN
+========================================================================
+items 402   judgments per fold 1232   arms per fold 1
+
+power target: detect a self-preference gap of +0.05 around p=0.30 at alpha=0.05, power=0.8
+  required n per group          : 1377
+  smallest per-fold cell (role) : 70
+  -> replications per cell R    : 8   (folds = 5R = 40)
+
+  per-role items by origin, per fold:
+    role               opus5  sonnet45    both  binding
+    A1_SOCIAL            100        90      51       90
+    A2_PSYCH             106       106      72      106
+    A3_ENDOCRINE         122        84      67       84
+    A4_NEUROIMMUNE        90        73      56       73
+    A5_MOLECULAR          91        70      54       70
+
+rotation: 5 folds, 25/25 (role,model) cells covered, reps per cell [1]
+estimated model calls: ~513  (batch size 12)
+
+[6/7] panel
+  fold 0 [claude-sonnet-5, gpt-5.6-sol, claude-haiku-4-5-20251001, gemini-3.1-pro-preview, gemini-2.5-pro] L1 r1
+  $ python3 run_panel.py --out out --depth L1 --round 1 --backbones /Users/aldogangemi/Dropbox/Koi/Docs_Work/Ricerca/iTAF/iTAF/orchestrationlanguage/xPOL8/CSF-demo/csfo-agentic-eval/csfo-panel/out/backbones.f0.json --fold 0 --seed 1000
+A1_SOCIAL         241 verdicts     0 unparsed   model=claude-sonnet-5
+A2_PSYCH          284 verdicts     0 unparsed   model=gpt-5.6-sol
+A3_ENDOCRINE      252 verdicts    21 unparsed   model=claude-haiku-4-5-20251001
+A4_NEUROIMMUNE    219 verdicts     0 unparsed   model=gemini-3.1-pro-preview
+A5_MOLECULAR      215 verdicts     0 unparsed   model=gemini-2.5-pro
+-> out/verdicts.L1.r1.f0.jsonl
+  fold 1 [gpt-5.6-sol, claude-haiku-4-5-20251001, gemini-3.1-pro-preview, gemini-2.5-pro, claude-sonnet-5] L1 r1
+  $ python3 run_panel.py --out out --depth L1 --round 1 --backbones /Users/aldogangemi/Dropbox/Koi/Docs_Work/Ricerca/iTAF/iTAF/orchestrationlanguage/xPOL8/CSF-demo/csfo-agentic-eval/csfo-panel/out/backbones.f1.json --fold 1 --seed 1001
+A1_SOCIAL         241 verdicts     0 unparsed   model=gpt-5.6-sol
+A2_PSYCH          282 verdicts     2 unparsed   model=claude-haiku-4-5-20251001
+A3_ENDOCRINE      273 verdicts     0 unparsed   model=gemini-3.1-pro-preview
+A4_NEUROIMMUNE    219 verdicts     0 unparsed   model=gemini-2.5-pro
+A5_MOLECULAR      215 verdicts     0 unparsed   model=claude-sonnet-5
+-> out/verdicts.L1.r1.f1.jsonl
+  fold 2 [claude-haiku-4-5-20251001, gemini-3.1-pro-preview, gemini-2.5-pro, claude-sonnet-5, gpt-5.6-sol] L1 r1
+  $ python3 run_panel.py --out out --depth L1 --round 1 --backbones /Users/aldogangemi/Dropbox/Koi/Docs_Work/Ricerca/iTAF/iTAF/orchestrationlanguage/xPOL8/CSF-demo/csfo-agentic-eval/csfo-panel/out/backbones.f2.json --fold 2 --seed 1002
+A1_SOCIAL         239 verdicts     2 unparsed   model=claude-haiku-4-5-20251001
+A2_PSYCH          284 verdicts     0 unparsed   model=gemini-3.1-pro-preview
+A3_ENDOCRINE      273 verdicts     0 unparsed   model=gemini-2.5-pro
+A4_NEUROIMMUNE    219 verdicts     0 unparsed   model=claude-sonnet-5
+A5_MOLECULAR      215 verdicts     0 unparsed   model=gpt-5.6-sol
+-> out/verdicts.L1.r1.f2.jsonl
+  fold 3 [gemini-3.1-pro-preview, gemini-2.5-pro, claude-sonnet-5, gpt-5.6-sol, claude-haiku-4-5-20251001] L1 r1
+  $ python3 run_panel.py --out out --depth L1 --round 1 --backbones /Users/aldogangemi/Dropbox/Koi/Docs_Work/Ricerca/iTAF/iTAF/orchestrationlanguage/xPOL8/CSF-demo/csfo-agentic-eval/csfo-panel/out/backbones.f3.json --fold 3 --seed 1003
+A1_SOCIAL         241 verdicts     0 unparsed   model=gemini-3.1-pro-preview
+    3 batch failure(s) for A2_PSYCH:
+      x3  HTTPError: HTTP Error 429: Too Many Requests
+A2_PSYCH          225 verdicts    59 unparsed   model=gemini-2.5-pro
+A3_ENDOCRINE      273 verdicts     0 unparsed   model=claude-sonnet-5
+A4_NEUROIMMUNE    219 verdicts     0 unparsed   model=gpt-5.6-sol
+A5_MOLECULAR      211 verdicts     4 unparsed   model=claude-haiku-4-5-20251001
+-> out/verdicts.L1.r1.f3.jsonl
+  fold 4 [gemini-2.5-pro, claude-sonnet-5, gpt-5.6-sol, claude-haiku-4-5-20251001, gemini-3.1-pro-preview] L1 r1
+  $ python3 run_panel.py --out out --depth L1 --round 1 --backbones /Users/aldogangemi/Dropbox/Koi/Docs_Work/Ricerca/iTAF/iTAF/orchestrationlanguage/xPOL8/CSF-demo/csfo-agentic-eval/csfo-panel/out/backbones.f4.json --fold 4 --seed 1004
+    10 batch failure(s) for A1_SOCIAL:
+      x10  HTTPError: HTTP Error 429: Too Many Requests
+A1_SOCIAL           0 verdicts   241 unparsed   model=gemini-2.5-pro
+    1 batch failure(s) for A2_PSYCH:
+      x1  unparseable response (8365 chars)
+A2_PSYCH          258 verdicts    26 unparsed   model=claude-sonnet-5
+A3_ENDOCRINE      273 verdicts     0 unparsed   model=gpt-5.6-sol
+A4_NEUROIMMUNE    219 verdicts     0 unparsed   model=claude-haiku-4-5-20251001
+A5_MOLECULAR      215 verdicts     0 unparsed   model=gemini-3.1-pro-preview
+-> out/verdicts.L1.r1.f4.jsonl
+
+[7/7] aggregate
+  $ python3 to_ds.py --verdicts out/verdicts.L1.r1.f0.jsonl --out out --items out/items.jsonl --assignment out/assignment.json
+stratum                  n  judged  anchors   posterior>=0.9
+T1_FRAME               404      40        0       0%
+T2_ROLE                261      12        0       0%
+T3_MODERATOR           485      57        0      99%
+T4_STEP                575      69      140      24%
+T5_BRIDGE             1115     137      456     100%
+T6_OUTCOME_BRIDGE       87      12        1       1%
+  T5_BRIDGE: shrinkage weight toward anchored profile = 0.52  (n judgments = 184)
+  T6_OUTCOME_BRIDGE: shrinkage weight toward anchored profile = 0.93  (n judgments = 15)
+
+red-team held out    : 191  (calibration half 190 excluded)
+panel rejection rate : 100.00%   (specificity estimate; unrejected defective items are the panel's confabulation floor)
+ well-formedness calls on red-team items: {'WELLFORMED': 66, 'REFERENT_MISMATCH': 8, 'TIMESCALE_NONCOMPOSABLE': 3, 'INDIVIDUATION_CLASH': 5}
+
+estimated per-agent competence (diagonal of Pi, anchored strata):
+  A1_SOCIAL        SUP=0.38  UND=0.64  CON=0.23
+  A2_PSYCH         SUP=0.37  UND=0.68  CON=0.19
+  A3_ENDOCRINE     SUP=0.27  UND=0.34  CON=0.27
+  A4_NEUROIMMUNE   SUP=0.35  UND=0.33  CON=0.30
+  A5_MOLECULAR     SUP=0.36  UND=0.36  CON=0.42
+
+unresolved queue     : 9 items (1 of them bridges) -> out/bridge_debug_queue.json
+
+self-preference probe (SUPPORTED rate by item origin; agents are blinded):
+  agent           backbone             opus5      n  sonnet45      n     gap
+  A1_SOCIAL                            0.270     37     0.325     40  -0.055
+  A2_PSYCH                             0.367     60     0.388     67  -0.021
+  A3_ENDOCRINE                         0.073     41     0.000     19  +0.073
+  A4_NEUROIMMUNE                       0.353     17     0.375      8  -0.022
+  A5_MOLECULAR                         0.125      8     0.800      5  -0.675
+  a backbone that also produced an extraction should show gap ~ 0; a positive gap toward its own output is self-preference.
+  $ python3 to_ds.py --verdicts out/verdicts.L1.r1.f1.jsonl --out out --items out/items.jsonl --assignment out/assignment.json
+stratum                  n  judged  anchors   posterior>=0.9
+T1_FRAME               404      30        0       0%
+T2_ROLE                261       9        0       0%
+T3_MODERATOR           485      43        0     100%
+T4_STEP                575      63      140      24%
+T5_BRIDGE             1115     131      456     100%
+T6_OUTCOME_BRIDGE       87      13        1       1%
+  T5_BRIDGE: shrinkage weight toward anchored profile = 0.53  (n judgments = 174)
+  T6_OUTCOME_BRIDGE: shrinkage weight toward anchored profile = 0.93  (n judgments = 16)
+
+red-team held out    : 191  (calibration half 190 excluded)
+panel rejection rate : 100.00%   (specificity estimate; unrejected defective items are the panel's confabulation floor)
+ well-formedness calls on red-team items: {'REFERENT_MISMATCH': 7, 'WELLFORMED': 70, 'TIMESCALE_NONCOMPOSABLE': 2, 'INDIVIDUATION_CLASH': 6}
+
+estimated per-agent competence (diagonal of Pi, anchored strata):
+  A1_SOCIAL        SUP=0.28  UND=0.65  CON=0.22
+  A2_PSYCH         SUP=0.46  UND=0.54  CON=0.25
+  A3_ENDOCRINE     SUP=0.40  UND=0.33  CON=0.29
+  A4_NEUROIMMUNE   SUP=0.38  UND=0.33  CON=0.34
+  A5_MOLECULAR     SUP=0.32  UND=0.33  CON=0.32
+
+unresolved queue     : 0 items (0 of them bridges) -> out/bridge_debug_queue.json
+
+self-preference probe (SUPPORTED rate by item origin; agents are blinded):
+  agent           backbone             opus5      n  sonnet45      n     gap
+  A1_SOCIAL                            0.171     35     0.154     39  +0.018
+  A2_PSYCH                             0.452     31     0.471     34  -0.019
+  A3_ENDOCRINE                         0.691     55     0.680     25  +0.011
+  A4_NEUROIMMUNE                       0.786     14     0.750      8  +0.036
+  A5_MOLECULAR                         0.143      7     0.000      6  +0.143
+  a backbone that also produced an extraction should show gap ~ 0; a positive gap toward its own output is self-preference.
+  $ python3 to_ds.py --verdicts out/verdicts.L1.r1.f2.jsonl --out out --items out/items.jsonl --assignment out/assignment.json
+stratum                  n  judged  anchors   posterior>=0.9
+T1_FRAME               404      45        0     100%
+T2_ROLE                261       8        0       0%
+T3_MODERATOR           485      32        0       0%
+T4_STEP                575      67      140      24%
+T5_BRIDGE             1115     141      456     100%
+T6_OUTCOME_BRIDGE       87      12        1       2%
+  T5_BRIDGE: shrinkage weight toward anchored profile = 0.52  (n judgments = 187)
+  T6_OUTCOME_BRIDGE: shrinkage weight toward anchored profile = 0.93  (n judgments = 15)
+
+red-team held out    : 191  (calibration half 190 excluded)
+panel rejection rate : 100.00%   (specificity estimate; unrejected defective items are the panel's confabulation floor)
+ well-formedness calls on red-team items: {'WELLFORMED': 64, 'REFERENT_MISMATCH': 17, 'INDIVIDUATION_CLASH': 3, 'TIMESCALE_NONCOMPOSABLE': 1}
+
+estimated per-agent competence (diagonal of Pi, anchored strata):
+  A1_SOCIAL        SUP=0.33  UND=0.54  CON=0.24
+  A2_PSYCH         SUP=0.46  UND=0.53  CON=0.22
+  A3_ENDOCRINE     SUP=0.43  UND=0.38  CON=0.27
+  A4_NEUROIMMUNE   SUP=0.31  UND=0.35  CON=0.28
+  A5_MOLECULAR     SUP=0.31  UND=0.48  CON=0.31
+
+unresolved queue     : 0 items (0 of them bridges) -> out/bridge_debug_queue.json
+
+self-preference probe (SUPPORTED rate by item origin; agents are blinded):
+  agent           backbone             opus5      n  sonnet45      n     gap
+  A1_SOCIAL                            0.211     19     0.450     20  -0.239
+  A2_PSYCH                             0.580     50     0.561     66  +0.019
+  A3_ENDOCRINE                         0.836     55     0.955     22  -0.118
+  A4_NEUROIMMUNE                       0.438     16     0.500      6  -0.062
+  A5_MOLECULAR                         0.000     16     0.000     18  +0.000
+  a backbone that also produced an extraction should show gap ~ 0; a positive gap toward its own output is self-preference.
+  $ python3 to_ds.py --verdicts out/verdicts.L1.r1.f3.jsonl --out out --items out/items.jsonl --assignment out/assignment.json
+stratum                  n  judged  anchors   posterior>=0.9
+T1_FRAME               404      31        0       2%
+T2_ROLE                261       8        0       0%
+T3_MODERATOR           485      32        0       2%
+T4_STEP                575      57      140      24%
+T5_BRIDGE             1115     136      456     100%
+T6_OUTCOME_BRIDGE       87      12        1       1%
+  T5_BRIDGE: shrinkage weight toward anchored profile = 0.50  (n judgments = 200)
+  T6_OUTCOME_BRIDGE: shrinkage weight toward anchored profile = 0.92  (n judgments = 18)
+
+red-team held out    : 191  (calibration half 190 excluded)
+panel rejection rate : 100.00%   (specificity estimate; unrejected defective items are the panel's confabulation floor)
+ well-formedness calls on red-team items: {'WELLFORMED': 71, 'REFERENT_MISMATCH': 4, 'INDIVIDUATION_CLASH': 3, 'TIMESCALE_NONCOMPOSABLE': 2}
+
+estimated per-agent competence (diagonal of Pi, anchored strata):
+  A1_SOCIAL        SUP=0.32  UND=0.57  CON=0.28
+  A2_PSYCH         SUP=0.43  UND=0.64  CON=0.21
+  A3_ENDOCRINE     SUP=0.26  UND=0.38  CON=0.28
+  A4_NEUROIMMUNE   SUP=0.28  UND=0.44  CON=0.35
+  A5_MOLECULAR     SUP=0.30  UND=0.33  CON=0.28
+
+unresolved queue     : 2 items (1 of them bridges) -> out/bridge_debug_queue.json
+
+self-preference probe (SUPPORTED rate by item origin; agents are blinded):
+  agent           backbone             opus5      n  sonnet45      n     gap
+  A1_SOCIAL                            0.300     20     0.227     22  +0.073
+  A2_PSYCH                             0.477     44     0.692     52  -0.215
+  A3_ENDOCRINE                         0.375     56     0.296     27  +0.079
+  A4_NEUROIMMUNE                       0.316     19     0.182     11  +0.134
+  A5_MOLECULAR                         0.067     15     0.000      7  +0.067
+  a backbone that also produced an extraction should show gap ~ 0; a positive gap toward its own output is self-preference.
+  $ python3 to_ds.py --verdicts out/verdicts.L1.r1.f4.jsonl --out out --items out/items.jsonl --assignment out/assignment.json
+stratum                  n  judged  anchors   posterior>=0.9
+T1_FRAME               404      20        0       0%
+T2_ROLE                261       3        0       0%
+T3_MODERATOR           485      28        0       0%
+T4_STEP                575      54      140      24%
+T5_BRIDGE             1115     136      456     100%
+T6_OUTCOME_BRIDGE       87      11        1       1%
+  T5_BRIDGE: shrinkage weight toward anchored profile = 0.54  (n judgments = 172)
+  T6_OUTCOME_BRIDGE: shrinkage weight toward anchored profile = 0.93  (n judgments = 14)
+
+red-team held out    : 191  (calibration half 190 excluded)
+panel rejection rate : 100.00%   (specificity estimate; unrejected defective items are the panel's confabulation floor)
+ well-formedness calls on red-team items: {'REFERENT_MISMATCH': 2, 'INDIVIDUATION_CLASH': 4, 'TIMESCALE_NONCOMPOSABLE': 4, 'WELLFORMED': 54}
+
+estimated per-agent competence (diagonal of Pi, anchored strata):
+  A1_SOCIAL        SUP=0.33  UND=0.33  CON=0.33
+  A2_PSYCH         SUP=0.37  UND=0.49  CON=0.19
+  A3_ENDOCRINE     SUP=0.30  UND=0.46  CON=0.28
+  A4_NEUROIMMUNE   SUP=0.29  UND=0.33  CON=0.31
+  A5_MOLECULAR     SUP=0.32  UND=0.33  CON=0.33
+
+unresolved queue     : 0 items (0 of them bridges) -> out/bridge_debug_queue.json
+
+self-preference probe (SUPPORTED rate by item origin; agents are blinded):
+  agent           backbone             opus5      n  sonnet45      n     gap
+  A1_SOCIAL                              nan      0       nan      0    +nan
+  A2_PSYCH                             0.500     42     0.469     49  +0.031
+  A3_ENDOCRINE                         0.277     65     0.290     31  -0.013
+  A4_NEUROIMMUNE                       0.000     15     0.167      6  -0.167
+  A5_MOLECULAR                         0.000      1     0.333      3  -0.333
+  a backbone that also produced an extraction should show gap ~ 0; a positive gap toward its own output is self-preference.
+
+done. pool the per-fold fits with variance components before reporting: role, model, and role x model are now separable by construction.
+
+--- 3. per-fold aggregation summary
+===== fold 0 =====
+stratum                  n  judged  anchors   posterior>=0.9
+T1_FRAME               404      40        0       0%
+T2_ROLE                261      12        0       0%
+T3_MODERATOR           485      57        0      99%
+T4_STEP                575      69      140      24%
+T5_BRIDGE             1115     137      456     100%
+T6_OUTCOME_BRIDGE       87      12        1       1%
+  T5_BRIDGE: shrinkage weight toward anchored profile = 0.52  (n judgments = 184)
+  T6_OUTCOME_BRIDGE: shrinkage weight toward anchored profile = 0.93  (n judgments = 15)
+
+red-team held out    : 191  (calibration half 190 excluded)
+panel rejection rate : 100.00%   (specificity estimate; unrejected defective items are the panel's confabulation floor)
+ well-formedness calls on red-team items: {'WELLFORMED': 66, 'REFERENT_MISMATCH': 8, 'TIMESCALE_NONCOMPOSABLE': 3, 'INDIVIDUATION_CLASH': 5}
+
+estimated per-agent competence (diagonal of Pi, anchored strata):
+  A1_SOCIAL        SUP=0.38  UND=0.64  CON=0.23
+  A2_PSYCH         SUP=0.37  UND=0.68  CON=0.19
+  A3_ENDOCRINE     SUP=0.27  UND=0.34  CON=0.27
+  A4_NEUROIMMUNE   SUP=0.35  UND=0.33  CON=0.30
+  A5_MOLECULAR     SUP=0.36  UND=0.36  CON=0.42
+
+unresolved queue     : 9 items (1 of them bridges) -> out/bridge_debug_queue.json
+
+self-preference probe (SUPPORTED rate by item origin; agents are blinded):
+  agent           backbone             opus5      n  sonnet45      n     gap
+  A1_SOCIAL                            0.270     37     0.325     40  -0.055
+  A2_PSYCH                             0.367     60     0.388     67  -0.021
+  A3_ENDOCRINE                         0.073     41     0.000     19  +0.073
+  A4_NEUROIMMUNE                       0.353     17     0.375      8  -0.022
+  A5_MOLECULAR                         0.125      8     0.800      5  -0.675
+  a backbone that also produced an extraction should show gap ~ 0; a positive gap toward its own output is self-preference.
+===== fold 1 =====
+stratum                  n  judged  anchors   posterior>=0.9
+T1_FRAME               404      30        0       0%
+T2_ROLE                261       9        0       0%
+T3_MODERATOR           485      43        0     100%
+T4_STEP                575      63      140      24%
+T5_BRIDGE             1115     131      456     100%
+T6_OUTCOME_BRIDGE       87      13        1       1%
+  T5_BRIDGE: shrinkage weight toward anchored profile = 0.53  (n judgments = 174)
+  T6_OUTCOME_BRIDGE: shrinkage weight toward anchored profile = 0.93  (n judgments = 16)
+
+red-team held out    : 191  (calibration half 190 excluded)
+panel rejection rate : 100.00%   (specificity estimate; unrejected defective items are the panel's confabulation floor)
+ well-formedness calls on red-team items: {'REFERENT_MISMATCH': 7, 'WELLFORMED': 70, 'TIMESCALE_NONCOMPOSABLE': 2, 'INDIVIDUATION_CLASH': 6}
+
+estimated per-agent competence (diagonal of Pi, anchored strata):
+  A1_SOCIAL        SUP=0.28  UND=0.65  CON=0.22
+  A2_PSYCH         SUP=0.46  UND=0.54  CON=0.25
+  A3_ENDOCRINE     SUP=0.40  UND=0.33  CON=0.29
+  A4_NEUROIMMUNE   SUP=0.38  UND=0.33  CON=0.34
+  A5_MOLECULAR     SUP=0.32  UND=0.33  CON=0.32
+
+unresolved queue     : 0 items (0 of them bridges) -> out/bridge_debug_queue.json
+
+self-preference probe (SUPPORTED rate by item origin; agents are blinded):
+  agent           backbone             opus5      n  sonnet45      n     gap
+  A1_SOCIAL                            0.171     35     0.154     39  +0.018
+  A2_PSYCH                             0.452     31     0.471     34  -0.019
+  A3_ENDOCRINE                         0.691     55     0.680     25  +0.011
+  A4_NEUROIMMUNE                       0.786     14     0.750      8  +0.036
+  A5_MOLECULAR                         0.143      7     0.000      6  +0.143
+  a backbone that also produced an extraction should show gap ~ 0; a positive gap toward its own output is self-preference.
+===== fold 2 =====
+stratum                  n  judged  anchors   posterior>=0.9
+T1_FRAME               404      45        0     100%
+T2_ROLE                261       8        0       0%
+T3_MODERATOR           485      32        0       0%
+T4_STEP                575      67      140      24%
+T5_BRIDGE             1115     141      456     100%
+T6_OUTCOME_BRIDGE       87      12        1       2%
+  T5_BRIDGE: shrinkage weight toward anchored profile = 0.52  (n judgments = 187)
+  T6_OUTCOME_BRIDGE: shrinkage weight toward anchored profile = 0.93  (n judgments = 15)
+
+red-team held out    : 191  (calibration half 190 excluded)
+panel rejection rate : 100.00%   (specificity estimate; unrejected defective items are the panel's confabulation floor)
+ well-formedness calls on red-team items: {'WELLFORMED': 64, 'REFERENT_MISMATCH': 17, 'INDIVIDUATION_CLASH': 3, 'TIMESCALE_NONCOMPOSABLE': 1}
+
+estimated per-agent competence (diagonal of Pi, anchored strata):
+  A1_SOCIAL        SUP=0.33  UND=0.54  CON=0.24
+  A2_PSYCH         SUP=0.46  UND=0.53  CON=0.22
+  A3_ENDOCRINE     SUP=0.43  UND=0.38  CON=0.27
+  A4_NEUROIMMUNE   SUP=0.31  UND=0.35  CON=0.28
+  A5_MOLECULAR     SUP=0.31  UND=0.48  CON=0.31
+
+unresolved queue     : 0 items (0 of them bridges) -> out/bridge_debug_queue.json
+
+self-preference probe (SUPPORTED rate by item origin; agents are blinded):
+  agent           backbone             opus5      n  sonnet45      n     gap
+  A1_SOCIAL                            0.211     19     0.450     20  -0.239
+  A2_PSYCH                             0.580     50     0.561     66  +0.019
+  A3_ENDOCRINE                         0.836     55     0.955     22  -0.118
+  A4_NEUROIMMUNE                       0.438     16     0.500      6  -0.062
+  A5_MOLECULAR                         0.000     16     0.000     18  +0.000
+  a backbone that also produced an extraction should show gap ~ 0; a positive gap toward its own output is self-preference.
+===== fold 3 =====
+stratum                  n  judged  anchors   posterior>=0.9
+T1_FRAME               404      31        0       2%
+T2_ROLE                261       8        0       0%
+T3_MODERATOR           485      32        0       2%
+T4_STEP                575      57      140      24%
+T5_BRIDGE             1115     136      456     100%
+T6_OUTCOME_BRIDGE       87      12        1       1%
+  T5_BRIDGE: shrinkage weight toward anchored profile = 0.50  (n judgments = 200)
+  T6_OUTCOME_BRIDGE: shrinkage weight toward anchored profile = 0.92  (n judgments = 18)
+
+red-team held out    : 191  (calibration half 190 excluded)
+panel rejection rate : 100.00%   (specificity estimate; unrejected defective items are the panel's confabulation floor)
+ well-formedness calls on red-team items: {'WELLFORMED': 71, 'REFERENT_MISMATCH': 4, 'INDIVIDUATION_CLASH': 3, 'TIMESCALE_NONCOMPOSABLE': 2}
+
+estimated per-agent competence (diagonal of Pi, anchored strata):
+  A1_SOCIAL        SUP=0.32  UND=0.57  CON=0.28
+  A2_PSYCH         SUP=0.43  UND=0.64  CON=0.21
+  A3_ENDOCRINE     SUP=0.26  UND=0.38  CON=0.28
+  A4_NEUROIMMUNE   SUP=0.28  UND=0.44  CON=0.35
+  A5_MOLECULAR     SUP=0.30  UND=0.33  CON=0.28
+
+unresolved queue     : 2 items (1 of them bridges) -> out/bridge_debug_queue.json
+
+self-preference probe (SUPPORTED rate by item origin; agents are blinded):
+  agent           backbone             opus5      n  sonnet45      n     gap
+  A1_SOCIAL                            0.300     20     0.227     22  +0.073
+  A2_PSYCH                             0.477     44     0.692     52  -0.215
+  A3_ENDOCRINE                         0.375     56     0.296     27  +0.079
+  A4_NEUROIMMUNE                       0.316     19     0.182     11  +0.134
+  A5_MOLECULAR                         0.067     15     0.000      7  +0.067
+  a backbone that also produced an extraction should show gap ~ 0; a positive gap toward its own output is self-preference.
+===== fold 4 =====
+stratum                  n  judged  anchors   posterior>=0.9
+T1_FRAME               404      20        0       0%
+T2_ROLE                261       3        0       0%
+T3_MODERATOR           485      28        0       0%
+T4_STEP                575      54      140      24%
+T5_BRIDGE             1115     136      456     100%
+T6_OUTCOME_BRIDGE       87      11        1       1%
+  T5_BRIDGE: shrinkage weight toward anchored profile = 0.54  (n judgments = 172)
+  T6_OUTCOME_BRIDGE: shrinkage weight toward anchored profile = 0.93  (n judgments = 14)
+
+red-team held out    : 191  (calibration half 190 excluded)
+panel rejection rate : 100.00%   (specificity estimate; unrejected defective items are the panel's confabulation floor)
+ well-formedness calls on red-team items: {'REFERENT_MISMATCH': 2, 'INDIVIDUATION_CLASH': 4, 'TIMESCALE_NONCOMPOSABLE': 4, 'WELLFORMED': 54}
+
+estimated per-agent competence (diagonal of Pi, anchored strata):
+  A1_SOCIAL        SUP=0.33  UND=0.33  CON=0.33
+  A2_PSYCH         SUP=0.37  UND=0.49  CON=0.19
+  A3_ENDOCRINE     SUP=0.30  UND=0.46  CON=0.28
+  A4_NEUROIMMUNE   SUP=0.29  UND=0.33  CON=0.31
+  A5_MOLECULAR     SUP=0.32  UND=0.33  CON=0.33
+
+unresolved queue     : 0 items (0 of them bridges) -> out/bridge_debug_queue.json
+
+self-preference probe (SUPPORTED rate by item origin; agents are blinded):
+  agent           backbone             opus5      n  sonnet45      n     gap
+  A1_SOCIAL                              nan      0       nan      0    +nan
+  A2_PSYCH                             0.500     42     0.469     49  +0.031
+  A3_ENDOCRINE                         0.277     65     0.290     31  -0.013
+  A4_NEUROIMMUNE                       0.000     15     0.167      6  -0.167
+  A5_MOLECULAR                         0.000      1     0.333      3  -0.333
+  a backbone that also produced an extraction should show gap ~ 0; a positive gap toward its own output is self-preference.
+
+=== Tue Aug 25 11:14:43 CEST 2026 finished ===
+read in the morning:
+  run-20260825-0836.log                          full transcript, incl. per-agent unparsed counts
+  out/bridge_debug_queue.json   the deliverable: unresolved items + defeaters
+  out/self_preference.json      origin-bias probe (expect ~0: no judge authored an extraction)
+  out/verdicts.L1.r1.f*.jsonl   raw verdicts, one file per fold

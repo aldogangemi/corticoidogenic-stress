@@ -1,0 +1,1144 @@
+{
+ "strata": {
+  "L1": [
+   {
+    "id": "csf:CSF_Situation",
+    "label": "CSF Situation",
+    "comment": "INSTANCE LEVEL: An actual situation that evokes a CorticoidogenicFrame. This is the domain-specific situation class for the CSF ontology.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csf:CorticoidogenicFrame",
+    "label": "Corticoidogenic Frame",
+    "comment": "SCHEMA LEVEL: A frame-semantic description that characterizes a TYPE of life situation structurally predisposed to induce chronic HPA axis activation and allostatic load accumulation. Situations EVOKE frames (D&S pattern).",
+    "pmid": "17615391",
+    "evidence": "systematic-review",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "frm:AgencyRestorationFrame",
+    "label": "Agency Restoration Frame (P2)",
+    "pmid": "11392867",
+    "evidence": "theory-and-review",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "frm:CaregivingEntrapmentFrame",
+    "label": "Caregiving Entrapment Frame",
+    "pmid": "32807491",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "frm:ChronicIdentityThreatFrame",
+    "label": "Chronic Identity Threat Frame",
+    "pmid": "32389588",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "frm:ChronicSubordinationFrame",
+    "label": "Chronic Subordination Frame",
+    "pmid": "9629234",
+    "evidence": "systematic-review",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "frm:CircadianMisalignmentFrame",
+    "label": "Circadian Misalignment Frame",
+    "pmid": "39680766",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "frm:CulturalContinuityFrame",
+    "label": "Cultural Continuity Frame (P3)",
+    "evidence": "cohort",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "frm:EarlyLifeProgrammingFrame",
+    "label": "Early Life Programming Frame",
+    "pmid": "15084670",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "frm:MeaningMakingFrame",
+    "label": "Meaning Making Frame (P4)",
+    "pmid": "20438142",
+    "evidence": "integrative-review",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "frm:ProtectiveFrame",
+    "label": "Protective Frame",
+    "comment": "A frame representing a protective/buffering configuration; subClassOf CorticoidogenicFrame for taxonomic coherence (H1).",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "frm:SocialDisconnectionFrame",
+    "label": "Social Disconnection Frame",
+    "pmid": "32389588",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "frm:SocialSupportFrame",
+    "label": "Social Support Frame (P1)",
+    "pmid": "24636058",
+    "evidence": "systematic-review",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "frm:SocioeconomicStrainFrame",
+    "label": "Socioeconomic Strain Frame (H)",
+    "pmid": "15094289",
+    "evidence": "cohort-and-review",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "frm:UncontrollableThreatFrame",
+    "label": "Uncontrollable Threat Frame",
+    "pmid": "19167389",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "sit:CasteBasedDiscrimination",
+    "label": "Caste/Class-Based Discrimination",
+    "comment": "Frontier node: underspecified in v3.1. Severity and control added in v3.2 based on structural discrimination literature.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "sit:ChildhoodAbuseNeglect",
+    "label": "Childhood Abuse/Neglect",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "sit:ChronicInsomnia",
+    "label": "Chronic Insomnia/Sleep Disorders",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "sit:ChronicShiftWork",
+    "label": "Chronic Shift Work",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "sit:DementiaCaregiving",
+    "label": "Dementia Caregiving (Spouse/Parent)",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "sit:ElderlyIsolation",
+    "label": "Chronic Social Isolation (Elderly)",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "sit:ForcedMigration",
+    "label": "Forced Migration / Refugee Status",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "sit:ImmigrantIsolation",
+    "label": "Immigrant Isolation (No Community)",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "sit:OngoingDomesticViolence",
+    "label": "Ongoing Domestic Violence",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "sit:RacialDiscrimination",
+    "label": "Sustained Racial/Ethnic Discrimination",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "sit:SocialOstracism",
+    "label": "Social Exclusion/Ostracism",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "sit:SocioeconomicDisadvantage",
+    "label": "Sustained Socioeconomic Disadvantage",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "sit:WarZoneExposure",
+    "label": "War Zone / Armed Conflict Exposure",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "sit:WorkplaceSubordination",
+    "label": "Workplace Subordination with Abusive Supervision",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "mod:SocialIsolation",
+    "label": "Social Isolation",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:HighSocialSupport",
+    "label": "High Quality Social Support",
+    "pmid": "32807491",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:CoRegulationPartner",
+    "label": "Co-Regulation Partner",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:CommunityEmbeddedness",
+    "label": "Community Embeddedness",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:LowSocioeconomicResources",
+    "label": "Low Socioeconomic Resources",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:ComorbidMedicalCondition",
+    "label": "Comorbid Medical Condition",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:ConcurrentMultipleStressors",
+    "label": "Concurrent Multiple Stressors",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:NatureExposure",
+    "label": "Access to Nature/Green Space",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:AdequateEconomicResources",
+    "label": "Adequate Economic Resources",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:SafeHousing",
+    "label": "Safe Housing",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:AccessToHealthcare",
+    "label": "Access to Healthcare",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:EarlyAdversityHistory",
+    "label": "Early Adversity History",
+    "pmid": "15084670",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:InsecureAttachment",
+    "label": "Insecure Attachment History",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:DisorganizedAttachment",
+    "label": "Disorganized Attachment",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:SecureAttachment",
+    "label": "Secure Attachment History",
+    "pmid": "15084670",
+    "stratum_provenance": "panel-routing (moderator)"
+   }
+  ],
+  "L2": [
+   {
+    "id": "csf:AppraisalStep",
+    "label": "Appraisal Step Type",
+    "comment": "A cognitive step in the stress cascade: the evaluative processing (Lazarus & Folkman 1984) that mediates between the situation/frame and the behavioural/physiological response. Distinct from moderators (which modulate) and ISIT parameters (which describe): an appraisal step is a causal link occupying the L2 (appraisal) stratum. Its absence previously wrote cognitive appraisal out of the causal cha",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:PrimaryAppraisalType",
+    "label": "Primary Appraisal (Type)",
+    "comment": "Evaluation of what is at stake: whether the encounter is irrelevant, benign-positive, or stressful (harm/loss, threat, or challenge).",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:ReappraisalType",
+    "label": "Reappraisal (Type)",
+    "comment": "Updated appraisal following new information, coping, or feedback (including cognitive reframing).",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:SecondaryAppraisalType",
+    "label": "Secondary Appraisal (Type)",
+    "comment": "Evaluation of coping resources and options \u2014 what can be done, and expected controllability/efficacy.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:ThreatAppraisalType",
+    "label": "Threat Appraisal (Type)",
+    "comment": "A primary appraisal outcome: anticipated harm/loss not yet occurred \u2014 the appraisal most tied to HPA recruitment.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "mod:RuminativeStyle",
+    "label": "Ruminative Cognitive Style",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "brg:ex_amp",
+    "label": "ex_amp",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:CatastrophizingStyle",
+    "label": "Catastrophizing Cognitive Style",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:LowSelfEfficacy",
+    "label": "Low Self-Efficacy",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:MeaningMakingCapacity",
+    "label": "Meaning-Making Capacity",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:FlexibleCopingRepertoire",
+    "label": "Flexible Coping Repertoire",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:HighSelfEfficacy",
+    "label": "High Self-Efficacy",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:PerceivedControllability",
+    "label": "Perceived Controllability",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:GrowthMindset",
+    "label": "Growth Mindset",
+    "stratum_provenance": "panel-routing (moderator)"
+   }
+  ],
+  "L3": [
+   {
+    "id": "csf:BehavioralStep",
+    "label": "Behavioral Step Type",
+    "comment": "Step type involving behavioral changes (coping, avoidance, etc.).",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:AvoidanceType",
+    "label": "Avoidance Behavior (Type)",
+    "comment": "Step type: behavioral avoidance of threat-related stimuli.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:HypervigilanceType",
+    "label": "Hypervigilance (Type)",
+    "comment": "Step type: sustained heightened alertness and threat scanning.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:LearnedHelplessnessType",
+    "label": "Learned Helplessness (Type)",
+    "comment": "Step type: behavioral passivity from uncontrollable stress.",
+    "pmid": "26981074",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:LossSocialBufferingType",
+    "label": "Loss of Social Buffering (Type)",
+    "comment": "Step type: absence of social support moderation.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:RuminativeCopingType",
+    "label": "Ruminative Coping (Type)",
+    "comment": "Step type: perseverative thinking maintaining activation.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:SleepDisruptionType",
+    "label": "Sleep Disruption (Type)",
+    "comment": "Step type: impaired sleep quality/continuity.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:SocialWithdrawalType",
+    "label": "Social Withdrawal (Type)",
+    "comment": "Step type: reduction in social engagement.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "mod:SubstanceUse",
+    "label": "Substance Use",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:SleepDeprivation",
+    "label": "Sleep Deprivation",
+    "pmid": "39680766",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:SedentaryLifestyle",
+    "label": "Sedentary Lifestyle",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:PoorNutrition",
+    "label": "Poor Nutrition",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:PhysicalExercise",
+    "label": "Regular Physical Exercise",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:HealthySleepPatterns",
+    "label": "Healthy Sleep Patterns",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:MindfulnessPractice",
+    "label": "Mindfulness Practice",
+    "stratum_provenance": "panel-routing (moderator)"
+   }
+  ],
+  "L4": [
+   {
+    "id": "csf:AutonomicStep",
+    "label": "Autonomic Step Type",
+    "comment": "Step type involving autonomic nervous system changes, particularly parasympathetic/vagal mechanisms. Added in v3.1 to address the gap in vagal pathway representation (Porges 2011, Thayer & Lane 2009).",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:AutonomicImbalanceType",
+    "label": "Autonomic Imbalance (Type)",
+    "comment": "Step type: chronic sympathetic-parasympathetic imbalance with sympathetic dominance. Contributes to cardiovascular risk, inflammatory activation, and impaired social engagement.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:ParasympatheticWithdrawalType",
+    "label": "Parasympathetic Withdrawal (Type)",
+    "comment": "Step type: reduction in parasympathetic (vagal) tone in response to chronic stress. Vagal withdrawal shifts autonomic balance toward sympathetic dominance, reducing heart rate variability and impairing stress recovery.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:VagalToneReductionType",
+    "label": "Chronic Vagal Tone Reduction (Type)",
+    "comment": "Step type: sustained reduction in resting vagal tone (indexed by HRV). Chronic low vagal tone impairs emotion regulation, social engagement, and inflammatory control.",
+    "stratum_provenance": "class-restriction"
+   }
+  ],
+  "L5": [
+   {
+    "id": "csf:NeuroendocrineStep",
+    "label": "Neuroendocrine Step Type",
+    "comment": "Step type involving HPA axis, cortisol, catecholamines.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:CARFlatteningType",
+    "label": "CAR Flattening (Type)",
+    "comment": "Step type: blunted or absent cortisol awakening response.",
+    "pmid": "39680766",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:CatecholamineReleaseType",
+    "label": "Catecholamine Release (Type)",
+    "comment": "Step type: release of norepinephrine and epinephrine.",
+    "pmid": "17615391",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:CortisolReleaseType",
+    "label": "Cortisol Release (Type)",
+    "comment": "Step type: release of cortisol from adrenal cortex.",
+    "pmid": "17615391",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:DiurnalRhythmDisruptionType",
+    "label": "Diurnal Rhythm Disruption (Type)",
+    "comment": "Step type: loss of normal diurnal cortisol slope.",
+    "pmid": "32807491",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:FailureToHabituateType",
+    "label": "Failure to Habituate (Type)",
+    "comment": "Step type: lack of habituation to repeated homotypic stressors.",
+    "pmid": "9629234",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:GRActivationType",
+    "label": "Glucocorticoid Receptor Activation (Type)",
+    "comment": "Step type: binding of cortisol to GR in brain and periphery.",
+    "pmid": "26981074",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:HPAActivationType",
+    "label": "HPA Axis Activation (Type)",
+    "comment": "Step type: initial activation of hypothalamic-pituitary-adrenal axis.",
+    "pmid": "17615391",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:ImpairedNegativeFeedbackType",
+    "label": "Impaired HPA Negative Feedback (Type)",
+    "comment": "Step type: reduced efficiency of cortisol negative feedback.",
+    "pmid": "33345670",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:MRActivationType",
+    "label": "Mineralocorticoid Receptor Activation (Type)",
+    "comment": "Step type: binding of cortisol to MR (high affinity, tonic signaling).",
+    "pmid": "17615391",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:SustainedHPAActivationType",
+    "label": "Sustained HPA Activation (Type)",
+    "comment": "Step type: failure to terminate HPA response after stressor offset.",
+    "pmid": "9629234",
+    "stratum_provenance": "class-restriction"
+   }
+  ],
+  "L6": [
+   {
+    "id": "csf:ImmuneStep",
+    "label": "Immune Step Type",
+    "comment": "Step type involving inflammatory or immune processes.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:ChronicLowGradeInflammationType",
+    "label": "Chronic Low-Grade Inflammation (Type)",
+    "comment": "Step type: sustained low-grade systemic inflammation (elevated CRP, IL-6, TNF-alpha) resulting from convergence of HPA dysregulation, autonomic imbalance, and CTRA activation. This is a convergence node where three previously disconnected cascade pathways meet. Added in v3.1.",
+    "pmid": "32389588",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:GlucocorticoidResistanceType",
+    "label": "Glucocorticoid Resistance (Type)",
+    "comment": "Step type: reduced immune cell sensitivity to cortisol's anti-inflammatory effects.",
+    "pmid": "17615391",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:InflammatoryActivationType",
+    "label": "Inflammatory Pathway Activation (Type)",
+    "comment": "Step type: activation of pro-inflammatory cytokines (IL-6, TNF-\u03b1, CRP).",
+    "pmid": "32389588",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:MicroglialActivationType",
+    "label": "Microglial Activation (Type)",
+    "comment": "Step type: activation of brain-resident immune cells.",
+    "pmid": "32389588",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:NeuroinflammationType",
+    "label": "Neuroinflammation (Type)",
+    "comment": "Step type: CNS inflammation affecting neural function.",
+    "pmid": "32389588",
+    "stratum_provenance": "class-restriction"
+   }
+  ],
+  "L7": [
+   {
+    "id": "csf:EpigeneticStep",
+    "label": "Epigenetic Step Type",
+    "comment": "Step type involving epigenetic modifications (DNA methylation, histone changes).",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csf:NeuralPlasticityStep",
+    "label": "Neural Plasticity Step Type",
+    "comment": "Step type involving structural or functional brain changes.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csf:SocialGenomicsStep",
+    "label": "Social Genomics Step Type",
+    "comment": "Step type involving social signal transduction to gene expression changes. Formalizes Cole's Conserved Transcriptional Response to Adversity (CTRA). Added in v3.1.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:AmygdalaActivationType",
+    "label": "Amygdala Activation (Type)",
+    "comment": "Step type: activation of amygdala in response to threat.",
+    "pmid": "33345670",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:AmygdalaHypertrophyType",
+    "label": "Amygdala Dendritic Hypertrophy (Type)",
+    "comment": "Step type: increased dendritic arborization in BLA.",
+    "pmid": "26981074",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:AmygdalaSensitizationType",
+    "label": "Amygdala Sensitization (Type)",
+    "comment": "Step type: LTP in amygdala producing heightened threat sensitivity.",
+    "pmid": "33345670",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:AntiviralDownregulationType",
+    "label": "Antiviral/Antibody Gene Downregulation (Type)",
+    "comment": "Step type: downregulation of IRF-mediated antiviral and antibody gene expression. The complement of NF-kB upregulation in the CTRA pattern, increasing vulnerability to viral infection.",
+    "pmid": "25071120",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:CognitiveRigidityType",
+    "label": "Cognitive Rigidity (Type)",
+    "comment": "Step type: impaired cognitive flexibility and set-shifting.",
+    "pmid": "17615391",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:FKBP5DemethylationType",
+    "label": "FKBP5 Demethylation (Type)",
+    "comment": "Step type: demethylation of FKBP5 enhancing GR resistance.",
+    "pmid": "24051924",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:HippocampalDendriticRetractionType",
+    "label": "Hippocampal CA3 Dendritic Retraction (Type)",
+    "comment": "Step type: retraction of CA3 apical dendrites.",
+    "pmid": "17615391",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:HippocampalVolumeReductionType",
+    "label": "Hippocampal Volume Reduction (Type)",
+    "comment": "Step type: hippocampal volume loss from dendritic retraction + reduced neurogenesis.",
+    "pmid": "17615391",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:ImpairedContextualizationType",
+    "label": "Impaired Threat Contextualization (Type)",
+    "comment": "Step type: reduced hippocampal threat contextualization \u2192 overgeneralization.",
+    "pmid": "19167389",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:ImpairedEmotionalProcessingType",
+    "label": "Impaired Emotional Processing (Type)",
+    "comment": "Step type: deficits in emotional discrimination and regulation.",
+    "pmid": "39680766",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:ImpairedWorkingMemoryType",
+    "label": "Impaired Working Memory (Type)",
+    "comment": "Step type: deficits from PFC dysfunction.",
+    "pmid": "17615391",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:LossOfTopDownInhibitionType",
+    "label": "Loss of Top-Down HPA Inhibition (Type)",
+    "comment": "Step type: impaired prefrontal/hippocampal inhibition of HPA via BST.",
+    "pmid": "33345670",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:NFkBUpregulationType",
+    "label": "NF-kB Pathway Upregulation (Type)",
+    "comment": "Step type: upregulation of NF-kB-mediated pro-inflammatory gene expression in response to chronic social threat. Part of the Conserved Transcriptional Response to Adversity (CTRA).",
+    "pmid": "17201568",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:NR3C1MethylationType",
+    "label": "NR3C1 Promoter Methylation (Type)",
+    "comment": "Step type: epigenetic silencing of glucocorticoid receptor gene.",
+    "pmid": "15084670",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:PFCDendriticRetractionType",
+    "label": "PFC Dendritic Retraction (Type)",
+    "comment": "Step type: atrophy of mPFC pyramidal neuron dendrites.",
+    "pmid": "26981074",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:PFCDownregulationType",
+    "label": "Prefrontal Cortex Downregulation (Type)",
+    "comment": "Step type: reduced PFC activity and top-down control.",
+    "pmid": "33345670",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:ReducedGRFunctionType",
+    "label": "Reduced GR Function (Type)",
+    "comment": "Step type: decreased glucocorticoid receptor expression/function.",
+    "pmid": "15084670",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:ReducedNeurogenesisType",
+    "label": "Reduced Adult Neurogenesis (Type)",
+    "comment": "Step type: suppression of DG neurogenesis.",
+    "pmid": "26981074",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csc:SynapticDysfunctionType",
+    "label": "Synaptic Dysfunction (Type)",
+    "comment": "Step type: impaired synaptic plasticity and neurotransmission.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "mod:FKBP5RiskVariant",
+    "label": "FKBP5 Risk Variant",
+    "pmid": "24051924",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:CRHR1RiskVariant",
+    "label": "CRHR1 Risk Variant",
+    "pmid": "17615391",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:NR3C1RiskVariant",
+    "label": "NR3C1 Risk Variant",
+    "pmid": "17615391",
+    "stratum_provenance": "panel-routing (moderator)"
+   },
+   {
+    "id": "mod:SLC6A4ShortAllele",
+    "label": "5-HTTLPR Short Allele",
+    "stratum_provenance": "panel-routing (moderator)"
+   }
+  ],
+  "L8": [
+   {
+    "id": "csf:ClinicalOutcome",
+    "label": "Clinical Outcome",
+    "comment": "A clinically significant state or event resulting from cascade processes.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csf:RecoveryOutcome",
+    "label": "Recovery Outcome",
+    "comment": "An outcome representing return to baseline functioning after cascade activation. Added in v3.1.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "csf:ResilienceOutcome",
+    "label": "Resilience Outcome",
+    "comment": "A positive adaptation outcome where the individual maintains or recovers functioning despite stress exposure. Added in v3.1 to balance the outcome taxonomy.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:AcceleratedCognitiveDecline",
+    "label": "Accelerated Cognitive Decline",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:Anxiety",
+    "label": "Anxiety",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:Burnout",
+    "label": "Burnout Syndrome",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:CardiovascularDisease",
+    "label": "CardiovascularDisease",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:CaregiverBurnout",
+    "label": "Caregiver Burnout",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:ChronicPainSyndromes",
+    "label": "Chronic Pain Syndromes",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:CognitiveImpairment",
+    "label": "Cognitive Impairment",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:ComplexTrauma",
+    "label": "ComplexTrauma",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:Dementia",
+    "label": "Dementia",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:Depression",
+    "label": "Major Depressive Episode",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:DifficultToReverseOutcome",
+    "label": "Difficult to Reverse Outcome",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:Dissociation",
+    "label": "Dissociative Symptoms",
+    "comment": "Dissociative symptoms arising from uncontrollable threat exposure.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:EarlyOnsetCognitiveDecline",
+    "label": "Early-Onset Cognitive Decline",
+    "comment": "Premature cognitive decline associated with chronic stress exposure.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:ElevatedAnxietySensitivity",
+    "label": "Elevated Anxiety Sensitivity",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:FunctionalRecovery",
+    "label": "Functional Recovery",
+    "comment": "Return to baseline functioning after cascade activation, with or without intervention.",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "out:HippocampalVolumeReduction",
+    "label": "Hippocampal Volume Reduction",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:ImmuneDysregulation",
+    "label": "Immune Dysregulation",
+    "comment": "Chronic immune system dysregulation including elevated inflammatory markers.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:LifelongVulnerability",
+    "label": "Lifelong Vulnerability",
+    "comment": "Persistent heightened vulnerability to stress-related disorders across the lifespan, typically resulting from early life programming.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:MetabolicSyndrome",
+    "label": "Metabolic Syndrome",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:MetabolicSyndromeOnset",
+    "label": "Metabolic Syndrome Onset",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:OutcomeCategory",
+    "label": "OutcomeCategory",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:PTSD",
+    "label": "Post-Traumatic Stress Disorder",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:PartiallyReversibleOutcome",
+    "label": "Partially Reversible Outcome",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:PersonalityPathology",
+    "label": "Personality Pathology",
+    "comment": "Enduring maladaptive personality patterns resulting from chronic developmental stress.",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:PostTraumaticGrowth",
+    "label": "Post-Traumatic Growth",
+    "comment": "Positive adaptation: enhanced meaning-making and personal growth following adversity.",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "out:RecurrentDepression",
+    "label": "Recurrent Depression",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:ReversibleClinicalOutcome",
+    "label": "Reversible Clinical Outcome",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:StressInoculation",
+    "label": "Stress Inoculation",
+    "comment": "Positive adaptation: moderate stress exposure builds future resilience.",
+    "stratum_provenance": "type-inherited"
+   },
+   {
+    "id": "out:StructuralDegenerativeOutcome",
+    "label": "Structural/Degenerative Outcome",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:SubclinicalOutcome",
+    "label": "Subclinical Outcome",
+    "stratum_provenance": "class-restriction"
+   },
+   {
+    "id": "out:TreatmentResistantDepression",
+    "label": "TreatmentResistantDepression",
+    "stratum_provenance": "class-restriction"
+   }
+  ]
+ },
+ "index": {
+  "L1": {
+   "uri": "http://purl.org/csf/L1_Situational",
+   "label": "L1 Situational",
+   "order": 1,
+   "next": "L2"
+  },
+  "L2": {
+   "uri": "http://purl.org/csf/L2_Appraisal",
+   "label": "L2 Appraisal",
+   "order": 2,
+   "next": "L3"
+  },
+  "L3": {
+   "uri": "http://purl.org/csf/L3_Behavioral",
+   "label": "L3 Behavioral",
+   "order": 3,
+   "next": "L4"
+  },
+  "L4": {
+   "uri": "http://purl.org/csf/L4_Autonomic",
+   "label": "L4 Autonomic",
+   "order": 4,
+   "next": "L5"
+  },
+  "L5": {
+   "uri": "http://purl.org/csf/L5_Endocrine",
+   "label": "L5 Endocrine",
+   "order": 5,
+   "next": "L6"
+  },
+  "L6": {
+   "uri": "http://purl.org/csf/L6_InflammatoryMetabolic",
+   "label": "L6 Inflammatory/metabolic",
+   "order": 6,
+   "next": "L7"
+  },
+  "L7": {
+   "uri": "http://purl.org/csf/L7_Molecular",
+   "label": "L7 Molecular",
+   "order": 7,
+   "next": "L8"
+  },
+  "L8": {
+   "uri": "http://purl.org/csf/L8_Outcome",
+   "label": "L8 Outcome",
+   "order": 8,
+   "next": null
+  }
+ },
+ "frames": [
+  {
+   "id": "frm:AgencyRestorationFrame",
+   "label": "Agency Restoration Frame (P2)",
+   "pmid": "11392867",
+   "evidence": "theory-and-review",
+   "protective": true
+  },
+  {
+   "id": "frm:CaregivingEntrapmentFrame",
+   "label": "Caregiving Entrapment Frame",
+   "pmid": "32807491",
+   "roles": [
+    "csf:Context",
+    "csf:Experiencer",
+    "csf:Stressor",
+    "frm:AmbiguousLoss",
+    "frm:CareRecipient",
+    "frm:CaregivingDemand",
+    "frm:RoleEndpoint",
+    "frm:SupportDeficit"
+   ]
+  },
+  {
+   "id": "frm:ChronicIdentityThreatFrame",
+   "label": "Chronic Identity Threat Frame",
+   "pmid": "32389588",
+   "roles": [
+    "csf:Context",
+    "csf:Experiencer",
+    "csf:Stressor",
+    "frm:ConcealmentCost",
+    "frm:DiscriminationSource",
+    "frm:IdentityDimension",
+    "frm:IdentityVigilance",
+    "frm:MinorityStatus"
+   ]
+  },
+  {
+   "id": "frm:ChronicSubordinationFrame",
+   "label": "Chronic Subordination Frame",
+   "pmid": "9629234",
+   "evidence": "systematic-review",
+   "roles": [
+    "csf:Context",
+    "csf:Experiencer",
+    "csf:Stressor",
+    "frm:DominanceBehavior",
+    "frm:HierarchyStructure",
+    "frm:StatusPosition"
+   ]
+  },
+  {
+   "id": "frm:CircadianMisalignmentFrame",
+   "label": "Circadian Misalignment Frame",
+   "pmid": "39680766",
+   "roles": [
+    "csf:Context",
+    "csf:Experiencer",
+    "csf:Stressor",
+    "frm:CARPattern",
+    "frm:LightExposure",
+    "frm:ScheduleDisruptor",
+    "frm:SleepQuality",
+    "frm:SocialZeitgeber"
+   ]
+  },
+  {
+   "id": "frm:CulturalContinuityFrame",
+   "label": "Cultural Continuity Frame (P3)",
+   "evidence": "cohort",
+   "protective": true
+  },
+  {
+   "id": "frm:EarlyLifeProgrammingFrame",
+   "label": "Early Life Programming Frame",
+   "pmid": "15084670",
+   "roles": [
+    "csf:Context",
+    "csf:Experiencer",
+    "csf:Stressor",
+    "frm:AttachmentQuality",
+    "frm:Caregiver",
+    "frm:DevelopmentalWindow",
+    "frm:EpigeneticModification",
+    "frm:HPASetPoint"
+   ]
+  },
+  {
+   "id": "frm:MeaningMakingFrame",
+   "label": "Meaning Making Frame (P4)",
+   "pmid": "20438142",
+   "evidence": "integrative-review",
+   "protective": true
+  },
+  {
+   "id": "frm:SocialDisconnectionFrame",
+   "label": "Social Disconnection Frame",
+   "pmid": "32389588",
+   "roles": [
+    "csf:Context",
+    "csf:Experiencer",
+    "csf:Stressor",
+    "frm:CoRegulationPartner",
+    "frm:PerceivedLoneliness",
+    "frm:SocialIntegration",
+    "frm:SocialNetworkSize",
+    "frm:SocialRejection"
+   ]
+  },
+  {
+   "id": "frm:SocialSupportFrame",
+   "label": "Social Support Frame (P1)",
+   "pmid": "24636058",
+   "evidence": "systematic-review",
+   "protective": true
+  },
+  {
+   "id": "frm:SocioeconomicStrainFrame",
+   "label": "Socioeconomic Strain Frame (H)",
+   "pmid": "15094289",
+   "evidence": "cohort-and-review",
+   "roles": [
+    "csf:Context",
+    "csf:Experiencer",
+    "csf:Stressor",
+    "frm:EconomicControllability",
+    "frm:FinancialResources",
+    "frm:MaterialDeprivation"
+   ]
+  },
+  {
+   "id": "frm:UncontrollableThreatFrame",
+   "label": "Uncontrollable Threat Frame",
+   "pmid": "19167389",
+   "roles": [
+    "csf:Context",
+    "csf:Experiencer",
+    "csf:Stressor",
+    "frm:ResponseFutility",
+    "frm:ThreatSource",
+    "frm:VigilanceRequirement"
+   ]
+  }
+ ],
+ "bridge_relations": [
+  {
+   "id": "brg:DirectlyPrecedes",
+   "label": "directly precedes",
+   "comment": "Source step is the typical immediate antecedent of the target step."
+  },
+  {
+   "id": "brg:FeedsForward",
+   "label": "feeds forward to"
+  },
+  {
+   "id": "brg:FeedsBack",
+   "label": "feeds back to",
+   "comment": "Downstream step modulates an upstream step (e.g. inflammation -> central glucocorticoid signalling)."
+  },
+  {
+   "id": "brg:LeadsToOutcome",
+   "label": "leads to outcome"
+  },
+  {
+   "id": "brg:Amplifies",
+   "label": "amplifies"
+  },
+  {
+   "id": "brg:Buffers",
+   "label": "buffers"
+  }
+ ]
+}

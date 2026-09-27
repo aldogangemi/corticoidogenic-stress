@@ -1,0 +1,130 @@
+@prefix csf:  <http://purl.org/csf/> .
+@prefix csc:  <http://purl.org/csf/cascades#> .
+@prefix frm:  <http://purl.org/csf/frames#> .
+@prefix mod:  <http://purl.org/csf/moderators#> .
+@prefix out:  <http://purl.org/csf/outcomes#> .
+@prefix brg:  <http://purl.org/csf/bridging#> .
+@prefix pol:  <https://w3id.org/polanyi/core#> .
+@prefix dul:  <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix cpas: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+################################################################################
+# CSF Cross-Layer Bridging pattern (v3.4) — "causal entrenchment" of the
+# compositional multilayer situation, as literature-grounded POSSIBILIA.
+################################################################################
+
+<http://purl.org/csf/bridging> a owl:Ontology ;
+  rdfs:label "CSF Cross-Layer Bridging pattern (v3.4)"@en ;
+  owl:imports <http://purl.org/csf/> ;
+  cpas:hasIntent "Represent, as defeasible literature-grounded POSSIBILIA, the cross-layer influences that entrench a compositional CSF multilayer situation: step->step within/across L4-L7, terminal-step->outcome (L8), and moderator x step. Cross-layer links are NOT asserted causation about the case; they are typical/possible relevances a reader may abduce, carrying plausibility, evidence status, a licensing cue, and a pathway citation."@en ;
+  cpas:scenarios "A diary yields a CSF situation whose autonomic (L4), endocrine (L5), inflammatory (L6) and molecular (L7) steps are abduced; the reader wants the typical pathway that connects them and leads to the observed outcome, with each link marked possible and cited, and each amplifier attached to the step it intensifies."@en ;
+  cpas:coversRequirements "R-B1 chain adjacent cascade steps across layers; R-B2 bridge the terminal step to an outcome; R-B3 attach each moderator to the step it amplifies/buffers; R-B4 every bridge is possibilia (modal + plausibility + evidence status) and literature-grounded; R-B5 do not over-commit to actual causation."@en ;
+  cpas:hasConsequences "Turns hub-and-spoke co-representation into a traversable multilayer graph; enables instance-level cross-layer queries; keeps OWL2-DL by reifying the n-ary relation (no cross-layer causal object-property is asserted between individuals)."@en ;
+  cpas:hasComponent dul:Description , csf:CascadeStepOccurrence ;
+  cpas:relatedCPs <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#Description> ;
+  owl:versionInfo "3.4-bridging-2026-08" .
+
+########## Modal status — the possibilia marker ##########
+brg:ModalStatus a owl:Class ; rdfs:subClassOf dul:Concept ;
+  rdfs:label "Modal Status"@en ;
+  rdfs:comment "Whether a bridge holds as a possibility or is actually attested."@en .
+brg:Possibile a brg:ModalStatus ; rdfs:label "possibile"@en ;
+  rdfs:comment "The bridge is a possible/typical relevance (default): a possibile, not asserted causation."@en .
+brg:Actual a brg:ModalStatus ; rdfs:label "actual"@en ;
+  rdfs:comment "The bridge is attested by direct evidence in the case (rare for L4-L7 in text)."@en .
+
+########## Bridge relation types (reified so links can be annotated) ##########
+brg:BridgeRelationType a owl:Class ; rdfs:subClassOf dul:Concept ;
+  rdfs:label "Bridge Relation Type"@en .
+brg:DirectlyPrecedes a brg:BridgeRelationType ; rdfs:label "directly precedes"@en ;
+  skos:closeMatch csf:directlyPrecedes ;
+  rdfs:comment "Source step is the typical immediate antecedent of the target step."@en .
+brg:FeedsForward a brg:BridgeRelationType ; rdfs:label "feeds forward to"@en ;
+  skos:closeMatch csf:feedsForwardTo .
+brg:FeedsBack a brg:BridgeRelationType ; rdfs:label "feeds back to"@en ;
+  skos:closeMatch csf:feedsBackTo ;
+  rdfs:comment "Downstream step modulates an upstream step (e.g. inflammation -> central glucocorticoid signalling)."@en .
+brg:LeadsToOutcome a brg:BridgeRelationType ; rdfs:label "leads to outcome"@en ;
+  skos:closeMatch csf:leadsToOutcome .
+brg:Amplifies a brg:BridgeRelationType ; rdfs:label "amplifies"@en ;
+  skos:closeMatch csf:amplifies .
+brg:Buffers a brg:BridgeRelationType ; rdfs:label "buffers"@en ;
+  skos:closeMatch csf:buffers .
+
+########## The reified bridge (n-ary, DUL-aligned) ##########
+brg:CrossLayerBridge a owl:Class ;
+  rdfs:subClassOf dul:Description ;
+  rdfs:label "Cross-Layer Bridge"@en ;
+  rdfs:comment "A defeasible, literature-typical cross-layer influence holding as a possibile within a CSF situation. Reifies an n-ary relation (source, target, relation-type) so it can carry modal status, plausibility, evidence status, licensing cue and pathway citation — without asserting a causal object-property between the individuals."@en .
+
+########## Object properties ##########
+brg:hasCrossLayerBridge a owl:ObjectProperty ;
+  rdfs:label "has cross-layer bridge"@en ;
+  rdfs:domain csf:CSF_Situation ; rdfs:range brg:CrossLayerBridge ;
+  rdfs:comment "Attaches an entrenchment bridge to the compositional situation."@en .
+brg:bridgeFrom a owl:ObjectProperty ;
+  rdfs:label "bridge from"@en ; rdfs:domain brg:CrossLayerBridge ;
+  rdfs:comment "Source: a cascade StepOccurrence, a Frame, or a Moderator."@en .
+brg:bridgeTo a owl:ObjectProperty ;
+  rdfs:label "bridge to"@en ; rdfs:domain brg:CrossLayerBridge ;
+  rdfs:comment "Target: a cascade StepOccurrence or an Outcome."@en .
+brg:bridgeRelation a owl:ObjectProperty ;
+  rdfs:label "bridge relation"@en ; rdfs:domain brg:CrossLayerBridge ;
+  rdfs:range brg:BridgeRelationType .
+brg:hasModalStatus a owl:ObjectProperty ;
+  rdfs:label "has modal status"@en ; rdfs:domain brg:CrossLayerBridge ;
+  rdfs:range brg:ModalStatus .
+
+########## Datatype properties ##########
+brg:pathwayCitation a owl:DatatypeProperty ;
+  rdfs:label "pathway citation"@en ; rdfs:domain brg:CrossLayerBridge ; rdfs:range xsd:string ;
+  rdfs:comment "Literature grounding for the typical pathway (PubMed ID or DOI). Required for a possibile bridge (R-B4)."@en .
+brg:bridgePlausibility a owl:DatatypeProperty ;
+  rdfs:subPropertyOf pol:plausibility ;
+  rdfs:label "bridge plausibility"@en ; rdfs:domain brg:CrossLayerBridge ; rdfs:range xsd:decimal .
+# (reuses pol:evidenceStatus and csf:licensingCue from the core vocabulary)
+
+################################################################################
+# A+ EXEMPLAR — the canonical acute-to-chronic HPA pathway as possibilia,
+# each transition literature-grounded (used as a positive fixture / template).
+################################################################################
+brg:ex_situation a csf:CSF_Situation ;
+  rdfs:label "exemplar situation (template)"@en ;
+  brg:hasCrossLayerBridge brg:ex_b1 , brg:ex_b2 , brg:ex_b3 , brg:ex_b4 , brg:ex_b5 , brg:ex_mod1 .
+
+brg:ex_step_l4 a csf:CascadeStepOccurrence ; rdfs:label "L4 catecholamine release (abduced)"@en ; pol:evidenceStatus pol:Abduced .
+brg:ex_step_l5 a csf:CascadeStepOccurrence ; rdfs:label "L5 HPA / cortisol (abduced)"@en ; pol:evidenceStatus pol:Abduced .
+brg:ex_step_l6 a csf:CascadeStepOccurrence ; rdfs:label "L6 chronic low-grade inflammation (abduced)"@en ; pol:evidenceStatus pol:Abduced .
+brg:ex_step_l7 a csf:CascadeStepOccurrence ; rdfs:label "L7 NR3C1 methylation (abduced)"@en ; pol:evidenceStatus pol:Abduced .
+brg:ex_outcome a out:Depression .
+brg:ex_amp a mod:RuminativeStyle .
+
+brg:ex_b1 a brg:CrossLayerBridge ;
+  brg:bridgeFrom brg:ex_step_l4 ; brg:bridgeTo brg:ex_step_l5 ; brg:bridgeRelation brg:DirectlyPrecedes ;
+  brg:hasModalStatus brg:Possibile ; brg:bridgePlausibility 0.80 ; pol:evidenceStatus pol:Abduced ;
+  csf:licensingCue "sustained arousal + demand -> HPA recruitment" ; brg:pathwayCitation "9629234" .
+brg:ex_b2 a brg:CrossLayerBridge ;
+  brg:bridgeFrom brg:ex_step_l5 ; brg:bridgeTo brg:ex_step_l6 ; brg:bridgeRelation brg:DirectlyPrecedes ;
+  brg:hasModalStatus brg:Possibile ; brg:bridgePlausibility 0.62 ; pol:evidenceStatus pol:Abduced ;
+  csf:licensingCue "glucocorticoid resistance -> unopposed inflammation" ; brg:pathwayCitation "22474371" .
+brg:ex_b3 a brg:CrossLayerBridge ;
+  brg:bridgeFrom brg:ex_step_l6 ; brg:bridgeTo brg:ex_step_l7 ; brg:bridgeRelation brg:DirectlyPrecedes ;
+  brg:hasModalStatus brg:Possibile ; brg:bridgePlausibility 0.45 ; pol:evidenceStatus pol:Abduced ;
+  csf:licensingCue "inflammatory signalling -> epigenetic set-point change" ; brg:pathwayCitation "15084670" .
+brg:ex_b4 a brg:CrossLayerBridge ;
+  brg:bridgeFrom brg:ex_step_l6 ; brg:bridgeTo brg:ex_step_l5 ; brg:bridgeRelation brg:FeedsBack ;
+  brg:hasModalStatus brg:Possibile ; brg:bridgePlausibility 0.50 ; pol:evidenceStatus pol:Abduced ;
+  csf:licensingCue "peripheral inflammation feeds back on central HPA" ; brg:pathwayCitation "26711676" .
+brg:ex_b5 a brg:CrossLayerBridge ;
+  brg:bridgeFrom brg:ex_step_l6 ; brg:bridgeTo brg:ex_outcome ; brg:bridgeRelation brg:LeadsToOutcome ;
+  brg:hasModalStatus brg:Possibile ; brg:bridgePlausibility 0.55 ; pol:evidenceStatus pol:Abduced ;
+  csf:licensingCue "chronic inflammation -> depressive phenotype" ; brg:pathwayCitation "26711676" .
+brg:ex_mod1 a brg:CrossLayerBridge ;
+  brg:bridgeFrom brg:ex_amp ; brg:bridgeTo brg:ex_step_l5 ; brg:bridgeRelation brg:Amplifies ;
+  brg:hasModalStatus brg:Possibile ; brg:bridgePlausibility 0.60 ; pol:evidenceStatus pol:Abduced ;
+  csf:licensingCue "rumination prolongs cortisol exposure" ; brg:pathwayCitation "12140762" .

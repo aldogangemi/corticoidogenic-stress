@@ -1,0 +1,191 @@
+@prefix : <http://purl.org/csf/moderators#> .
+@prefix csf: <http://purl.org/csf/> .
+@prefix core: <http://purl.org/csf/core#> .
+@prefix frm: <http://purl.org/csf/frames#> .
+@prefix mod: <http://purl.org/csf/moderators#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+
+csf:moderators
+    a owl:Ontology ;
+    rdfs:comment "v3.2 / Req 8, Req 17): The moderator module models amplifiers and buffers but lacks an explicit Intervention class. Interventions (therapy, policy, social support programs) are distinct from naturally-occurring buffers. A dedicated csf-interventions.ttl module is proposed (REIFIED hypothesis H7) with csf:Intervention class, sit:mitigates, sit:targetsMechanism, and sit:evidenceLevel properties."@en ;
+    owl:imports csf:outcomes ;
+    dcterms:title "CSF Moderators Module (Refactored)"@en ;
+    owl:versionInfo "3.2.2" .
+
+
+# ==========================================================
+# MODERATOR-FRAME INTERACTION (v3.2 extension — Req 4)
+# ==========================================================
+
+mod:moderatesOutcome a owl:ObjectProperty ;
+    rdfs:domain csf:Moderator ;
+    rdfs:range csf:ClinicalOutcome ;
+    rdfs:label "moderates outcome"@en ;
+    rdfs:comment "Links a moderator to a clinical outcome it influences (amplifying or buffering severity)."@en .
+
+mod:interactsWith a owl:ObjectProperty ;
+    rdfs:domain csf:Moderator ;
+    rdfs:range csf:CorticoidogenicFrame ;
+    rdfs:label "interacts with"@en ;
+    rdfs:comment "Links a moderator to a corticoidogenic frame it modulates."@en .
+
+mod:effectSize a owl:DatatypeProperty ;
+    rdfs:domain csf:Moderator ;
+    rdfs:range rdfs:Literal ;
+    rdfs:label "effect size"@en ;
+    rdfs:comment "Reported effect size for this moderator (e.g., 'OR 2.0-4.0 for PTSD')."@en .
+
+mod:amplificationFactor a owl:DatatypeProperty ;
+    rdfs:domain mod:Amplifier ;
+    rdfs:range xsd:float ;
+    rdfs:label "amplification factor"@en ;
+    rdfs:comment "Multiplicative factor by which this amplifier increases cascade severity."@en .
+
+mod:bufferingFactor a owl:DatatypeProperty ;
+    rdfs:domain mod:Buffer ;
+    rdfs:range xsd:float ;
+    rdfs:label "buffering factor"@en ;
+    rdfs:comment "Multiplicative factor by which this buffer reduces cascade severity (0.0 = complete protection, 1.0 = no effect)."@en .
+
+# NOTE (v3.2 / Req 8, Req 17): The moderator module models amplifiers and buffers
+# but lacks an explicit Intervention class. Interventions (therapy, policy, social support
+# programs) are distinct from naturally-occurring buffers. A dedicated csf-interventions.ttl
+# module is proposed (REIFIED hypothesis H7) with csf:Intervention class, sit:mitigates,
+# sit:targetsMechanism, and sit:evidenceLevel properties.
+mod:Amplifier a owl:Class ; rdfs:subClassOf csf:Moderator .
+mod:Buffer a owl:Class ; rdfs:subClassOf csf:Moderator .
+mod:GeneticModerator a owl:Class ; rdfs:subClassOf csf:Moderator .
+mod:DevelopmentalModerator a owl:Class ; rdfs:subClassOf csf:Moderator .
+mod:BehavioralModerator a owl:Class ; rdfs:subClassOf csf:Moderator .
+mod:SocialModerator a owl:Class ; rdfs:subClassOf csf:Moderator .
+mod:CognitiveModerator a owl:Class ; rdfs:subClassOf csf:Moderator .
+mod:ContextualModerator a owl:Class ; rdfs:subClassOf csf:Moderator .
+
+# ==========================================
+# AMPLIFIERS (Converted to Individuals)
+# ==========================================
+mod:FKBP5RiskVariant a mod:Amplifier, mod:GeneticModerator, owl:NamedIndividual ;
+    rdfs:label "FKBP5 Risk Variant"@en ;
+    csf:pubmedID "24051924" ;
+    mod:effectSize "OR 2.0-4.0 for PTSD"@en ;
+    mod:interactsWith frm:EarlyLifeProgrammingFrame, frm:UncontrollableThreatFrame .
+
+mod:CRHR1RiskVariant a mod:Amplifier, mod:GeneticModerator, owl:NamedIndividual ;
+    rdfs:label "CRHR1 Risk Variant"@en ;
+    csf:pubmedID "17615391" .
+
+mod:NR3C1RiskVariant a mod:Amplifier, mod:GeneticModerator, owl:NamedIndividual ;
+    rdfs:label "NR3C1 Risk Variant"@en ;
+    csf:pubmedID "17615391" .
+
+mod:SLC6A4ShortAllele a mod:Amplifier, mod:GeneticModerator, owl:NamedIndividual ;
+    rdfs:label "5-HTTLPR Short Allele"@en ;
+    mod:interactsWith frm:EarlyLifeProgrammingFrame .
+
+mod:EarlyAdversityHistory a mod:Amplifier, mod:DevelopmentalModerator, owl:NamedIndividual ;
+    rdfs:label "Early Adversity History"@en ;
+    csf:pubmedID "15084670" ;
+    mod:effectSize "2-4x increased risk for adult psychopathology"@en ;
+    mod:amplificationFactor "2.5"^^xsd:float .
+
+mod:InsecureAttachment a mod:Amplifier, mod:DevelopmentalModerator, owl:NamedIndividual ;
+    rdfs:label "Insecure Attachment History"@en .
+
+mod:DisorganizedAttachment a mod:Amplifier, mod:DevelopmentalModerator, owl:NamedIndividual ;
+    rdfs:label "Disorganized Attachment"@en .
+
+mod:SubstanceUse a mod:Amplifier, mod:BehavioralModerator, owl:NamedIndividual ;
+    rdfs:label "Substance Use"@en .
+
+mod:SleepDeprivation a mod:Amplifier, mod:BehavioralModerator, owl:NamedIndividual ;
+    rdfs:label "Sleep Deprivation"@en ;
+    csf:pubmedID "39680766" ;
+    mod:amplificationFactor "1.8"^^xsd:float .
+
+mod:SedentaryLifestyle a mod:Amplifier, mod:BehavioralModerator, owl:NamedIndividual ;
+    rdfs:label "Sedentary Lifestyle"@en .
+
+mod:PoorNutrition a mod:Amplifier, mod:BehavioralModerator, owl:NamedIndividual ;
+    rdfs:label "Poor Nutrition"@en .
+
+mod:LowSocioeconomicResources a mod:Amplifier, mod:ContextualModerator, owl:NamedIndividual ;
+    rdfs:label "Low Socioeconomic Resources"@en .
+
+mod:ComorbidMedicalCondition a mod:Amplifier, mod:ContextualModerator, owl:NamedIndividual ;
+    rdfs:label "Comorbid Medical Condition"@en .
+
+mod:ConcurrentMultipleStressors a mod:Amplifier, mod:ContextualModerator, owl:NamedIndividual ;
+    rdfs:label "Concurrent Multiple Stressors"@en .
+
+mod:SocialIsolation a mod:Amplifier, mod:SocialModerator, owl:NamedIndividual ;
+    rdfs:label "Social Isolation"@en .
+
+mod:RuminativeStyle a mod:Amplifier, mod:CognitiveModerator, owl:NamedIndividual ;
+    rdfs:label "Ruminative Cognitive Style"@en .
+
+mod:CatastrophizingStyle a mod:Amplifier, mod:CognitiveModerator, owl:NamedIndividual ;
+    rdfs:label "Catastrophizing Cognitive Style"@en .
+
+mod:LowSelfEfficacy a mod:Amplifier, mod:CognitiveModerator, owl:NamedIndividual ;
+    rdfs:label "Low Self-Efficacy"@en .
+
+# ==========================================
+# BUFFERS (Converted to Individuals)
+# ==========================================
+mod:HighSocialSupport a mod:Buffer, mod:SocialModerator, owl:NamedIndividual ;
+    rdfs:label "High Quality Social Support"@en ;
+    csf:pubmedID "32807491" ;
+    mod:bufferingFactor "0.4"^^xsd:float .
+
+mod:SecureAttachment a mod:Buffer, mod:DevelopmentalModerator, owl:NamedIndividual ;
+    rdfs:label "Secure Attachment History"@en ;
+    csf:pubmedID "15084670" ;
+    mod:bufferingFactor "0.5"^^xsd:float .
+
+mod:CoRegulationPartner a mod:Buffer, mod:SocialModerator, owl:NamedIndividual ;
+    rdfs:label "Co-Regulation Partner"@en .
+
+mod:CommunityEmbeddedness a mod:Buffer, mod:SocialModerator, owl:NamedIndividual ;
+    rdfs:label "Community Embeddedness"@en .
+
+mod:PhysicalExercise a mod:Buffer, mod:BehavioralModerator, owl:NamedIndividual ;
+    rdfs:label "Regular Physical Exercise"@en ;
+    mod:bufferingFactor "0.6"^^xsd:float .
+
+mod:HealthySleepPatterns a mod:Buffer, mod:BehavioralModerator, owl:NamedIndividual ;
+    rdfs:label "Healthy Sleep Patterns"@en .
+
+mod:MindfulnessPractice a mod:Buffer, mod:BehavioralModerator, owl:NamedIndividual ;
+    rdfs:label "Mindfulness Practice"@en .
+
+mod:NatureExposure a mod:Buffer, mod:ContextualModerator, owl:NamedIndividual ;
+    rdfs:label "Access to Nature/Green Space"@en .
+
+mod:MeaningMakingCapacity a mod:Buffer, mod:CognitiveModerator, owl:NamedIndividual ;
+    rdfs:label "Meaning-Making Capacity"@en .
+
+mod:FlexibleCopingRepertoire a mod:Buffer, mod:CognitiveModerator, owl:NamedIndividual ;
+    rdfs:label "Flexible Coping Repertoire"@en .
+
+mod:HighSelfEfficacy a mod:Buffer, mod:CognitiveModerator, owl:NamedIndividual ;
+    rdfs:label "High Self-Efficacy"@en .
+
+mod:PerceivedControllability a mod:Buffer, mod:CognitiveModerator, owl:NamedIndividual ;
+    rdfs:label "Perceived Controllability"@en .
+
+mod:GrowthMindset a mod:Buffer, mod:CognitiveModerator, owl:NamedIndividual ;
+    rdfs:label "Growth Mindset"@en .
+
+mod:AdequateEconomicResources a mod:Buffer, mod:ContextualModerator, owl:NamedIndividual ;
+    rdfs:label "Adequate Economic Resources"@en .
+
+mod:SafeHousing a mod:Buffer, mod:ContextualModerator, owl:NamedIndividual ;
+    rdfs:label "Safe Housing"@en .
+
+mod:AccessToHealthcare a mod:Buffer, mod:ContextualModerator, owl:NamedIndividual ;
+    rdfs:label "Access to Healthcare"@en .

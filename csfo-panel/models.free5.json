@@ -1,0 +1,12 @@
+[
+ {"provider":"groq","model":"openai/gpt-oss-120b","family":"openai-oss","role_default":"A1_SOCIAL",
+  "free":"Groq free tier ~1000 req/day, no card","env":"GROQ_API_KEY"},
+ {"provider":"mistral","model":"mistral-large-latest","family":"mistral","role_default":"A2_PSYCH",
+  "free":"Mistral free/Experiment tier, no card (opt-in to training)","env":"MISTRAL_API_KEY"},
+ {"provider":"cerebras","model":"llama-3.3-70b","family":"meta","role_default":"A3_ENDOCRINE",
+  "free":"Cerebras free tier ~1M tok/day","env":"CEREBRAS_API_KEY"},
+ {"provider":"cohere","model":"command-a-03-2025","family":"cohere","role_default":"A4_NEUROIMMUNE",
+  "free":"Cohere trial key, 1000 calls/month, NON-COMMERCIAL only","env":"COHERE_API_KEY"},
+ {"provider":"google","model":"gemini-3.7-flash","family":"google","role_default":"A5_MOLECULAR",
+  "free":"Gemini API free tier (Flash only since 2026-04-01), no card","env":"GEMINI_API_KEY"}
+]

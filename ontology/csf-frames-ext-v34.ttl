@@ -1,0 +1,95 @@
+# =====================================================================
+# CSF frames extension v3.4 -- closes two gaps surfaced by extraction:
+#   (1) instantiates the protective frames P1-P4 (previously only in comments)
+#   (2) adds SocioeconomicStrainFrame (Frame H), evidenced across two independent
+#       sources (StudentLife "winter heating bill"; LiveJournal financial strain)
+# Aligns to the real CSFO namespaces; conforms to csf-shaclshapes.shacl.
+# =====================================================================
+@prefix csf:   <http://purl.org/csf/> .
+@prefix frm:   <http://purl.org/csf/frames#> .
+@prefix csc:   <http://purl.org/csf/cascades#> .
+@prefix out:   <http://purl.org/csf/outcomes#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+# ---- class + property scaffolding (idempotent; safe if already present) ----
+frm:ProtectiveFrame a owl:Class ;
+    rdfs:subClassOf csf:CorticoidogenicFrame ;
+    rdfs:label "Protective Frame"@en ;
+    rdfs:comment "A frame representing a protective/buffering configuration; subClassOf CorticoidogenicFrame for taxonomic coherence (H1)."@en .
+
+frm:protectiveStrength a owl:DatatypeProperty ;
+    rdfs:label "protective strength"@en ;
+    rdfs:range xsd:float .
+
+# =====================================================================
+# (1) PROTECTIVE FRAMES  P1-P4
+# =====================================================================
+frm:SocialSupportFrame a frm:ProtectiveFrame, owl:NamedIndividual ;
+    rdfs:label "Social Support Frame (P1)"@en ;
+    csf:hasCSFRole csf:Experiencer, frm:SupportProvider, frm:SupportQuality ;
+    frm:buffersAgainstFrame frm:SocialDisconnectionFrame, frm:ChronicSubordinationFrame,
+                            frm:UncontrollableThreatFrame, frm:CaregivingEntrapmentFrame ;
+    frm:protectiveStrength "0.70"^^xsd:float ;
+    csf:pubmedID "23607429" ;
+    csf:evidenceStrength "systematic-review" ;
+    dcterms:description "Social buffering of the HPA axis (Hostinar et al. 2014)."@en .
+
+frm:AgencyRestorationFrame a frm:ProtectiveFrame, owl:NamedIndividual ;
+    rdfs:label "Agency Restoration Frame (P2)"@en ;
+    csf:hasCSFRole csf:Experiencer, frm:PerceivedControl, frm:CompetenceSignal ;
+    frm:buffersAgainstFrame frm:ChronicSubordinationFrame, frm:UncontrollableThreatFrame ;
+    frm:protectiveStrength "0.60"^^xsd:float ;
+    csf:pubmedID "11392867" ;
+    csf:evidenceStrength "theory-and-review" ;
+    dcterms:description "Restored autonomy/competence (self-determination; Deci & Ryan 2000)."@en .
+
+frm:CulturalContinuityFrame a frm:ProtectiveFrame, owl:NamedIndividual ;
+    rdfs:label "Cultural Continuity Frame (P3)"@en ;
+    csf:hasCSFRole csf:Experiencer, frm:CulturalIdentity, frm:CommunityConnection ;
+    frm:buffersAgainstFrame frm:ChronicIdentityThreatFrame, frm:SocialDisconnectionFrame ;
+    frm:protectiveStrength "0.60"^^xsd:float ;
+    csf:evidenceStrength "cohort" ;
+    dcterms:description "Cultural continuity as protection (Chandler & Lalonde 2008)."@en .
+
+frm:MeaningMakingFrame a frm:ProtectiveFrame, owl:NamedIndividual ;
+    rdfs:label "Meaning Making Frame (P4)"@en ;
+    csf:hasCSFRole csf:Experiencer, frm:MeaningFramework, frm:BenefitFinding ;
+    frm:buffersAgainstFrame frm:UncontrollableThreatFrame, frm:EarlyLifeProgrammingFrame,
+                            frm:ChronicIdentityThreatFrame ;
+    frm:protectiveStrength "0.60"^^xsd:float ;
+    csf:pubmedID "20192563" ;
+    csf:evidenceStrength "integrative-review" ;
+    dcterms:description "Meaning-making adjustment to stressful events (Park 2010)."@en .
+
+# role individuals used above (minimal declarations)
+frm:SupportProvider a owl:NamedIndividual ; rdfs:label "Support Provider"@en .
+frm:SupportQuality a owl:NamedIndividual ; rdfs:label "Support Quality"@en .
+frm:PerceivedControl a owl:NamedIndividual ; rdfs:label "Perceived Control"@en .
+frm:CompetenceSignal a owl:NamedIndividual ; rdfs:label "Competence Signal"@en .
+frm:CulturalIdentity a owl:NamedIndividual ; rdfs:label "Cultural Identity"@en .
+frm:CommunityConnection a owl:NamedIndividual ; rdfs:label "Community Connection"@en .
+frm:MeaningFramework a owl:NamedIndividual ; rdfs:label "Meaning Framework"@en .
+frm:BenefitFinding a owl:NamedIndividual ; rdfs:label "Benefit Finding"@en .
+
+# =====================================================================
+# (2) FRAME H -- SocioeconomicStrainFrame  (new corticoidogenic frame)
+# =====================================================================
+frm:SocioeconomicStrainFrame a csf:CorticoidogenicFrame, owl:NamedIndividual ;
+    rdfs:label "Socioeconomic Strain Frame (H)"@en ;
+    csf:hasCSFRole csf:Experiencer, csf:Stressor, csf:Context,
+                   frm:FinancialResources, frm:MaterialDeprivation, frm:EconomicControllability ;
+    csf:evidenceStrength "cohort-and-review" ;
+    csf:pubmedID "10681894" ;
+    frm:typicalSeverity csf:Moderate, csf:High ;
+    frm:typicalOutcomes out:Depression, out:MetabolicSyndrome, out:ChronicLowGradeInflammation ;
+    frm:compoundsWithFrame frm:ChronicSubordinationFrame, frm:SocialDisconnectionFrame,
+                           frm:CaregivingEntrapmentFrame ;
+    dcterms:description "Chronic financial strain / material deprivation as a corticoidogenic stressor (low economic controllability, persistent scarcity). Evidenced across two independent extraction sources (StudentLife event 'winter heating bill'; a LiveJournal diary's recurring financial strain). socioeconomic status and chronic stress: Baum et al. 1999 (PMID 10681894)."@en .
+
+frm:FinancialResources a owl:NamedIndividual ; rdfs:label "Financial Resources"@en .
+frm:MaterialDeprivation a owl:NamedIndividual ; rdfs:label "Material Deprivation"@en .
+frm:EconomicControllability a owl:NamedIndividual ; rdfs:label "Economic Controllability"@en .

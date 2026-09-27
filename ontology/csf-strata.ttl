@@ -1,0 +1,65 @@
+@prefix csf:  <http://purl.org/csf/> .
+@prefix csc:  <http://purl.org/csf/cascades#> .
+@prefix frm:  <http://purl.org/csf/frames#> .
+@prefix out:  <http://purl.org/csf/outcomes#> .
+@prefix dul:  <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix cpas: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+################################################################################
+# CSF Stratum module (v3.4) — makes the L1-L8 multilayer stack a FIRST-CLASS,
+# assignable entity so "which layer" is asserted, never guessed from names.
+################################################################################
+
+<http://purl.org/csf/strata> a owl:Ontology ;
+  rdfs:label "CSF Stratum module (v3.4)"@en ;
+  owl:imports <http://purl.org/csf/> ;
+  cpas:hasIntent "Reify the CSF multilayer stack (L1 situational .. L8 outcome) as ordered Stratum individuals, and provide csf:atStratum to assign any construct (cascade step, frame, outcome) to a stratum. This is the precondition for evaluating cross-layer bridges: a link is cross-layer iff its endpoints are atStratum different strata; adjacency and direction are checkable against stratumOrder / nextStratum."@en ;
+  cpas:coversRequirements "R-S1 a construct's layer is asserted, not inferred; R-S2 strata are totally ordered; R-S3 every biological step class is anchored to a stratum so occurrences inherit it."@en ;
+  owl:versionInfo "3.4-strata-2026-08" .
+
+########## Stratum class + ordering ##########
+csf:Stratum a owl:Class ; rdfs:subClassOf dul:Concept ;
+  rdfs:label "Stratum"@en ;
+  rdfs:comment "A level of the CSF multilayer stress model (L1-L8). Ordered from the situational surface to the molecular depth to the outcome."@en .
+
+csf:atStratum a owl:ObjectProperty ;
+  rdfs:label "at stratum"@en ; rdfs:range csf:Stratum ;
+  rdfs:comment "Assigns a construct (cascade step / step-occurrence / frame / outcome) to a stratum. Asserted, not guessed."@en .
+csf:stratumOrder a owl:DatatypeProperty , owl:FunctionalProperty ;
+  rdfs:label "stratum order"@en ; rdfs:domain csf:Stratum ; rdfs:range xsd:integer .
+csf:nextStratum a owl:ObjectProperty , owl:FunctionalProperty ;
+  rdfs:label "next stratum"@en ; rdfs:domain csf:Stratum ; rdfs:range csf:Stratum .
+
+########## the eight strata ##########
+csf:L1_Situational          a csf:Stratum ; rdfs:label "L1 Situational"@en ; csf:stratumOrder 1 ; csf:nextStratum csf:L2_Appraisal .
+csf:L2_Appraisal            a csf:Stratum ; rdfs:label "L2 Appraisal"@en ;  csf:stratumOrder 2 ; csf:nextStratum csf:L3_Behavioral .
+csf:L3_Behavioral           a csf:Stratum ; rdfs:label "L3 Behavioral"@en ; csf:stratumOrder 3 ; csf:nextStratum csf:L4_Autonomic .
+csf:L4_Autonomic            a csf:Stratum ; rdfs:label "L4 Autonomic"@en ;  csf:stratumOrder 4 ; csf:nextStratum csf:L5_Endocrine .
+csf:L5_Endocrine            a csf:Stratum ; rdfs:label "L5 Endocrine"@en ;  csf:stratumOrder 5 ; csf:nextStratum csf:L6_InflammatoryMetabolic .
+csf:L6_InflammatoryMetabolic a csf:Stratum ; rdfs:label "L6 Inflammatory/metabolic"@en ; csf:stratumOrder 6 ; csf:nextStratum csf:L7_Molecular .
+csf:L7_Molecular            a csf:Stratum ; rdfs:label "L7 Molecular"@en ;  csf:stratumOrder 7 ; csf:nextStratum csf:L8_Outcome .
+csf:L8_Outcome              a csf:Stratum ; rdfs:label "L8 Outcome"@en ;    csf:stratumOrder 8 .
+
+########## anchor the existing biological step CLASSES to strata ##########
+# every instance of these classes is atStratum the given level (DL-safe hasValue).
+csf:BehavioralStep        rdfs:subClassOf [ a owl:Restriction ; owl:onProperty csf:atStratum ; owl:hasValue csf:L3_Behavioral ] .
+csf:AutonomicStep         rdfs:subClassOf [ a owl:Restriction ; owl:onProperty csf:atStratum ; owl:hasValue csf:L4_Autonomic ] .
+csf:NeuroendocrineStep    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty csf:atStratum ; owl:hasValue csf:L5_Endocrine ] .
+csf:ImmuneStep            rdfs:subClassOf [ a owl:Restriction ; owl:onProperty csf:atStratum ; owl:hasValue csf:L6_InflammatoryMetabolic ] .
+csf:EpigeneticStep        rdfs:subClassOf [ a owl:Restriction ; owl:onProperty csf:atStratum ; owl:hasValue csf:L7_Molecular ] .
+csf:SocialGenomicsStep    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty csf:atStratum ; owl:hasValue csf:L7_Molecular ] .
+csf:NeuralPlasticityStep  rdfs:subClassOf [ a owl:Restriction ; owl:onProperty csf:atStratum ; owl:hasValue csf:L7_Molecular ] .
+# frames and situations at the situational surface (L1); outcomes at L8.
+# Roots corrected v3.4: the outcome hierarchy is rooted at csf:ClinicalOutcome (the
+# undeclared out:Outcome reached nothing) and situations at csf:CSF_Situation; anchoring
+# the roots propagates the level to every outcome/situation subclass by inheritance.
+csf:CorticoidogenicFrame rdfs:subClassOf [ a owl:Restriction ; owl:onProperty csf:atStratum ; owl:hasValue csf:L1_Situational ] .
+csf:CSF_Situation        rdfs:subClassOf [ a owl:Restriction ; owl:onProperty csf:atStratum ; owl:hasValue csf:L1_Situational ] .
+csf:ClinicalOutcome      rdfs:subClassOf [ a owl:Restriction ; owl:onProperty csf:atStratum ; owl:hasValue csf:L8_Outcome ] .
+
+########## appraisal (cognitive) step class -> L2 (added v3.4, Lazarus) ##########
+csf:AppraisalStep rdfs:subClassOf [ a owl:Restriction ; owl:onProperty csf:atStratum ; owl:hasValue csf:L2_Appraisal ] .

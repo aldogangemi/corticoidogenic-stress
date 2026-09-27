@@ -1,0 +1,90 @@
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix brg:  <http://purl.org/csf/bridging#> .
+@prefix csf:  <http://purl.org/csf/> .
+@prefix csc:  <http://purl.org/csf/cascades#> .
+@prefix pol:  <https://w3id.org/polanyi/core#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+################################################################################
+# SHACL for the CSF cross-layer bridging pattern. Encodes CLOSED-WORLD checks
+# not entailed by OWL: well-formedness + cardinality of the reified bridge, the
+# possibilia literature-grounding requirement, and completeness recommendations.
+################################################################################
+
+## (1) STRUCTURAL — a bridge must be well-formed possibilia (Violation) ##########
+brg:CrossLayerBridgeShape a sh:NodeShape ;
+  sh:targetClass brg:CrossLayerBridge ;
+  sh:property [ sh:path brg:bridgeFrom ; sh:minCount 1 ; sh:maxCount 1 ;
+                sh:message "A bridge needs exactly one source (step | frame | moderator)." ] ;
+  sh:property [ sh:path brg:bridgeTo ; sh:minCount 1 ; sh:maxCount 1 ;
+                sh:message "A bridge needs exactly one target (step | outcome)." ] ;
+  sh:property [ sh:path brg:bridgeRelation ; sh:minCount 1 ; sh:maxCount 1 ;
+                sh:class brg:BridgeRelationType ;
+                sh:message "A bridge needs exactly one typed relation." ] ;
+  sh:property [ sh:path brg:hasModalStatus ; sh:minCount 1 ; sh:class brg:ModalStatus ;
+                sh:message "A bridge must declare modal status (default: possibile)." ] ;
+  sh:property [ sh:path pol:evidenceStatus ; sh:minCount 1 ;
+                sh:message "A bridge must state evidence status (Observed|Abduced)." ] ;
+  sh:property [ sh:path brg:bridgePlausibility ; sh:minCount 1 ; sh:maxCount 1 ;
+                sh:datatype xsd:decimal ; sh:minInclusive 0.0 ; sh:maxInclusive 1.0 ;
+                sh:message "A bridge must carry a plausibility in [0,1]." ] ;
+  sh:property [ sh:path brg:pathwayCitation ; sh:minCount 1 ;
+                sh:datatype xsd:string ;
+                sh:message "R-B4: a possibile bridge must be literature-grounded (PubMed ID / DOI)." ] .
+
+## (1b) NEGATIVE CQ — no over-commitment: an Abduced target may not be asserted Actual
+brg:NoOverCommitShape a sh:NodeShape ;
+  sh:targetClass brg:CrossLayerBridge ;
+  sh:sparql [ sh:severity sh:Violation ;
+    sh:message "Over-commitment: bridge marked Actual but its target step is only Abduced — keep it possibile." ;
+    sh:select """
+      PREFIX brg: <http://purl.org/csf/bridging#>
+      PREFIX pol: <https://w3id.org/polanyi/core#>
+      SELECT $this WHERE {
+        $this brg:hasModalStatus brg:Actual ; brg:bridgeTo ?t .
+        ?t pol:evidenceStatus pol:Abduced .
+      }""" ] .
+
+## (2) COMPLETENESS — a multi-STRATUM situation SHOULD be bridged (Warning) ######
+## Cross-layer-ness is computed from csf:atStratum (asserted), NOT from labels.
+brg:SituationBridgingShape a sh:NodeShape ;
+  sh:targetClass csf:CSF_Situation ;
+  sh:sparql [ sh:severity sh:Warning ;
+    sh:message "Under-bridged: this situation has cascade steps at >=2 STRATA (csf:atStratum) but no CrossLayerBridge; the compositional layers are not causally entrenched." ;
+    sh:select """
+      PREFIX brg: <http://purl.org/csf/bridging#>
+      PREFIX csf: <http://purl.org/csf/>
+      SELECT $this WHERE {
+        { SELECT $this (COUNT(DISTINCT ?st) AS ?nst) WHERE {
+            $this csf:hasCascadeStep ?s . ?s csf:atStratum ?st .
+          } GROUP BY $this }
+        FILTER(?nst >= 2)
+        FILTER NOT EXISTS { $this brg:hasCrossLayerBridge ?b . }
+      }""" ] .
+
+## (3) STRATUM CONSISTENCY — bridge direction must respect the stratum order ######
+brg:StratumConsistencyShape a sh:NodeShape ;
+  sh:targetClass brg:CrossLayerBridge ;
+  sh:sparql [ sh:severity sh:Warning ;
+    sh:message "DirectlyPrecedes bridge does not connect ADJACENT strata (order should increase by exactly 1)." ;
+    sh:select """
+      PREFIX brg: <http://purl.org/csf/bridging#>
+      PREFIX csf: <http://purl.org/csf/>
+      SELECT $this WHERE {
+        $this brg:bridgeRelation brg:DirectlyPrecedes ; brg:bridgeFrom ?f ; brg:bridgeTo ?t .
+        ?f csf:atStratum/csf:stratumOrder ?of . ?t csf:atStratum/csf:stratumOrder ?ot .
+        FILTER(?ot != ?of + 1)
+      }""" ] ;
+  sh:sparql [ sh:severity sh:Warning ;
+    sh:message "FeedsBack bridge does not go BACKWARD (target stratum should be lower-order than source)." ;
+    sh:select """
+      PREFIX brg: <http://purl.org/csf/bridging#>
+      PREFIX csf: <http://purl.org/csf/>
+      SELECT $this WHERE {
+        $this brg:bridgeRelation brg:FeedsBack ; brg:bridgeFrom ?f ; brg:bridgeTo ?t .
+        ?f csf:atStratum/csf:stratumOrder ?of . ?t csf:atStratum/csf:stratumOrder ?ot .
+        FILTER(?ot >= ?of)
+      }""" ] .

@@ -1,0 +1,48 @@
+@prefix csf:  <http://purl.org/csf/> .
+@prefix csc:  <http://purl.org/csf/cascades#> .
+@prefix pol:  <http://purl.org/polanyi/heuristics#> .
+@prefix cpas: <http://www.ontologydesignpatterns.org/schemas/cpannotationschema.owl#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+################################################################################
+# CSF Appraisal module (v3.4) — adds the missing COGNITIVE / APPRAISAL step class
+# so the L2 stratum can enter the cascade as a first-class causal link, restoring
+# Lazarus & Folkman's cognitive appraisal as a mediator (not merely a moderator).
+################################################################################
+
+<http://purl.org/csf/appraisal> a owl:Ontology ;
+  rdfs:label "CSF Appraisal module (v3.4)"@en ;
+  owl:imports <http://purl.org/csf/> ;
+  cpas:hasIntent "Introduce csf:AppraisalStep (cognitive stratum, L2) and concrete Lazarus appraisal step-types, so appraisal can be a link in the corticoidogenic cascade rather than only a moderator or an ISIT parameter. Fixes a structural gap by which L2 was unpopulable and Lazarus's appraisal-as-mediator was excluded by construction."@en ;
+  cpas:coversRequirements "R-AP1 appraisal is a cascade step (occurs between situation/frame and the behavioural/autonomic response); R-AP2 primary vs secondary appraisal are distinguished; R-AP3 appraisal steps are atStratum L2."@en ;
+  cpas:hasConsequences "L2 becomes populable; A2's L2 half has content to adjudicate; the cascade can model appraisal -> autonomic/endocrine sequencing (Lazarus -> McEwen)."@en ;
+  dcterms:source "Lazarus & Folkman 1984, Stress, Appraisal, and Coping (Springer); Lazarus 1966, Psychological Stress and the Coping Process." ;
+  owl:versionInfo "3.4-appraisal-2026-08" .
+
+########## the missing cognitive step class ##########
+csf:AppraisalStep a owl:Class ;
+  rdfs:subClassOf csf:CascadeStep ;
+  rdfs:label "Appraisal Step Type"@en ;
+  rdfs:comment "A cognitive step in the stress cascade: the evaluative processing (Lazarus & Folkman 1984) that mediates between the situation/frame and the behavioural/physiological response. Distinct from moderators (which modulate) and ISIT parameters (which describe): an appraisal step is a causal link occupying the L2 (appraisal) stratum. Its absence previously wrote cognitive appraisal out of the causal chain."@en ;
+  pol:groundingReference <https://link.springer.com/book/10.1007/978-1-4419-1005-9> .
+
+########## concrete appraisal step-types (instantiable) ##########
+csc:PrimaryAppraisalType a csf:AppraisalStep , owl:NamedIndividual ;
+  rdfs:label "Primary Appraisal (Type)"@en ;
+  rdfs:comment "Evaluation of what is at stake: whether the encounter is irrelevant, benign-positive, or stressful (harm/loss, threat, or challenge)."@en .
+csc:SecondaryAppraisalType a csf:AppraisalStep , owl:NamedIndividual ;
+  rdfs:label "Secondary Appraisal (Type)"@en ;
+  rdfs:comment "Evaluation of coping resources and options — what can be done, and expected controllability/efficacy."@en .
+csc:ReappraisalType a csf:AppraisalStep , owl:NamedIndividual ;
+  rdfs:label "Reappraisal (Type)"@en ;
+  rdfs:comment "Updated appraisal following new information, coping, or feedback (including cognitive reframing)."@en .
+csc:ThreatAppraisalType a csf:AppraisalStep , owl:NamedIndividual ;
+  rdfs:label "Threat Appraisal (Type)"@en ;
+  rdfs:comment "A primary appraisal outcome: anticipated harm/loss not yet occurred — the appraisal most tied to HPA recruitment."@en .
+
+# appraisal typically follows the situation and precedes the behavioural/autonomic response
+csc:PrimaryAppraisalType csf:precedes csc:SecondaryAppraisalType .
