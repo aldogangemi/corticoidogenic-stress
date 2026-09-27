@@ -974,3 +974,10 @@ csf:AlarmPhase csf:activatesCascadePhase csf:AcutePhase .
 csf:ResistancePhase csf:activatesCascadePhase csf:SubacutePhase .
 csf:ExhaustionPhase csf:activatesCascadePhase csf:ChronicPhase .
 csf:RecoveryGASPhase csf:activatesCascadePhase csf:RecoveryPhase .
+# ── v3.4 finalize: situation -> step-occurrence containment (used by extractions and
+# by SituationBridgingShape; previously used but undeclared).
+csf:hasCascadeStep a owl:ObjectProperty ;
+    rdfs:label "has cascade step"@en ;
+    rdfs:domain csf:CSF_Situation ;
+    rdfs:range csf:CascadeStepOccurrence ;
+    rdfs:comment "Relates an actual situation to the cascade-step occurrences it contains."@en .

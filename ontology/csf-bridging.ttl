@@ -97,12 +97,12 @@ brg:ex_situation a csf:CSF_Situation ;
   rdfs:label "exemplar situation (template)"@en ;
   brg:hasCrossLayerBridge brg:ex_b1 , brg:ex_b2 , brg:ex_b3 , brg:ex_b4 , brg:ex_b5 , brg:ex_mod1 .
 
-brg:ex_step_l4 a csf:CascadeStepOccurrence ; rdfs:label "L4 catecholamine release (abduced)"@en ; pol:evidenceStatus pol:Abduced .
-brg:ex_step_l5 a csf:CascadeStepOccurrence ; rdfs:label "L5 HPA / cortisol (abduced)"@en ; pol:evidenceStatus pol:Abduced .
-brg:ex_step_l6 a csf:CascadeStepOccurrence ; rdfs:label "L6 chronic low-grade inflammation (abduced)"@en ; pol:evidenceStatus pol:Abduced .
-brg:ex_step_l7 a csf:CascadeStepOccurrence ; rdfs:label "L7 NR3C1 methylation (abduced)"@en ; pol:evidenceStatus pol:Abduced .
-brg:ex_outcome a out:Depression .
-brg:ex_amp a mod:RuminativeStyle .
+brg:ex_step_l4 a csf:CascadeStepOccurrence ; rdfs:label "L4 catecholamine release (abduced)"@en ; pol:evidenceStatus pol:Abduced ; csf:atStratum csf:L4_Autonomic .
+brg:ex_step_l5 a csf:CascadeStepOccurrence ; rdfs:label "L5 HPA / cortisol (abduced)"@en ; pol:evidenceStatus pol:Abduced ; csf:atStratum csf:L5_Endocrine .
+brg:ex_step_l6 a csf:CascadeStepOccurrence ; rdfs:label "L6 chronic low-grade inflammation (abduced)"@en ; pol:evidenceStatus pol:Abduced ; csf:atStratum csf:L6_InflammatoryMetabolic .
+brg:ex_step_l7 a csf:CascadeStepOccurrence ; rdfs:label "L7 NR3C1 methylation (abduced)"@en ; pol:evidenceStatus pol:Abduced ; csf:atStratum csf:L7_Molecular .
+brg:ex_outcome a out:Depression ; csf:atStratum csf:L8_Outcome .
+brg:ex_amp a mod:Amplifier .
 
 brg:ex_b1 a brg:CrossLayerBridge ;
   brg:bridgeFrom brg:ex_step_l4 ; brg:bridgeTo brg:ex_step_l5 ; brg:bridgeRelation brg:DirectlyPrecedes ;

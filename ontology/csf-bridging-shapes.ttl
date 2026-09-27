@@ -12,7 +12,18 @@
 # SHACL for the CSF cross-layer bridging pattern. Encodes CLOSED-WORLD checks
 # not entailed by OWL: well-formedness + cardinality of the reified bridge, the
 # possibilia literature-grounding requirement, and completeness recommendations.
+#
+# v3.4 finalize: SPARQL-based constraints now carry sh:prefixes (a sh:declare
+# container). Prior versions relied on inline PREFIX declarations, which
+# spec-compliant SHACL-SPARQL engines ignore, so those constraints could not execute.
 ################################################################################
+
+# Prefix container referenced by every sh:sparql constraint below.
+<http://purl.org/csf/bridging-shapes> a owl:Ontology ;
+  rdfs:label "CSF bridging SHACL shapes (v3.4)"@en ;
+  sh:declare [ sh:prefix "brg" ; sh:namespace "http://purl.org/csf/bridging#"^^xsd:anyURI ] ;
+  sh:declare [ sh:prefix "csf" ; sh:namespace "http://purl.org/csf/"^^xsd:anyURI ] ;
+  sh:declare [ sh:prefix "pol" ; sh:namespace "https://w3id.org/polanyi/core#"^^xsd:anyURI ] .
 
 ## (1) STRUCTURAL — a bridge must be well-formed possibilia (Violation) ##########
 brg:CrossLayerBridgeShape a sh:NodeShape ;
@@ -39,10 +50,9 @@ brg:CrossLayerBridgeShape a sh:NodeShape ;
 brg:NoOverCommitShape a sh:NodeShape ;
   sh:targetClass brg:CrossLayerBridge ;
   sh:sparql [ sh:severity sh:Violation ;
+    sh:prefixes <http://purl.org/csf/bridging-shapes> ;
     sh:message "Over-commitment: bridge marked Actual but its target step is only Abduced — keep it possibile." ;
     sh:select """
-      PREFIX brg: <http://purl.org/csf/bridging#>
-      PREFIX pol: <https://w3id.org/polanyi/core#>
       SELECT $this WHERE {
         $this brg:hasModalStatus brg:Actual ; brg:bridgeTo ?t .
         ?t pol:evidenceStatus pol:Abduced .
@@ -53,10 +63,9 @@ brg:NoOverCommitShape a sh:NodeShape ;
 brg:SituationBridgingShape a sh:NodeShape ;
   sh:targetClass csf:CSF_Situation ;
   sh:sparql [ sh:severity sh:Warning ;
+    sh:prefixes <http://purl.org/csf/bridging-shapes> ;
     sh:message "Under-bridged: this situation has cascade steps at >=2 STRATA (csf:atStratum) but no CrossLayerBridge; the compositional layers are not causally entrenched." ;
     sh:select """
-      PREFIX brg: <http://purl.org/csf/bridging#>
-      PREFIX csf: <http://purl.org/csf/>
       SELECT $this WHERE {
         { SELECT $this (COUNT(DISTINCT ?st) AS ?nst) WHERE {
             $this csf:hasCascadeStep ?s . ?s csf:atStratum ?st .
@@ -69,20 +78,18 @@ brg:SituationBridgingShape a sh:NodeShape ;
 brg:StratumConsistencyShape a sh:NodeShape ;
   sh:targetClass brg:CrossLayerBridge ;
   sh:sparql [ sh:severity sh:Warning ;
+    sh:prefixes <http://purl.org/csf/bridging-shapes> ;
     sh:message "DirectlyPrecedes bridge does not connect ADJACENT strata (order should increase by exactly 1)." ;
     sh:select """
-      PREFIX brg: <http://purl.org/csf/bridging#>
-      PREFIX csf: <http://purl.org/csf/>
       SELECT $this WHERE {
         $this brg:bridgeRelation brg:DirectlyPrecedes ; brg:bridgeFrom ?f ; brg:bridgeTo ?t .
         ?f csf:atStratum/csf:stratumOrder ?of . ?t csf:atStratum/csf:stratumOrder ?ot .
         FILTER(?ot != ?of + 1)
       }""" ] ;
   sh:sparql [ sh:severity sh:Warning ;
+    sh:prefixes <http://purl.org/csf/bridging-shapes> ;
     sh:message "FeedsBack bridge does not go BACKWARD (target stratum should be lower-order than source)." ;
     sh:select """
-      PREFIX brg: <http://purl.org/csf/bridging#>
-      PREFIX csf: <http://purl.org/csf/>
       SELECT $this WHERE {
         $this brg:bridgeRelation brg:FeedsBack ; brg:bridgeFrom ?f ; brg:bridgeTo ?t .
         ?f csf:atStratum/csf:stratumOrder ?of . ?t csf:atStratum/csf:stratumOrder ?ot .

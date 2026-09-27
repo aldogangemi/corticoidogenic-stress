@@ -25,26 +25,27 @@ cascade pathway, not from direct causation.
 	LITERATURE: The allostatic load model (Juster et al. 2010, PMID 19836632) provides the
 theoretical basis: cumulative wear → system-specific dysregulation → endpoints.
 	"""@en ;
-    owl:versionInfo "3.3" .
+    owl:versionInfo "3.3" ;
+    rdfs:comment "v3.4 finalize: schema-level typical-situation properties (predictsOutcome, hasChronicity, mediatedByCascade, ...) now take csf:CorticoidogenicFrame as domain. The situation-TYPE classes are frames punned as situation classes; domain csf:CSF_Situation (the instance class) previously RDFS-typed them as instances, triggering spurious SituationShape violations."@en .
 
 # ==========================================================
 # SITUATION-LEVEL PROPERTIES (v3.2 extension)
 # ==========================================================
 
 sit:expectedSeverity a owl:ObjectProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range csf:SeverityLevel ;
     rdfs:label "expected severity"@en ;
     rdfs:comment "Links a situation type to its expected severity level based on literature."@en .
 
 sit:controlRange a owl:DatatypeProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range xsd:string ;
     rdfs:label "control range"@en ;
     rdfs:comment "Controllability range for this situation type (e.g., '0.0-0.2'). String encoding of min-max float range."@en .
 
 sit:compoundsWithFrame a owl:ObjectProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range csf:CorticoidogenicFrame ;
     rdfs:label "compounds with frame"@en ;
     rdfs:comment "Links a situation to a secondary frame it co-activates."@en .
@@ -54,26 +55,26 @@ sit:compoundsWithFrame a owl:ObjectProperty ;
 # ==========================================================
 
 sit:hasOnsetAge a owl:DatatypeProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range xsd:string ;
     rdfs:label "has onset age"@en ;
     rdfs:comment "Typical age or life-stage of onset for this situation type (e.g., 'childhood', 'adulthood', 'any')."@en .
 
 sit:hasTypicalDuration a owl:DatatypeProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range xsd:string ;
     rdfs:label "has typical duration"@en ;
     rdfs:comment "Typical duration range for this situation type (e.g., 'years', 'months-years', 'indefinite')."@en .
 
 sit:hasTrajectory a owl:DatatypeProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range [ a rdfs:Datatype ;
                  owl:oneOf ("escalating" "stable" "remitting" "episodic" "variable") ] ;
     rdfs:label "has trajectory"@en ;
     rdfs:comment "Typical trajectory pattern of this situation type over time."@en .
 
 sit:hasChronicity a owl:DatatypeProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range [ a rdfs:Datatype ;
                  owl:oneOf ("acute" "subacute" "chronic" "lifelong") ] ;
     rdfs:label "has chronicity"@en ;
@@ -85,7 +86,7 @@ sit:hasChronicity a owl:DatatypeProperty ;
 
 sit:hasExperiencer a owl:ObjectProperty ;
     rdfs:subPropertyOf dul:hasParticipant ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range dul:Agent ;
     rdfs:label "has experiencer"@en ;
     rdfs:comment "Links a situation to the agent undergoing it. Enables individual-level modeling and vulnerability profiling. Added in v3.2 per DUL Situation pattern alignment."@en .
@@ -96,13 +97,13 @@ sit:hasExperiencer a owl:ObjectProperty ;
 
 sit:compoundsWithSituation a owl:ObjectProperty ;
     a owl:SymmetricProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range csf:CSF_Situation ;
     rdfs:label "compounds with situation"@en ;
     rdfs:comment "Links two co-occurring situation types that produce interaction effects. Enables intersectionality modeling (e.g., RacialDiscrimination + SocioeconomicDisadvantage). Added in v3.2."@en .
 
 sit:interactionEffect a owl:DatatypeProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range [ a rdfs:Datatype ;
                  owl:oneOf ("additive" "multiplicative" "synergistic") ] ;
     rdfs:label "interaction effect"@en ;
@@ -285,7 +286,7 @@ sit:ChildhoodAbuseNeglect sit:compoundsWithSituation sit:ElderlyIsolation .
 #################################################################
 
 sit:predictsOutcome a owl:ObjectProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range csf:ClinicalOutcome ;
     rdfs:label "predicts outcome"@en ;
     rdfs:comment """Schema-level shortcut linking a situation type to clinical outcomes 
@@ -295,7 +296,7 @@ sit:predictsOutcome a owl:ObjectProperty ;
     predicate for epidemiological queries. Added in v3.3 per H3 (Req 14)."""@en .
 
 sit:outcomeProbability a owl:DatatypeProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range [ a rdfs:Datatype ;
                  owl:onDatatype xsd:float ;
                  owl:withRestrictions ( [ xsd:minInclusive "0.0"^^xsd:float ]
@@ -306,14 +307,14 @@ sit:outcomeProbability a owl:DatatypeProperty ;
     Moderators shift this probability up (amplifiers) or down (buffers)."""@en .
 
 sit:outcomeEvidenceGrade a owl:DatatypeProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range [ a rdfs:Datatype ;
                  owl:oneOf ("meta-analysis" "systematic-review" "RCT" "cohort" "cross-sectional" "expert-consensus" "theoretical") ] ;
     rdfs:label "outcome evidence grade"@en ;
     rdfs:comment "Level of evidence supporting the situation-outcome prediction."@en .
 
 sit:mediatedByCascade a owl:ObjectProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range csf:CascadeFrame ;
     rdfs:label "mediated by cascade"@en ;
     rdfs:comment """Links a situation-outcome prediction to the cascade frame that 
@@ -352,13 +353,13 @@ sit:VeryHighAllostaticLoad a sit:AllostaticLoadAccumulation ;
     rdfs:comment "7+ dysregulated systems. Multiple comorbidities expected."@en .
 
 sit:hasAllostaticLoad a owl:ObjectProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range sit:AllostaticLoadAccumulation ;
     rdfs:label "has allostatic load"@en ;
     rdfs:comment "Links a situation instance to its current allostatic load level."@en .
 
 sit:expectedAllostaticLoad a owl:ObjectProperty ;
-    rdfs:domain csf:CSF_Situation ;
+    rdfs:domain csf:CorticoidogenicFrame ;
     rdfs:range sit:AllostaticLoadAccumulation ;
     rdfs:label "expected allostatic load"@en ;
     rdfs:comment "Schema-level: typical allostatic load for this situation type at exhaustion phase."@en .

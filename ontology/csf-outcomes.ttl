@@ -27,7 +27,7 @@ out:SubclinicalOutcome a owl:Class ;
 out:ReversibleClinicalOutcome a owl:Class ;
     rdfs:subClassOf out:OutcomeCategory ,
         [ a owl:Restriction ; owl:onProperty csf:hasSeverity ; owl:hasValue csf:Moderate ] ,
-        [ a owl:Restriction ; owl:onProperty csf:hasReversibility ; owl:hasValue csf:PartiallyReversible ] ;
+        [ a owl:Restriction ; owl:onProperty csf:hasReversibility ; owl:hasValue csf:FullyReversible ] ;
     rdfs:label "Reversible Clinical Outcome"@en .
 
 out:PartiallyReversibleOutcome a owl:Class ;

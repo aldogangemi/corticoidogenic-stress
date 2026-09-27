@@ -1,0 +1,30 @@
+# Test fixtures for csf:TextOnlyNoMolecularAssertionShape (NOT shipped in the network).
+# Expect EXACTLY ONE violation: nfx:sit_bad.
+@prefix csf: <http://purl.org/csf/> .
+@prefix pol: <https://w3id.org/polanyi/core#> .
+@prefix nfx: <http://purl.org/csf/ninf-fixtures#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+# A- (MUST violate): a text-only situation asserting a MEASURED L7 molecular step.
+nfx:sit_bad a csf:CSF_Situation ; rdfs:label "text-only, illegally measured L7"@en ;
+  csf:hasCascadeStep nfx:step_bad .
+nfx:step_bad a csf:CascadeStepOccurrence ;
+  csf:atStratum csf:L7_Molecular ; pol:evidenceStatus pol:Observed .
+
+# A+ (MUST pass): same L7 step but ABDUCED (possibilic) — the normal pipeline case.
+nfx:sit_ok_abduced a csf:CSF_Situation ; rdfs:label "text-only, abduced L7 (ok)"@en ;
+  csf:hasCascadeStep nfx:step_ok1 .
+nfx:step_ok1 a csf:CascadeStepOccurrence ;
+  csf:atStratum csf:L7_Molecular ; pol:evidenceStatus pol:Abduced .
+
+# A+ (MUST pass): an INSTRUMENTED situation may carry a measured L7 step.
+nfx:sit_ok_instrumented a csf:InstrumentedSituation ; rdfs:label "assayed L7 (ok)"@en ;
+  csf:hasCascadeStep nfx:step_ok2 .
+nfx:step_ok2 a csf:CascadeStepOccurrence ;
+  csf:atStratum csf:L7_Molecular ; pol:evidenceStatus pol:Observed .
+
+# A+ (MUST pass): text-only, measured step but at a NON-molecular stratum (L4) — out of scope.
+nfx:sit_ok_l4 a csf:CSF_Situation ; rdfs:label "text-only, measured L4 (out of scope)"@en ;
+  csf:hasCascadeStep nfx:step_ok3 .
+nfx:step_ok3 a csf:CascadeStepOccurrence ;
+  csf:atStratum csf:L4_Autonomic ; pol:evidenceStatus pol:Observed .

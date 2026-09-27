@@ -9,6 +9,17 @@
 @prefix mod: <http://purl.org/csf/moderators#> .
 @prefix int: <http://purl.org/csf/interventions#> .
 @prefix dul: <http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+# v3.4 finalize: SPARQL-constraint prefix container. Turtle @prefix declarations do
+# NOT propagate into SHACL-SPARQL query strings; these three constraints previously
+# could not execute ("unknown prefix"). sh:prefixes supplies them per the SHACL spec.
+<http://purl.org/csf/shaclshapes> sh:declare
+    [ sh:prefix "csf" ; sh:namespace "http://purl.org/csf/"^^xsd:anyURI ] ,
+    [ sh:prefix "sit" ; sh:namespace "http://purl.org/csf/situations#"^^xsd:anyURI ] ,
+    [ sh:prefix "int" ; sh:namespace "http://purl.org/csf/interventions#"^^xsd:anyURI ] ,
+    [ sh:prefix "csc" ; sh:namespace "http://purl.org/csf/cascades#"^^xsd:anyURI ] ,
+    [ sh:prefix "owl" ; sh:namespace "http://www.w3.org/2002/07/owl#"^^xsd:anyURI ] .
 
 #################################################################
 #    CSF SHACL Shapes v3.3
@@ -23,7 +34,10 @@
 
 csf:SituationShape
     a sh:NodeShape ;
-    sh:targetClass csf:CSF_Situation ;
+    # v3.4 finalize: target only genuine INSTANCE situations, excluding the schema-level
+    # situation-TYPE classes (owl:Class) that RDFS may type as csf:CSF_Situation.
+    sh:target [ a sh:SPARQLTarget ; sh:prefixes <http://purl.org/csf/shaclshapes> ;
+        sh:select "SELECT ?this WHERE { ?this a csf:CSF_Situation . FILTER NOT EXISTS { ?this a owl:Class } }" ] ;
     rdfs:label "CSF Situation Validation Shape"@en ;
     rdfs:comment "Ensures every actual situation evokes exactly one corticoidogenic frame template."@en ;
     
@@ -121,7 +135,10 @@ csf:ModeratorInteractionShape
 # Validates that situation instances have at most one current phase
 csf:SituationPhaseShape
     a sh:NodeShape ;
-    sh:targetClass csf:CSF_Situation ;
+    # v3.4 finalize: target only genuine INSTANCE situations, excluding the schema-level
+    # situation-TYPE classes (owl:Class) that RDFS may type as csf:CSF_Situation.
+    sh:target [ a sh:SPARQLTarget ; sh:prefixes <http://purl.org/csf/shaclshapes> ;
+        sh:select "SELECT ?this WHERE { ?this a csf:CSF_Situation . FILTER NOT EXISTS { ?this a owl:Class } }" ] ;
     rdfs:label "Situation Phase Validation Shape"@en ;
     rdfs:comment "Validates GAS phase assignment on situation instances."@en ;
     
@@ -246,6 +263,7 @@ csf:InterventionPhaseConsistencyShape
     rdfs:label "Intervention Phase Consistency Shape"@en ;
     rdfs:comment "Warns if an intervention lists the same phase as both optimal and contraindicated."@en ;
     sh:sparql [
+        sh:prefixes <http://purl.org/csf/shaclshapes> ;
         sh:message "Intervention {$this} lists {?phase} as both optimalPhase and contraindicated — this is contradictory." ;
         sh:select """
             SELECT $this ?phase
@@ -284,12 +302,16 @@ csf:InterventionOccurrenceShape
 
 csf:SituationOutcomePredictionShape
     a sh:NodeShape ;
-    sh:targetClass csf:CSF_Situation ;
+    # v3.4 finalize: target only genuine INSTANCE situations, excluding the schema-level
+    # situation-TYPE classes (owl:Class) that RDFS may type as csf:CSF_Situation.
+    sh:target [ a sh:SPARQLTarget ; sh:prefixes <http://purl.org/csf/shaclshapes> ;
+        sh:select "SELECT ?this WHERE { ?this a csf:CSF_Situation . FILTER NOT EXISTS { ?this a owl:Class } }" ] ;
     rdfs:label "Situation-Outcome Prediction Validation Shape"@en ;
     rdfs:comment "Warns if a situation type predicts outcomes without specifying a mediating cascade."@en ;
     sh:severity sh:Warning ;
     
     sh:sparql [
+        sh:prefixes <http://purl.org/csf/shaclshapes> ;
         sh:message "Situation {$this} declares sit:predictsOutcome but lacks sit:mediatedByCascade — the mechanistic pathway is unspecified." ;
         sh:select """
             SELECT $this
@@ -327,6 +349,7 @@ csf:InterventionMechanismConsistencyShape
     rdfs:comment "Warns if an intervention targets a cascade step not found in cascades associated with its mitigated situations."@en ;
     sh:severity sh:Warning ;
     sh:sparql [
+        sh:prefixes <http://purl.org/csf/shaclshapes> ;
         sh:message "Intervention {$this} targets mechanism {?step} but the mitigated situations do not connect to a cascade containing that step type." ;
         sh:select """
             SELECT $this ?step

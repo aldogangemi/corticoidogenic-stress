@@ -1,0 +1,58 @@
+# =====================================================================
+# CSF v3.4 — HARD non-inference SHACL shape (R1.4)
+# "Representation is not clinical assertion / measurement."
+#
+# Enforces: a TEXT-ONLY corticoidogenic situation (the default; anything not
+# explicitly typed csf:InstrumentedSituation) may NOT carry a MOLECULAR-stratum
+# (L7) cascade step asserted as MEASURED (pol:evidenceStatus pol:Observed).
+# Molecular-layer content extracted from uncalibrated text must remain possibilic
+# (pol:Abduced) — never a measurement (R1.4: "clinical hallucination risk").
+#
+# The single escape hatch is csf:InstrumentedSituation: a situation whose
+# molecular layer was actually assayed (NR3C1 methylation array, GR binding, etc.).
+# No pipeline output over text is instrumented, so on the released network this
+# shape reports 0 violations; the negative fixture below proves it is non-vacuous.
+#
+# SPARQL prefixes do NOT inherit Turtle @prefix — hence the sh:declare container.
+# =====================================================================
+@prefix csf:  <http://purl.org/csf/> .
+@prefix pol:  <https://w3id.org/polanyi/core#> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+# --- marker class: the ONLY thing that licenses a measured molecular assertion ---
+csf:InstrumentedSituation a owl:Class ;
+  rdfs:subClassOf csf:CSF_Situation ;
+  rdfs:label "Instrumented situation"@en ;
+  rdfs:comment "A CSF situation whose internalized (L4-L7) layer was actually MEASURED by an assay/instrument, not abduced from text. Only these may carry pol:Observed molecular-stratum steps."@en .
+
+# --- SPARQL prefix container ---
+csf:_ninf_prefixes
+  sh:declare [ sh:prefix "csf" ; sh:namespace "http://purl.org/csf/"^^xsd:anyURI ] ;
+  sh:declare [ sh:prefix "pol" ; sh:namespace "https://w3id.org/polanyi/core#"^^xsd:anyURI ] .
+
+# --- the hard shape ---
+csf:TextOnlyNoMolecularAssertionShape a sh:NodeShape ;
+  rdfs:label "Text-only situations assert no measured molecular step"@en ;
+  # target: genuine CSF_Situation INSTANCES that are NOT instrumented (text-only default)
+  sh:target [ a sh:SPARQLTarget ;
+    sh:prefixes csf:_ninf_prefixes ;
+    sh:select """
+      SELECT ?this WHERE {
+        ?this a csf:CSF_Situation .
+        FILTER NOT EXISTS { ?this a csf:InstrumentedSituation }
+        FILTER NOT EXISTS { ?this a owl:Class }
+      }""" ] ;
+  sh:sparql [ a sh:SPARQLConstraint ;
+    sh:prefixes csf:_ninf_prefixes ;
+    sh:severity sh:Violation ;
+    sh:message "Text-only situation asserts a MEASURED (pol:Observed) molecular-stratum (L7) step {?step}; molecular content abduced from text must stay possibilic (pol:Abduced), not measured. Type the situation csf:InstrumentedSituation only if the molecular layer was actually assayed." ;
+    sh:select """
+      SELECT ?this ?step WHERE {
+        ?this (csf:hasCascadeStep|csf:hasStep) ?step .
+        ?step csf:atStratum csf:L7_Molecular .
+        ?step pol:evidenceStatus pol:Observed .
+      }""" ] .

@@ -857,3 +857,12 @@ csc:SleepDisruptionType csf:hasTemporalPhase csf:AcutePhase ;
 
 csc:SocialWithdrawalType csf:hasTemporalPhase csf:SubacutePhase ;
     csf:hasTypicalOnset "weeks" .
+# ── v3.4 finalize: declare the seven per-frame cascade templates referenced by
+# frm:typicalCascade (previously dangling). Typed as CascadeFrame (schema-level).
+csc:SubordinationCascade        a csf:CascadeFrame, owl:NamedIndividual ; rdfs:label "Subordination Cascade"@en .
+csc:UncontrollableThreatCascade a csf:CascadeFrame, owl:NamedIndividual ; rdfs:label "Uncontrollable Threat Cascade"@en .
+csc:CaregivingEntrapmentCascade a csf:CascadeFrame, owl:NamedIndividual ; rdfs:label "Caregiving Entrapment Cascade"@en .
+csc:EarlyLifeProgrammingCascade a csf:CascadeFrame, owl:NamedIndividual ; rdfs:label "Early-Life Programming Cascade"@en .
+csc:IdentityThreatCascade       a csf:CascadeFrame, owl:NamedIndividual ; rdfs:label "Identity Threat Cascade"@en .
+csc:CircadianMisalignmentCascade a csf:CascadeFrame, owl:NamedIndividual ; rdfs:label "Circadian Misalignment Cascade"@en .
+csc:SocialDisconnectionCascade  a csf:CascadeFrame, owl:NamedIndividual ; rdfs:label "Social Disconnection Cascade"@en .
